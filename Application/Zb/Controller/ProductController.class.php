@@ -44,16 +44,6 @@ class ProductController extends CommonController {
         return $this->pageAry;
     }
 
-    //获取查看价格
-    private function getLookPrice($isFree=1)
-    {
-        $lookPrice = 0;
-        if($isFree <= 0){
-            $lookPrice = floatval($this->getSysConfig("LOOK_PRICE"));
-        }
-        return $lookPrice;
-    }
-
     //获取分类信息
     private function getCategoryAry($categoryId)
     {

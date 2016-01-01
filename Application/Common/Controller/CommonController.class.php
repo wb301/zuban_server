@@ -370,4 +370,14 @@ class CommonController extends Controller
 
 
 
+        //获取查看价格
+    public function getLookPrice($isFree=1)
+    {
+        $lookPrice = 0;
+        if($isFree <= 0){
+            $lookPrice = floatval($this->getSysConfig("LOOK_PRICE"));
+        }
+        return $lookPrice;
+    }
+
 }

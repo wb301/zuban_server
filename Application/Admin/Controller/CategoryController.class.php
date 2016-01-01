@@ -156,6 +156,17 @@ class CategoryController extends AdminCommonController {
             }else if($updateAry['is_free'] < 0){
                 $updateAry['is_free'] = 0;
             }
+            //修复该分类下商品信息
+            $categoryModel = M('zuban_product_category','','DB_DSN');
+            $productCodeList = $categoryModel->where("`category_id` = $id")->getField("product_sys_code", true);
+            if(!empty($productCodeList)){
+                $lookPrice = $this->getLookPrice($updateAry['is_free']);
+                $productCodeListStr = getListString($productCodeList);
+                M('zuban_product_goods','','DB_DSN')->where("`product_sys_code` IN  ($productCodeListStr)")->save(array(
+                    'update_time' => date('Y-m-d H:i:s'),
+                    'look_price' => $lookPrice
+                ));
+            }
         }
         if(isset($categoryInfo['status'])){
             $updateAry['status'] = intval($categoryInfo['status']);
