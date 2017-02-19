@@ -1,7 +1,7 @@
 <?php
 return array(
     'RUN_ENV' =>  1, //0开发 1测试 2正式  //此处用的测试环境配置  后续改正
-    'SERVER_URL'            =>  "test.guleshop.com/api", //当前服务地址
+    'SERVER_URL'            =>  "http://weixin.zuban8.com/zuban_server", //当前服务地址
     /**
 
     数据库
@@ -9,7 +9,7 @@ return array(
     */
     'DB_PREFIX'         =>  '',
     'URL_MODEL'         =>  3, // 如果你的环境不支持PATHINFO 请设置为3
-    'DB_DSN'            =>  'mysqli://remote_root:b^T%t6ngMcUE@182.254.219.233:3306/yf_bi',
+    'DB_DSN'            =>  'mysqli://hdm157793421:gemei123456@hdm157793421.my3w.com:3306/hdm157793421_db',
 
 
     /**
