@@ -42,7 +42,7 @@ return  array(
     'DEFAULT_V_LAYER'       =>  '', // 默认的视图层名称
     'DEFAULT_LANG'          =>  'zh-cn', // 默认语言
     'DEFAULT_THEME'         =>  '',	// 默认模板主题名称
-    'DEFAULT_MODULE'        =>  'BI',  // 默认模块
+    'DEFAULT_MODULE'        =>  'Zb',  // 默认模块
     'DEFAULT_CONTROLLER'    =>  'Index', // 默认控制器名称
     'DEFAULT_ACTION'        =>  'index', // 默认操作名称
     'DEFAULT_CHARSET'       =>  'utf-8', // 默认输出编码
