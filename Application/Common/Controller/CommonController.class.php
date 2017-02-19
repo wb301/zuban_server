@@ -9,10 +9,18 @@ use Think\Controller;
 */
 class CommonController extends Controller
 {
-	public function __construct() {
+
+    //模型名称
+    public    $modelName = MODULE_NAME;
+    //服务对象
+    public    $service;
+
+    public function __construct() {
         parent::__construct();
         date_default_timezone_set('PRC');
         $this->requestTime = time();
+        //对象实例化
+        $this->service = A( "{$this->modelName}/{$this->getControllerName()}", 'Service' );
     }
 
     //数组分页通用返回结构
@@ -83,5 +91,25 @@ class CommonController extends Controller
     //通用错误返回(尽量不使用)
     protected function returnErrorNotice($msg="failed",$code=-100){
         $this->returnJQuery(array(),$msg,$code,C('AJAX_STATUS_ERROR'));
+    }
+
+
+    /**
+    +----------------------------------------------------------
+     * 获取当前控制器名称
+    +----------------------------------------------------------
+     * @access  protected
+    +----------------------------------------------------------
+     * @return srting
+    +----------------------------------------------------------
+     */
+    protected function getControllerName() {
+        if(empty($this->controllerName)) {
+            // 获取Controller名称
+            $nameArray = explode('\\',get_class($this));
+            $count = count($nameArray);
+            $this->controllerName = substr($nameArray[$count-1],0,-strlen($nameArray[$count-2]));
+        }
+        return $this->controllerName;
     }
 }

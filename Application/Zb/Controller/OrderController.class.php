@@ -1,8 +1,8 @@
 <?php
 namespace Zb\Controller;
 use Zb\Controller\CommonController;
-class IndexController extends CommonController {
+class OrderController extends CommonController {
     public function index(){
-        $this->service->a();
+        print_r(2);exit;
        }
 }
