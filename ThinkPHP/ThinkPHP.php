@@ -47,14 +47,10 @@ if(function_exists('saeAutoLoader')){// 自动识别SAE环境
 
 $module = 'c'; //自定义修改 与convention.php VAR_MODULE 必须一致
 $runtimePath = 'Zb/'; //自定义修改 与convention.php DEFAULT_MODULE 必须一致
-if($GLOBALS['_GET'] && count($GLOBALS['_GET']) > 0){
-    if($GLOBALS['_GET'][$module]){
-        $runtimePath = $GLOBALS['_GET'][$module]."/";
-    }
-}else{
-    if($GLOBALS['_POST'][$module]){
-        $runtimePath = $GLOBALS['_POST'][$module]."/";
-    }
+if(isset($GLOBALS['_GET'][$module])){
+    $runtimePath = $GLOBALS['_GET'][$module]."/";
+}else if(isset($GLOBALS['_POST'][$module])){
+    $runtimePath = $GLOBALS['_POST'][$module]."/";
 }
 
 
