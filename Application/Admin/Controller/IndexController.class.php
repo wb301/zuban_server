@@ -20,14 +20,14 @@ class IndexController extends Controller {
         }else{
             $this->index();exit();
         }
-        $path = $docPath.'/youfan_bi_server';
+        $path = $docPath.'/zuban_server';
         //你想要哪个文件夹下面的注释生成对应的API文档
         $swagger = \Swagger\scan($path."/Application");
         header('Content-Type: application/json');
         $swagger_path = $path.'/swagger-ui/swagger.json';
         $res = file_put_contents($swagger_path, $swagger);
         if ($res == true) {
-            $url = "http://".$_SERVER['HTTP_HOST']."/youfan_bi_server/swagger-ui/dist/";
+            $url = "http://".$_SERVER['HTTP_HOST']."/zuban_server/swagger-ui/dist/";
             header('Location: '.$url);
         }else{
             $this->index();exit();

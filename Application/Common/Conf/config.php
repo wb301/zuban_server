@@ -1,6 +1,6 @@
 <?php
 return array(
-    'RUN_ENV' =>  1, //0开发 1测试 2正式  //此处用的测试环境配置  后续改正
+    'RUN_ENV' =>  0, //0开发 1测试 2正式  //此处用的测试环境配置  后续改正
     'SERVER_URL'            =>  "http://weixin.zuban8.com/zuban_server", //当前服务地址
     /**
 
