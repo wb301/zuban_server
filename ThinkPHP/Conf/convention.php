@@ -23,7 +23,7 @@ return  array(
     'APP_SUB_DOMAIN_RULES'  =>  array(), // 子域名部署规则
     'APP_DOMAIN_SUFFIX'     =>  '', // 域名后缀 如果是com.cn net.cn 之类的后缀必须设置    
     'ACTION_SUFFIX'         =>  '', // 操作方法后缀
-    'MULTI_MODULE'          =>  false, // 是否允许多模块 如果为false 则必须设置 DEFAULT_MODULE
+    'MULTI_MODULE'          =>  false, // 是否允许多模块 如果为false 则必须设置
     'MODULE_DENY_LIST'      =>  array('Common,Vendor'),
     'CONTROLLER_LEVEL'      =>  2,
     'APP_AUTOLOAD_LAYER'    =>  'Controller', // 自动加载的应用类库层 关闭APP_USE_NAMESPACE后有效
