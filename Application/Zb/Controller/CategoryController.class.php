@@ -18,10 +18,6 @@ class CategoryController extends CommonController {
         if($id < 0){
             $this->returnErrorNotice("分类编码错误！");
         }
-        $tempCategoryModel = M('admin_product_category','','DB_DSN');
-        $categoryRs = $tempCategoryModel->where('`status`= 1 AND `level`<='.$level)->field('`id`,`parent_id`,`category_name`,`level`,`img`')->order(" `sort` ASC,`level` ASC ")->select();
-
-        $categoryList = findChildren($categoryRs,$id);
-        $this->returnSuccess($categoryList);
+        $this->returnSuccess($this->category_list($id,$level));
     }
 }

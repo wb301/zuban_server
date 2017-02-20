@@ -6,8 +6,17 @@ use Zb\Service\CommonService;
 
 class ProductController extends CommonController {
 
+    private $orderByMap = array(
+        'mr' => " ORDER BY g.`update_time` DESC ",  //默认排序
+        'jg_0' => " ORDER BY g.`price` ASC, g.`update_time` DESC ",  //价格升序排序
+        'jg_1' => " ORDER BY g.`price` DESC, g.`update_time` DESC ",  //价格降序序排序
+        'jl_0' => " ORDER BY `juli` ASC, g.`update_time` DESC ",  //距离升序排序
+        'jl_1' => " ORDER BY `juli` DESC, g.`update_time` DESC ",  //距离降序排序
+        'zh' => " ORDER BY `juli` ASC, g.`price` ASC, g.`update_time` DESC ",  //综合排序
+    );
+
     //通用获取商品列表
-    private function getProductList($where,$km=null)
+    private function getProductList($where,$km=null,$orderBy='mr')
     {
         $productModel = M('zuban_product_goods','','DB_DSN');
         $sql = "SELECT count(c.`id`) AS `num` FROM `zuban_product_category` AS c INNER JOIN `zuban_product_goods` AS g ON c.`product_sys_code` = g.`product_sys_code` WHERE $where;";
@@ -20,14 +29,15 @@ class ProductController extends CommonController {
         $this->setPageRow();
 
         $fied = "";
-        $order = " ORDER BY g.`update_time` DESC ";
-        if($km){
-            $lat = $km['latitude'];
-            $log = $km['logitude'];
+        if($km && isset($km['lat']) && isset($km['log'])){
+            $lat = floatval($km['lat']);
+            $log = floatval($km['log']);
             $fied = ", round(6378.138*2*asin(sqrt(pow(sin( ($lat*pi()/180-g.`latitude`*pi()/180)/2),2)+cos($lat*pi()/180)*cos(g.`latitude`*pi()/180)* pow(sin( ($log*pi()/180-g.`logitude`*pi()/180)/2),2)))*1000) AS `juli`";
-            $order = " ORDER BY `juli` ASC, g.`update_time` DESC ";
         }
-
+        $order = "";
+        if(isset($this->orderByMap[$orderBy])){
+            $order = $this->orderByMap[$orderBy];
+        }
         $sql = "SELECT g.*, c.`category_id`, c.`category_name` $fied FROM `zuban_product_category` AS c INNER JOIN `zuban_product_goods` AS g ON c.`product_sys_code` = g.`product_sys_code` WHERE $where $order LIMIT ".($this->page-1).",".$this->row.";";
         $this->pageAry['list'] = $productModel->query($sql);
 
@@ -39,22 +49,34 @@ class ProductController extends CommonController {
 		获取发布列表
 
 	*/
-    public function getShowProductList($latitude,$logitude,$categoryId=1)
+    public function getShowProductList($latitude,$logitude,$orderBy='zh',$categoryId=1,$regionCode="1")
     {
     	$categoryId = intval($categoryId);
         if($categoryId < 0){
             $this->returnErrorNotice("分类编码错误！");
         }
-        $tempCategoryModel = M('admin_product_category','','DB_DSN');
-        $categoryIdList = $tempCategoryModel->where('`status`= 1 AND ( `id` = '.$categoryId.' OR `parent_id` = '.$categoryId.' )')->getField("id", true);
-
-        if(empty($categoryIdList)){
+        if(strlen($regionCode) < 0){
+            $this->returnErrorNotice("地区编码错误！");
+        }
+        //条件格式化
+        $categoryList = $this->category_list($categoryId);
+        if(empty($categoryList)){
             $this->returnErrorNotice("分类编码错误！");
         }
+        $regionList = $this->region_list($regionCode);
+        if(empty($regionList)){
+            $this->returnErrorNotice("地区编码错误！");
+        }
+
+        $categoryIdList = array_merge(array($categoryId),array_column(tree_to_List($categoryList), 'id'));
+        $regionCodeList = array_merge(array($regionCode),array_column(tree_to_List($regionList), 'code'));
 
         $categoryIdListStr = join(",",$categoryIdList);
+        $regionCodeListStr = getListString($regionCodeList);
+        $where = "c.`category_id` IN ($categoryIdListStr) AND g.`region_code` IN ($regionCodeListStr)";
 
-        $this->pageAry = $this->getProductList("c.`category_id` IN ($categoryIdListStr)",array('latitude'=>$latitude,'logitude'=>$logitude));
+        //查询
+        $this->pageAry = $this->getProductList($where,array('lat'=>$latitude,'log'=>$logitude),$orderBy);
         $this->pageAry['list'] = $this->getUserInfoByAryList($this->pageAry['list']);
 
         $this->returnSuccess($this->pageAry);
@@ -69,7 +91,7 @@ class ProductController extends CommonController {
     {
         $userInfo = $this->checkToken();
         $userId = $userInfo['user_id'];
-        $this->pageAry = $this->getProductList("g.`user_id` = '$userId' ");
+        $this->pageAry = $this->getProductList("g.`user_id` = '$userId' ","mr");
 
         $this->returnSuccess($this->pageAry);
     }

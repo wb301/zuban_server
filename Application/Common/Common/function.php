@@ -290,20 +290,59 @@ function sortByKey($sortAry, $targetAry, $filedName=null, $isNeedFixIndex = fals
 }
 
 /**
-    查找下一级
+    无限分级 树状转数组
 */
-function findChildren($list, $pId){
-    $r = array();
-    foreach($list as $id=>$item){
-        if($item['parent_id'] == $pId) {
-            $length = count($r);
-            $r[$length] = $item;
-            if($t = findChildren($list, $item['id']) ){
-                $r[$length]['subs'] = $t;
+function tree_to_List($array,$child='children')
+{
+    static $result_array = array();
+    foreach($array as $key=>$value){
+        $push = $value;
+        if(isset($value[$child])){
+            tree_to_List($value[$child],$child);
+            unset($push[$child]);
+        }
+        $result_array[]=$push;
+    }
+    return $result_array;
+}
+
+/**
+    无限分级 数组转树状
+*/
+function list_to_tree($list, $root, $pk = 'id', $pid = 'parent_id', $child = 'children')
+{
+    // 创建Tree
+    $tree = array();
+    if ( !is_array($list) ) return $tree;
+    // 创建基于主键的数组引用
+    $refer = array();
+    foreach ($list as $key => $data) {
+        $refer[$data[$pk]] = & $list[$key];
+    }
+    foreach ($list as $key => $data) {
+        // 判断是否存在parent
+        $parentId = $data[$pid];
+        if (is_array($root)) {
+            if (in_array($parentId, $root)) {
+                $tree[] = & $list[$key];
+            } else {
+                if (isset($refer[$parentId])) {
+                    $parent = & $refer[$parentId];
+                    $parent[$child][] = & $list[$key];
+                }
+            }
+            continue;
+        }
+        if ($root == $parentId) {
+            $tree[] = & $list[$key];
+        } else {
+            if (isset($refer[$parentId])) {
+                $parent = & $refer[$parentId];
+                $parent[$child][] = & $list[$key];
             }
         }
     }
-    return $r;
+    return $tree;
 }
 
 function arrayUnique($data,$field){

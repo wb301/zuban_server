@@ -208,8 +208,8 @@ class CommonController extends Controller
         $res = preg_replace('/%7E/', '~', $res);
         return $res;
     }
- 
- 
+
+
     public function computeSignature($parameters, $accessKeySecret)
     {
         // 将参数Key按字典顺序排序
@@ -281,5 +281,24 @@ class CommonController extends Controller
         }
         return $orderAry;
     }
+
+    //获取地区列表
+    protected function region_list($code,$level=999999)
+    {
+        $tempBaseRegionModel = M('zuban_temp_base_region','','DB_DSN');
+        $regionRs = $tempBaseRegionModel->where('`status`= 1 AND `level`<='.$level)->field('`code`,`parent_code`,`name`,`level`')->order(" `id` ASC,`level` ASC ")->select();
+
+        return list_to_tree($regionRs,$code,"code","parent_code");
+    }
+
+    //获取地区列表
+    protected function category_list($id,$level=999999)
+    {
+        $tempCategoryModel = M('admin_product_category','','DB_DSN');
+        $categoryRs = $tempCategoryModel->where('`status`= 1 AND `level`<='.$level)->field('`id`,`parent_id`,`category_name`,`level`,`img`')->order(" `sort` ASC,`level` ASC ")->select();
+
+        return list_to_tree($categoryRs,$id);
+    }
+
 
 }
