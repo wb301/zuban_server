@@ -112,4 +112,41 @@ class CommonController extends Controller
         }
         return $this->controllerName;
     }
+
+
+    //参数验证
+    protected function getPostparameters($getKeyAry, $data = null){
+        if($data)
+            $parameters = $data;
+        else
+            $parameters = $_REQUEST;
+        foreach ($getKeyAry as  $key => $value) {
+            if($value && strlen($value) > 0){
+                if(!isset($parameters[$key]) || (is_string($parameters[$key]) && strlen($parameters[$key]) <= 0) || is_array($parameters[$key]) && count($parameters[$key]) <= 0 ){
+                    $this->returnErrorNotice($value);
+                }
+            }
+            if(!isset($parameters[$key])){
+                $parameters[$key]='';
+            }
+        }
+        return $parameters;
+    }
+
+    //去重
+    protected function array_unique($data,$field){
+        if(count($data)<=0){
+            return array();
+        }
+        $newData=array();
+        $checkList=array();
+        foreach($data AS $key=>$value){
+            $checkfield = $value[$field];
+            if(!in_array($checkfield,$checkList)){
+                array_push($newData,$value);
+            }
+            array_push($checkList,$checkfield);
+        }
+        return $newData;
+    }
 }
