@@ -53,7 +53,7 @@ class CommonController extends Controller
     {
         $token=isset($_REQUEST['token'])?$_REQUEST['token']:'';
         $userInfoModel = M('zuban_user_info', '', 'DB_DSN');
-        $userInfo = $userInfoModel->where("`token` = '$token' ")->feild("`user_id`,`device`,`logitude`,`latitude`")->select();
+        $userInfo = $userInfoModel->where("`token` = '$token' ")->field("`user_id`,`device`,`logitude`,`latitude`")->select();
         if (!$userInfo || count($userInfo) <= 0) {
             if ($isNotice) {
                 return $this->returnErrorNotice("用户标识错误!");
