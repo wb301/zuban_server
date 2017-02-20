@@ -23,11 +23,21 @@ class CommonController extends Controller
         $this->service = A( "{$this->modelName}/{$this->getControllerName()}", 'Service' );
     }
 
-    //数组分页通用返回结构
+    //数组分页通用返回结构及统一获取
     protected $pageAry = array(
         'list' => array(),
         'total' => 0
     );
+    protected $page = 1;
+    protected $row = 10;
+    protected function setPageRow() {
+        if(isset($_REQUEST['page']) && intval($_REQUEST['page']) > 0) {
+            $this->page = $_REQUEST['page'];
+        }
+        if(isset($_REQUEST['rows']) && intval($_REQUEST['rows']) > 0) {
+            $this->row = $_REQUEST['rows'];
+        }
+    }
 
     /**
         限定请求方式
@@ -129,8 +139,8 @@ class CommonController extends Controller
         }
         $userIdListStr = getListString($userIdList);
 
-        $userModel = M('mbfun_user_base');
-        $userInfoRs = $userModel->db(0,'DB_DSN')->where("`user_id` IN ($userIdListStr) ")->select();
+        $userModel = M('zuban_user_base','','DB_DSN');
+        $userInfoRs = $userModel->where("`user_id` IN ($userIdListStr) ")->select();
 
         if(!$userInfoRs || count($userInfoRs) <= 0){
             return $aryList;

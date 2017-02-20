@@ -18,8 +18,8 @@ class RegionController extends CommonController {
         if($id < 0){
             $this->returnErrorNotice("地区编码错误！");
         }
-        $tempBaseRegionModel = M('zuban_temp_base_region');
-        $regionRs = $tempBaseRegionModel->db(0,'DB_TEMP')->where('`status`= 1 AND `level`<='.$level)->field('`id`,`code`,`parent_id`,`name`,`level`')->order(" `id` ASC,`level` ASC ")->select();
+        $tempBaseRegionModel = M('zuban_temp_base_region','','DB_DSN');
+        $regionRs = $tempBaseRegionModel->where('`status`= 1 AND `level`<='.$level)->field('`id`,`code`,`parent_id`,`name`,`level`')->order(" `id` ASC,`level` ASC ")->select();
 
         $regionList = findChildren($regionRs,$id);
         $this->returnSuccess($regionList);
