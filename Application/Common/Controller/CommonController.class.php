@@ -57,38 +57,14 @@ class CommonController extends Controller
         exit(json_encode($result));
 	}
 
-    /**
-
-        通用返回
-
-    */
-    protected function returnResult($rs=array(),$msg="failed",$code=-100)
-    {
-        if(empty($rs)){
-            $this->returnErrorNotice($msg,$code);
-        }else{
-            if(isset($rs['code'])&&isset($rs['msg'])){
-                $code = $rs['code'];
-                $msg = $rs['msg'];
-                if($code > 0){
-                    $this->returnSuccess($rs['data'],$msg,$code);
-                }else{
-                    $this->returnErrorNotice($msg,$code);
-                }
-            }else{
-                $this->returnSuccess($rs);
-            }
-        }
-    }
-
-    //通用成功返回(尽量不使用)
+    //通用成功返回
     protected function returnSuccess($data=array(),$msg='success',$code=100)
     {
         $this->returnJQuery($data,$msg,$code,C('AJAX_STATUS_SUCCESS'));
     }
 
 
-    //通用错误返回(尽量不使用)
+    //通用错误返回
     protected function returnErrorNotice($msg="failed",$code=-100){
         $this->returnJQuery(array(),$msg,$code,C('AJAX_STATUS_ERROR'));
     }

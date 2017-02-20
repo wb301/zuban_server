@@ -9,28 +9,6 @@ use Think\Controller;
 */
 class CommonService extends Controller
 {
-	/**
-
-		业务层通用
-
-	*/
-	protected function trySV($func,$code=-500,$msg="数据异常！")
-	{
-		$result = array(
-			'code' => 100,
-			'msg' => 'success',
-			'data' => null
-		);
-        try {
-        	$result['data'] = $func();
-        }catch (Exception $e) {
-			$result['code']  = $code;
-			$result['msg']  = $msg;
-			//todo:记录错误日志
-		}
-		return $result;
-	}
-
 	//xml格式转换为json
 	public function xml_to_json($source) {
 	    if(is_file($source)){ //传的是文件，还是xml的string的判断
