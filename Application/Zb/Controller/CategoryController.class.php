@@ -21,8 +21,7 @@ class CategoryController extends CommonController {
         $tempCategoryModel = M('admin_product_category');
         $categoryRs = $tempCategoryModel->db(0,'DB_DSN')->where('`status`= 1 AND `level`<='.$level)->field('`id`,`parent_id`,`category_name`,`level`,`img`')->order(" `sort` ASC,`level` ASC ")->select();
 
-        $service = new CommonService();
-        $categoryList = $service->findChildren($categoryRs,$id);
+        $categoryList = findChildren($categoryRs,$id);
         $this->returnSuccess($categoryList);
     }
 }

@@ -21,8 +21,7 @@ class RegionController extends CommonController {
         $tempBaseRegionModel = M('zuban_temp_base_region');
         $regionRs = $tempBaseRegionModel->db(0,'DB_TEMP')->where('`status`= 1 AND `level`<='.$level)->field('`id`,`code`,`parent_id`,`name`,`level`')->order(" `id` ASC,`level` ASC ")->select();
 
-        $service = new CommonService();
-        $regionList = $service->findChildren($regionRs,$id);
+        $regionList = findChildren($regionRs,$id);
         $this->returnSuccess($regionList);
     }
 }

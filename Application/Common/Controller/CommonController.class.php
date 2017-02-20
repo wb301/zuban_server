@@ -109,21 +109,43 @@ class CommonController extends Controller
         return $parameters;
     }
 
-    //去重
-    protected function array_unique($data,$field){
-        if(count($data)<=0){
+     /**
+
+        绑定用户信息函数
+
+    */
+    public function getUserInfoByAryList($aryList,$fileName="user_id"){
+        if(!$aryList || count($aryList) <= 0){
             return array();
         }
-        $newData=array();
-        $checkList=array();
-        foreach($data AS $key=>$value){
-            $checkfield = $value[$field];
-            if(!in_array($checkfield,$checkList)){
-                array_push($newData,$value);
+        $userIdList = array();
+        foreach ($aryList as $key => $value) {
+            if(isset($value[$fileName]) && strlen($value[$fileName]) > 0){
+                array_push($userIdList, $value[$fileName]);
             }
-            array_push($checkList,$checkfield);
         }
-        return $newData;
+        if(count($userIdList) <= 0){
+            return $aryList;
+        }
+        $userIdListStr = getListString($userIdList);
+
+        $userModel = M('mbfun_user_base');
+        $userInfoRs = $userModel->db(0,'DB_DSN')->where("`user_id` IN ($userIdListStr) ")->select();
+
+        if(!$userInfoRs || count($userInfoRs) <= 0){
+            return $aryList;
+        }
+        foreach ($aryList as $ak => $av) {
+            $userId = $av[$fileName];
+            foreach ($userInfoRs as $uk => $uv) {
+                if($userId == $uv['user_id']){
+                    $aryList[$ak]['userInfo'] = $uv;
+                    break;
+                }
+            }
+        }
+
+        return $aryList;
     }
 
 
