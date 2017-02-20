@@ -74,18 +74,23 @@ class CommonController extends Controller
         $proCodeList = array();
         foreach ($productList AS $key => $value) {
             $productList[$key]['price'] = 0;
+            $productList[$key]['look_price'] = 0;
+            $productList[$key]['product_name'] = '';
+            $productList[$key]['price_type'] = 1;
+            $productList[$key]['status'] = 0;
+            $productList[$key]['num'] = $value['num'];
             array_push($proCodeList, $value['product_sys_code']);
         }
         $proCodeListStr = getListString($proCodeList);
         $productGoodsModel = M('zuban_product_goods', '', 'DB_DSN');
-        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`product_name`")->select();
+        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`")->select();
         if (count($productRs) > 0) {
-        
             foreach ($productList AS $key => $value) {
                 $proCode = $value['product_sys_code'];
                     foreach ($productRs AS $k => $v) {
                         if ($v['product_sys_code'] == $proCode) {
                             $productList[$key]['price'] = $v['price'];
+                            $productList[$key]['look_price'] = $v['look_price'];
                             $productList[$key]['product_name'] = $v['product_name'];
                             $productList[$key]['price_type'] = $v['price_type'];
                             $productList[$key]['status'] = $v['status'];
@@ -93,6 +98,8 @@ class CommonController extends Controller
                     }
                 }
             }
+
+        return $productList;
 
     }
 
@@ -221,6 +228,58 @@ class CommonController extends Controller
         $signature = base64_encode(hash_hmac('sha1', $stringToSign, $accessKeySecret . '&', true));
         echo "<br>".$signature."<br>";
         return $signature;
+    }
+    /**
+     * info：获取价格信息
+     * params:productList
+     * return:array
+     */
+    public function  getProductListByCode($productCodeList){
+        $proCodeListStr = getListString($productCodeList);
+        $productGoodsModel = M('zuban_product_goods', '', 'DB_DSN');
+        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`,`product_image`,`product_phone`,`profession`,`region_code`")->select();
+        return $productRs;
+
+    }
+
+    /**
+     * version：2015-8-30
+     * 获取订单状态名称
+     * 参数:
+     * 无参数
+     */
+    protected function getSatusOrder($status){
+
+        $statusNameAry=array(
+            '0'=>'待付款',
+            '1'=>'待发货',
+            '5'=>'已发货',
+            '6'=>'交易完成',
+            '15'=>'交易关闭',
+        );
+        return $statusNameAry[$status];
+    }
+
+    /**
+     * 绑定支付信息
+     * @param $payAry
+     * @param $orderAry
+     * @return mixed
+     */
+    protected function getOrderPay($payAry, $orderAry)
+    {
+        foreach ($orderAry as $key => $value) {
+            $orderNo = $value['order_no'];
+            $orderAry[$key]['paymentList'] = array();
+            if (count($payAry) > 0) {
+                foreach ($payAry as $ok => $ov) {
+                    if ($orderNo == $ov['order_no']) {
+                        array_push($orderAry[$key]['paymentList'], $ov);
+                    }
+                }
+            }
+        }
+        return $orderAry;
     }
 
 }
