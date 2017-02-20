@@ -166,4 +166,71 @@ class CommonController extends Controller
         $paramModel->where("`code`='$code'")->setInc("value");
         return $paramRs+1;
     }
+
+    /**
+     * info：//生成user_id 方法
+     * return:
+     */
+    protected function create_guid() {
+
+        $charid = strtoupper(md5(uniqid(mt_rand(), true)));
+        $hyphen = chr(45);// "-"
+        $uuid =
+             substr($charid, 0, 8).$hyphen
+            .substr($charid, 8, 4).$hyphen
+            .substr($charid,12, 4).$hyphen
+            .substr($charid,16, 4).$hyphen
+            .substr($charid,20,12);
+        $uuid = strtolower($uuid);
+        return $uuid;
+    }
+
+    /**
+        检测手机号码和验证码
+    */
+    protected function checkAccountByCode($account, $code) {
+
+        $validationModel = M("zuban_sms_validation", 0, "DB_DSN");
+
+        $whereArr = array("account" => $account, "code" => $code, "status" => 0);
+        $validationInfo = $validationModel->where($whereArr)->find();
+        if(!$validationInfo){
+            return false;
+        }
+        
+        $validationModel->where($whereArr)->save(array("status" => 1));
+        return true;
+    }  
+
+    /**
+        根据token获取用户信息
+    */
+    protected function getUserInfoByToken($token){
+
+        $userInfoModel = M("zuban_user_info", 0, "DB_DSN");
+        $userRes = $userInfoModel->where(array("token" => $token))->find();
+
+        if($userRes === false){
+            return $this->returnErrorNotice("用户标示错误");
+        }
+
+        $userInfo = $this->getUserInfoByUserId($userRes["user_id"]);
+        return $userInfo;
+    }
+
+    /**
+        根据user_id获取用户信息
+    */
+    protected function getUserInfoByUserId($userId){
+
+        $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
+        $userInfo = $userBaseModel->where(array("user_id" => $userId))->find();
+
+        if($userInfo === false){
+            return $this->returnErrorNotice("用户不存在");
+        }
+
+        return $userInfo;
+    }
+
 }

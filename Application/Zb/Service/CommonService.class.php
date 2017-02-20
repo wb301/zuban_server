@@ -10,6 +10,9 @@ use Common\Service\CommonService AS Service;
 class CommonService extends Service
 {
 
+	public function index(){
 
+		echo "111";
+	}
 }
 ?>
