@@ -5,4 +5,9 @@ class OrderController extends CommonController {
     public function index(){
         print_r(2);exit;
        }
+
+
+    public function  createOrder(){
+
+    }
 }
