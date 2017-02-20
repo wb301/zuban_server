@@ -296,12 +296,11 @@ function tree_to_List($array,$child='children')
 {
     static $result_array = array();
     foreach($array as $key=>$value){
-        $push = $value;
         if(isset($value[$child])){
             tree_to_List($value[$child],$child);
-            unset($push[$child]);
+            unset($value[$child]);
         }
-        $result_array[]=$push;
+        $result_array[]=$value;
     }
     return $result_array;
 }
