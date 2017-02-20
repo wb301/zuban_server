@@ -59,7 +59,6 @@ class ProductController extends CommonController {
         $userInfo = $this->checkToken();
         $userId = $userInfo['user_id'];
         $this->pageAry = $this->getProductList("g.`user_id` = '$userId' ");
-        $this->pageAry['list'] = $this->getUserInfoByAryList($this->pageAry['list']);
 
         $this->returnSuccess($this->pageAry);
     }
