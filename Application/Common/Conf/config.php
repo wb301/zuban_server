@@ -61,4 +61,12 @@ return array(
 
     'IOS_APP_XINGE' => array('ai' => 2200248939, 'sk' => "d9c04b1ae567681952e851e26f99b92a"),//IOS APP
     'ANDROID_APP_XINGE' => array('ai' => 2100248837, 'sk' => "99adc0b69a3e059e15b4247404a55ec2"),  //安卓 测试demo
+
+    'CODE_ERROR' => -100, //参数错误
+    'CODE_INFO_ERROR' => -110, //内容长度不正确
+    'CODE_MB_ERROR' => -1000, //美邦旧服务器响应失败
+    'CODE_LOGIN_ERROR' => -103, //查无此用户
+    'CODE_VERIFY_ERROR' => -102, //验证码验证错误
+    'CODE_SESSION_ERROR' => -103, //session错误
+
 );

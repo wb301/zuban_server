@@ -125,4 +125,13 @@ class CommonController extends Controller
         }
         return $newData;
     }
+
+
+    //生成六位码
+    protected function createCode($code='ORDER_CODE'){
+        $paramModel = M('zuban_param','','DB_DSN');
+        $paramRs = $paramModel->where("`is_delete` = 0 AND `code`='$code'")->getField("`value`");
+        $paramModel->where("`code`='$code'")->setInc("value");
+        return $paramRs+1;
+    }
 }
