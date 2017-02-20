@@ -115,5 +115,22 @@ class CommonService extends Controller
 	    return $newAry;
 	}
 
+	/**
+    	查找下一级
+    */
+    public function findChildren($list, $pId){
+        $r = array();
+        foreach($list as $id=>$item){
+            if($item['parent_id'] == $pId) {
+                $length = count($r);
+                $r[$length] = $item;
+                if($t = $this->findChildren($list, $item['id']) ){
+                    $r[$length]['subs'] = $t;
+                }
+            }
+        }
+        return $r;
+    }
+
 }
 ?>
