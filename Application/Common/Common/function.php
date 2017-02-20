@@ -306,7 +306,7 @@ function findChildren($list, $pId){
     return $r;
 }
 
-function array_unique($data,$field){
+function arrayUnique($data,$field){
     if(count($data)<=0){
         return array();
     }
