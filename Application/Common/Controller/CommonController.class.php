@@ -186,6 +186,24 @@ class CommonController extends Controller
     }
 
     /**
+        保存手机号码和验证码
+    */
+    protected function saveAccountByCode($account, $code, $from) {
+
+        $validationModel = M("zuban_sms_validation", 0, "DB_DSN");
+        $validationModel->where(array("account" => $account))->save(array("status" => 2));
+
+        $nowTime = date('Y-m-d H:i:s');
+        $validationArr = array("account" => $account,
+                               "code" => $code,
+                               "create_time" => $nowTime,
+                               "update_time" => $nowTime,
+                               "status" => 0,
+                               "from" => $from);
+        $validationModel->add($validationArr);
+    }  
+
+    /**
         检测手机号码和验证码
     */
     protected function checkAccountByCode($account, $code) {

@@ -118,13 +118,7 @@ class CommonController extends Controller
         $dateTimeFormat = 'Y-m-d\TH:i:s\Z'; // ISO8601规范
         $accessKeyId = 'LTAIGPskV7XIy0QL';      // 这里填写您的Access Key ID
         $accessKeySecret = 'Rztpe5ie0WZ4Sq4wgdxhVXXNAhmGQ0';  // 这里填写您的Access Key Secret
-        // $ParamString="{\"code\":\"".strval($mobile_code)."\",\"time\":\"3\"}";
-        // $ParamString="{\"code\":\"".strval($mobile_code)."\",\"time\":\"3\"}";
-
-        $code = $mobile_code;
-        $time = 3;
-        $ParamString = "尊敬的租伴网用户,您的验证码:${code},${time}分钟内有效!谢谢使用!";
-        // $ParamString = json_encode(array("code" => $mobile_code, "time" => 3));/
+        $ParamString="{'code':'$mobile_code','time':'3'}";
         $data = array(
             // 公共参数
             'SignName'=> "租伴网",
@@ -146,20 +140,13 @@ class CommonController extends Controller
         //echo $data['Version']."<br>";
         //echo $data['Timestamp']."<br>";
         $data['Signature'] = $this->computeSignature($data, $accessKeySecret);
+        echo json_encode($data)."\n\n";
         // 发送请求
-        // $result = $this->https_request($target.http_build_query($data));
+        $result = $this->https_request($target.http_build_query($data));
 
-        $nowTime = date('Y-m-d H:i:s');
-        $validationArr = array("account" => $phone,
-        					   "code" => $mobile_code,
-        					   "create_time" => $nowTime,
-        					   "update_time" => $nowTime,
-        					   "status" => 0,
-        					   "from" => $from);
-        $validationModel = M("zuban_sms_validation", 0, "DB_DSN");
-        $validationModel->add($validationArr);
+        $this->saveAccountByCode($phone, $mobile_code, $from);
 
-        $result = $this->xml_to_array($this->https_request($target.http_build_query($data)));
+        // $result = $this->xml_to_array($this->https_request($target.http_build_query($data)));
         print_r($result);
     }
     public function https_request($url)
@@ -229,9 +216,10 @@ class CommonController extends Controller
         }
         // 生成用于计算签名的字符串 stringToSign
         $stringToSign = 'GET&%2F&' . $this->percentencode(substr($canonicalizedQueryString, 1));
-        //echo "<br>".$stringToSign."<br>";
+        // echo "<br>".$stringToSign."<br>";
         // 计算签名，注意accessKeySecret后面要加上字符'&'
         $signature = base64_encode(hash_hmac('sha1', $stringToSign, $accessKeySecret . '&', true));
+        echo "<br>".$signature."<br>";
         return $signature;
     }
 
