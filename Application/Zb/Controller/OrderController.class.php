@@ -65,48 +65,29 @@ class OrderController extends CommonController {
                 $this->returnErrorNotice('订单信息已生成!');
             }
         }
-
+        $productList = json_decode($parameters['cartList'], true);
+        $productList=$this->getProductPrice($productList);
         //生成订单号
         $orderId=$this->createCode("ORDER_CODE");
         $orderNo = time() . "" . (1000000000 + $orderId);
         $newOrderAry = array(
             'user_id' => $userId,
-            'order_no' => $channel_code.$orderNo,
-            'channel_code' => $channel_code,
-            'seller_code' => $sellerCode,
-            'order_pay_no' => $orderNo,
-            'invoice_title' => '',
-            'invoice_type' => '',
+            'order_no' => $orderNo,
             'total_price' => $allPrice, //统计总价
-            'dec_price' => 0,
-            'from_type' => $parameters['type'],
             'from_source' => $parameters['source'],
-            'trans_price' => 0, //运费
             'price' => $allPrice, //商品统计价
             'status' => 0,//未支付状态
             'memo' => '',
-            'send_require' => "",
             'create_time' => $nowTime,
             'update_time' => $nowTime,
             'receiver' => "",
             'phone' => "",
-            'country' => "",
-            'province' => "",
-            'city' => "",
-            'county' => "",
-            'street' => '',
-            'address' => "",
-            'post_code' => "",
             'check_code' => '',
-            'order_type' => $order_type,
-            'sys_create_id' => 0
         );
-
         $orderId = $orderModel->add($newOrderAry);
         if ($orderId <= 0) {
             $this->returnErrorNotice("订单维护中，请稍后再试,");
         }
-
         // 开始生成未支付的记录
         $newOrderPayAry = array(
             'order_no' => $orderNo,
@@ -116,29 +97,43 @@ class OrderController extends CommonController {
             'create_time' => $nowTime,
             'status' => 0 //未支付
         );
-        $orderPayRecordModel = M('whfun_order_pay_record','','DB_DSN');
+        $orderPayRecordModel = M('zuban_order_pay_record','','DB_DSN');
         $orderPayId = $orderPayRecordModel->add($newOrderPayAry);
         if ($orderPayId <= 0) {
             $this->returnErrorNotice('订单生成维护中，请稍后再试!');
         }
 
-        $_pay=array(
-            'order_no' => $orderNo,
-            'channel_order_no'=>$channel_code.$orderNo,
-            'payment' => $paymentAry['payment'],
-            'pay_type' => $paymentAry['pay_type'],
-            'pay_price' => $allPrice,
-            'create_time' => $nowTime,
-            'status' => 0 //未支付
-        );
+        $addProductList=array();
+        foreach ($productList as $key => $value) {
+            $_ = array(
+                'product_sys_code'=>$value['product_sys_code'],
+                'order_no' => $value['channel_code'].$orderNo,
+                'dec_price' => '0.00',
+                'price' => $value['spec_price'],
+                'total_price' => $value['spec_price'] * $value['num'],
+                'num' => $value['num'],
+                'status' => 0,
+                'create_time' => $nowTime,
+            );
+            array_push($addProductList,$_);
+        }
+        if (count($addProductList)<=0) {
+            $this->returnErrorNotice('订单商品维护中，请稍后再试!');
+        }
+        $orderProductModel=M('zuban_order_product','','DB_DSN');
 
-        $channelOrderPayRecordModel = M('whfun_channel_order_pay_record','','DB_DSN');
-        $channelOrderPayId = $channelOrderPayRecordModel->add($_pay);
-        if ($channelOrderPayId <= 0) {
-            $this->returnErrorNotice('订单生成维护中，请稍后再试!');
+        $productRs= $orderProductModel->add($addProductList);
+        if ($productRs <= 0) {
+            $this->returnErrorNotice('订单商品维护中，请稍后再试!');
         }
 
-        $this->returnSuccess(array('order_no'=>$orderNo,'allPrice'=>$allPrice),'添加成功!');
+
+
+    }
+
+    //获取商品价格信息
+    public function  getProductPrice($productList){
+
     }
 
 

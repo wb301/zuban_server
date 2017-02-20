@@ -51,7 +51,7 @@ class CommonController extends Controller
      */
     protected function checkToken($isNotice = 1)
     {
-        $token=$_REQUEST['token'];
+        $token=isset($_REQUEST['token'])?$_REQUEST['token']:'';
         $userInfoModel = M('zuban_user_info', '', 'DB_DSN');
         $userInfo = $userInfoModel->where("`token` = '$token' ")->feild("`user_id`,`device`,`logitude`,`latitude`")->select();
         if (!$userInfo || count($userInfo) <= 0) {
@@ -62,6 +62,39 @@ class CommonController extends Controller
             }
         }
         return $userInfo[0];
+    }
+
+
+    /**
+     * info：获取价格信息
+     * params:productList
+     * return:array
+     */
+    public function  getProductPrice($productList){
+
+        $proCodeList = array();
+        foreach ($productList AS $key => $value) {
+            $productList[$key]['price'] = 0;
+            array_push($proCodeList, $value['product_sys_code']);
+        }
+        $proCodeListStr = getListString($proCodeList);
+        $productGoodsModel = M('zuban_product_goods', '', 'DB_DSN');
+        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`product_name`")->select();
+        if (count($productRs) > 0) {
+        
+            foreach ($productList AS $key => $value) {
+                $proCode = $value['product_sys_code'];
+                    foreach ($productRs AS $k => $v) {
+                        if ($v['product_sys_code'] == $proCode) {
+                            $productList[$key]['price'] = $v['price'];
+                            $productList[$key]['product_name'] = $v['product_name'];
+                            $productList[$key]['price_type'] = $v['price_type'];
+                            $productList[$key]['status'] = $v['status'];
+                        }
+                    }
+                }
+            }
+
     }
 
 
