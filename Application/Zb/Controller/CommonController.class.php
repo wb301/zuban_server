@@ -119,7 +119,12 @@ class CommonController extends Controller
         $accessKeyId = 'LTAIGPskV7XIy0QL';      // 这里填写您的Access Key ID
         $accessKeySecret = 'Rztpe5ie0WZ4Sq4wgdxhVXXNAhmGQ0';  // 这里填写您的Access Key Secret
         // $ParamString="{\"code\":\"".strval($mobile_code)."\",\"time\":\"3\"}";
-        $ParamString = json_encode(array("code" => $mobile_code, "time" => 3));
+        // $ParamString="{\"code\":\"".strval($mobile_code)."\",\"time\":\"3\"}";
+
+        $code = $mobile_code;
+        $time = 3;
+        $ParamString = "尊敬的租伴网用户,您的验证码:${code},${time}分钟内有效!谢谢使用!";
+        // $ParamString = json_encode(array("code" => $mobile_code, "time" => 3));/
         $data = array(
             // 公共参数
             'SignName'=> "租伴网",
@@ -230,5 +235,4 @@ class CommonController extends Controller
         return $signature;
     }
 
->>>>>>> 手机注册   手机登录  微信登录  微信绑定手机号码
 }
