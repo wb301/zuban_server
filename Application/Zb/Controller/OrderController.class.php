@@ -268,8 +268,54 @@ class OrderController extends CommonController {
 
     /**
      * 订单详情
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=getOrderDetails&token=1111&orderNo=14876127851000103530
      * */
-    public function getOrderDetails(){
+    public function getOrderDetails($orderNo,$token){
+
+        if ( strlen($token) <= 0 ||strlen($orderNo) < 0) {
+            $this->returnErrorNotice('参数错误!');
+        }
+        //检测用户
+        $userInfo=$this->checkToken(true);
+        $userId=$userInfo['user_id'];
+        $orderModel = M('zuban_order','','DB_DSN');
+        $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo'")->order("`create_time` DESC ")->select();
+        if (count($orderRs) <= 0) {
+            $this->returnErrorNotice('订单不存在或已经删除!');
+        }
+        $orderRs=$orderRs[0];
+        $orderNo=$orderRs['order_no'];
+        $orderRs['status_name']=$this->getSatusOrder($orderRs['status']);
+        $orderProductModel = M('zuban_order_product','','DB_DSN');
+        $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->select();
+        if (!$orderProductRs || count($orderProductRs) <= 0) {
+            $this->returnErrorNotice('订单商品数据异常!');
+        }
+        $orderPayModel = M('zuban_order_pay_record','','DB_DSN');
+        $orderPayRs = $orderPayModel->where("`order_no` ='$orderNo'")->select();
+
+        //绑定支付
+        $orderRs['paymentList'] = $orderPayRs[0];
+        $proCodeList = array();
+        foreach ($orderProductRs as $key => $value) {
+            $proCodeList[]=$value['product_sys_code'];
+        }
+        //查询商品数据
+        $productList = $this->getProductListByCode($proCodeList);
+
+        //先绑定商品
+        foreach ($orderProductRs as $ok => $ov) {
+            $code = $ov['product_sys_code'];
+            foreach ($productList as $pk => $pv) {
+                if ($code == $pv['product_sys_code']) {
+                    $orderProductRs[$ok]['product'] = $pv;
+                    break;
+                }
+            }
+        }
+        //绑定到订单
+        $orderRs['productList']=$orderProductRs[0];
+        $this->returnSuccess($orderRs);
 
     }
 
@@ -284,9 +330,62 @@ class OrderController extends CommonController {
     /**
      * 发货
      */
-    public function deliveryOrder($orderno)
+    public function deliveryOrder($orderNo)
+    {
+        $rs=$this->updateOrderStatus($orderNo,1,5);
+        if(count($rs)<=0){
+            $this->returnErrorNotice('发货失败!');
+        }
+        $orderProductModel = M('zuban_order_product','','DB_DSN');
+        $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
+        if(count($orderProductRs)>0){
+            $productCode_str=getListString($orderProductRs);
+            $productModel = M('zuban_product_goods','','DB_DSN');
+            $updateAry = array(
+                'status' => 2,
+                'update_time' => date('Y-m-d H:i:s')
+            );
+            $productModel->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
+        }
+        $this->returnSuccess('发货成功！');
+    }
+
+
+    /**
+     * 更改订单状态
+     * @param $token 用户token
+     * @param $orderNo 订单No
+     * @param $checkStatus
+     * @param $status 状态
+     * @return bool
+     */
+    protected function updateOrderStatus($orderNo, $checkStatus, $status)
     {
 
+        if (strlen($orderNo) <= 0) {
+            $this->returnErrorNotice('参数错误!');
+        }
+        //检测用户userId
+        $userId = $this->checkToken(1)['user_id'];
+        $orderModel = M('zuban_order', '', 'DB_DSN');
+        $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->field("`id`,`user_id`,`order_no`,`price`,`status`,`create_time`")->select();
+        if (!$orderRs || count($orderRs) <= 0) {
+            $this->returnErrorNotice('订单编号错误!');
+        }
+        $orderRs = $orderRs[0];
+        if (intval($orderRs['status']) != $checkStatus) {
+            $this->returnErrorNotice('订单状态已变更!');
+        }
+        // 开始付款后的状态变更
+        $updateAry = array(
+            'status' => $status,
+            'update_time' => date('Y-m-d H:i:s')
+        );
+        $result = $orderModel->where("`order_no` ='$orderNo'")->save($updateAry);
+        if (!$result || count($result) <= 0) {
+            $this->returnErrorNotice('订单状态变更失败!');
+        }
+        return $orderRs;
     }
 
 
@@ -298,12 +397,27 @@ class OrderController extends CommonController {
      * 请求方式:get
      * 服务名:Order
      * 参数:
-     * @param $orderId 订单id
-     * @param $token  token
+     * @param $orderNo 订单No
      * status 5->10
      */
-    public function orderConfirm($token, $orderId)
+    public function orderConfirm($orderNo)
     {
+        $rs=$this->updateOrderStatus($orderNo,5,6);
+        if(count($rs)<=0){
+            $this->returnErrorNotice('确认失败!');
+        }
+        $orderProductModel = M('zuban_order_product','','DB_DSN');
+        $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
+        if(count($orderProductRs)>0){
+            $productCode_str=getListString($orderProductRs);
+            $productModel = M('zuban_product_goods','','DB_DSN');
+            $updateAry = array(
+                'status' => 1,
+                'update_time' => date('Y-m-d H:i:s')
+            );
+            $productModel->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
+        }
+        $this->returnSuccess('确认成功！');
 
     }
 
@@ -314,7 +428,6 @@ class OrderController extends CommonController {
      * */
     public function notify()
     {
-        import("@.Pay.BasePay");
         switch($_REQUEST['channel'])
         {
             case 'alipay' :
@@ -336,7 +449,6 @@ class OrderController extends CommonController {
      * */
     public function prePay()
     {
-        import("@.Pay.BasePay");
         $pay = \Pay\BasePay::getInstance('wx');
         $pay->prePay();
     }

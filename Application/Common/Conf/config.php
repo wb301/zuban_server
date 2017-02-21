@@ -69,4 +69,45 @@ return array(
     'CODE_VERIFY_ERROR' => -102, //验证码验证错误
     'CODE_SESSION_ERROR' => -103, //session错误
 
+
+
+    /*
+    * 微信支付配置
+    *   * APPID：绑定支付的APPID
+    *
+    * MCHID：商户号
+    *
+    * KEY：商户支付密钥
+    *
+    * APPSECRET：公众帐号secert（仅JSAPI支付的时候需要配置， 登录公众平台，进入开发者中心可设置），
+        * */
+
+    'PAY_CONFIG_WX' => array(
+        'APPID' => 'wxa320b84bf762d6e4',
+        'MCHID' => '1345361901',
+        'KEY' => '6034e6f15423f86507eg794cf7b0519e',
+        'APP_KEY' => '',
+        'APPSECRET' => 'ce225e4db87c20dbcb619e594624f8c5',
+        'NOTIFY_URL' => 'http://stylistpay.51mb.com//index.php/Order/notify/channel/wx',
+        'SSLCERT_PATH' => APP_PATH.'Pay/Wx/cert/apiclient_cert.pem',
+        'SSLKEY_PATH' => APP_PATH.'Pay/Wx/cert/apiclient_key.pem',
+        'PRE_PAY_URL' => 'https://api.mch.weixin.qq.com/pay/unifiedorder',
+        'QUERY_URL' => 'https://api.mch.weixin.qq.com/pay/orderquery',
+    ),
+    /*
+     * *支付宝支付配置
+        *  PARTNER  合作者id
+        *  PRIVATE_KEY_PATH 商户私钥
+        *  PUBLIC_KEY_PATH 公钥
+     * */
+    'PAY_CONFIG_ALI' => array(
+        'PARTNER' => '2088501838178029',
+        'PRIVATE_KEY_PATH' => APP_PATH.'Pay/AliPay/cert/rsa_private_key.pem',
+        'PUBLIC_KEY_PATH' => APP_PATH.'Pay/AliPay/cert/alipay_public_key.pem',
+        'HTTPS_VERIFY_URL' => 'https://mapi.alipay.com/gateway.do?service=notify_verify&',
+        'TRANSPROT' => '',
+        'HTTP_VERIFY_URL' => 'http://notify.alipay.com/trade/notify_query.do?',
+        'CACERT' => APP_PATH.'Lib/Pay/AliPay/cert/cacert.pem',
+    ),
+
 );
