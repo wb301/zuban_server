@@ -1,57 +1,428 @@
-[ 2017-02-21T19:35:49+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=User&a=sendMobileCode?mobile=18221830467
+[ 2017-02-21T00:30:51+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=getOrderDetails
 INFO: [ app_init ] --START--
-INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000037s ]
-INFO: [ app_init ] --END-- [ RunTime:0.002031s ]
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000008s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000185s ]
 INFO: [ app_begin ] --START--
-INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000996s ]
-INFO: [ app_begin ] --END-- [ RunTime:0.001088s ]
-ERR: 非法操作:sendMobileCode?mobile=18221830467
-
-[ 2017-02-21T11:36:38+00:00 ] ::1 /zuban_server/index.php?c=Zb&m=User&a=sendMobileCode&mobile=18221830467
-INFO: [ app_init ] --START--
-INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000015s ]
-INFO: [ app_init ] --END-- [ RunTime:0.000618s ]
-INFO: [ app_begin ] --START--
-INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000785s ]
-INFO: [ app_begin ] --END-- [ RunTime:0.000863s ]
-NOTIC: [8] Undefined index: from /Users/youfan2/zuban_server/Application/Zb/Controller/UserController.class.php 第 48 行.
-NOTIC: [8] Undefined variable: template_code /Users/youfan2/zuban_server/Application/Zb/Controller/UserController.class.php 第 51 行.
-SQL: SHOW COLUMNS FROM `zuban_sms_validation` [ RunTime:0.014756s ]
-SQL: UPDATE `zuban_sms_validation` SET `status`=2 WHERE ( `account` = '18221830467' ) [ RunTime:0.016510s ]
-SQL: INSERT INTO `zuban_sms_validation` (`account`,`code`,`create_time`,`update_time`,`status`,`from`) VALUES ('18221830467','542282','2017-02-21 11:36:38','2017-02-21 11:36:38',0,1) [ RunTime:0.019738s ]
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000217s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000241s ]
+SQL: SHOW COLUMNS FROM `zuban_user_base` [ RunTime:0.041308s ]
+SQL: INSERT INTO `zuban_user_base` (`user_id`,`account`,`password`,`wx_openid`,`nick_name`,`register_time`) VALUES (111,111,'2bf0ccdbb4d3ebbcb990af74bd78c658','',111,'2017-02-21') [ RunTime:0.068152s ]
 INFO: [ app_end ] --START--
-INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.002426s ]
-INFO: [ app_end ] --END-- [ RunTime:0.002609s ]
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.002039s ]
+INFO: [ app_end ] --END-- [ RunTime:0.002120s ]
 
-[ 2017-02-21T19:37:19+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Login&a=login&account=18221830467&password=123456
+[ 2017-02-21T00:40:48+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=orderCommonFilter
 INFO: [ app_init ] --START--
-INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000012s ]
-INFO: [ app_init ] --END-- [ RunTime:0.000310s ]
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000009s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000424s ]
 INFO: [ app_begin ] --START--
-INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000386s ]
-INFO: [ app_begin ] --END-- [ RunTime:0.000433s ]
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000481s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000522s ]
+ERR: 参数错误或者未定义:userId
 
-[ 2017-02-21T19:39:57+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Register&a=registerByMobile&account=18221830467&password=123456&code=542282&nick_name=hjh
+[ 2017-02-21T01:06:12+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=orderCommonFilter&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a
 INFO: [ app_init ] --START--
-INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000028s ]
-INFO: [ app_init ] --END-- [ RunTime:0.001066s ]
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000010s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000435s ]
 INFO: [ app_begin ] --START--
-INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000933s ]
-INFO: [ app_begin ] --END-- [ RunTime:0.001028s ]
-SQL: SELECT * FROM `zuban_sms_validation` WHERE ( `account` = '18221830467' ) AND ( `code` = '542282' ) AND ( `status` = 0 ) LIMIT 1   [ RunTime:0.013818s ]
-SQL: UPDATE `zuban_sms_validation` SET `status`=1 WHERE ( `account` = '18221830467' ) AND ( `code` = '542282' ) AND ( `status` = 0 ) [ RunTime:0.028652s ]
-SQL: SHOW COLUMNS FROM `zuban_user_base` [ RunTime:0.014741s ]
-SQL: SELECT * FROM `zuban_user_base` WHERE ( `account` = '18221830467' ) LIMIT 1   [ RunTime:0.011872s ]
-NOTIC: [8] Undefined index: region_code /Users/youfan2/zuban_server/Application/Zb/Controller/RegisterController.class.php 第 50 行.
-NOTIC: [8] Undefined index: logitude /Users/youfan2/zuban_server/Application/Zb/Controller/RegisterController.class.php 第 51 行.
-NOTIC: [8] Undefined index: latitude /Users/youfan2/zuban_server/Application/Zb/Controller/RegisterController.class.php 第 52 行.
-SQL: INSERT INTO `zuban_user_base` (`user_id`,`account`,`password`,`wx_openid`,`nick_name`,`region_code`,`logitude`,`latitude`,`register_time`) VALUES ('dcf7ed94-4695-1fd9-152b-d76bd35e9f01','18221830467','e10adc3949ba59abbe56e057f20f883e','','hjh','','','','2017-02-21 19:39:57') [ RunTime:0.022833s ]
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000486s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000526s ]
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.010485s ]
+SQL: SHOW COLUMNS FROM `zuban_order` [ RunTime:0.011515s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) LIMIT 1   [ RunTime:0.012930s ]
+SQL: SELECT * FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) ORDER BY `create_time` DESC  LIMIT 0,20   [ RunTime:0.023131s ]
+NOTIC: [8] Undefined offset: 10 /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 135 行.
+NOTIC: [8] Undefined offset: 10 /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 135 行.
+SQL: SHOW COLUMNS FROM `zuban_order_product` [ RunTime:0.010955s ]
+SQL: SELECT * FROM `zuban_order_product` WHERE ( `order_no` IN ('WH100000021914760700911000103352','WH100000021914746143761000103254','WH100000021914746103381000103244','WH100000021714745968801000103239','WH100000021714745968551000103238','WH100000021914745228131000103226','WH100000014514745149181000103224','SELLER100000002714745149181000103224','WH100000020714745147461000103223','WH100000020714745142461000103222','SELLER100000002714745142461000103222','WH100000014514744392231000103207','WH100000014014744389461000103206','WH100000014514744264761000103205','SELLER100000001814744264761000103205','WH100000021514744250631000103200','WH100000021514744250261000103199','WH100000014514744238901000103198','SELLER100000001814744238901000103198','WH100000014514744237851000103197') AND `status` >= 0 )  [ RunTime:0.013370s ]
+SQL: SHOW COLUMNS FROM `zuban_order_pay_record` [ RunTime:0.010835s ]
+SQL: SELECT * FROM `zuban_order_pay_record` WHERE ( `order_no` IN ('WH100000021914760700911000103352','WH100000021914746143761000103254','WH100000021914746103381000103244','WH100000021714745968801000103239','WH100000021714745968551000103238','WH100000021914745228131000103226','WH100000014514745149181000103224','SELLER100000002714745149181000103224','WH100000020714745147461000103223','WH100000020714745142461000103222','SELLER100000002714745142461000103222','WH100000014514744392231000103207','WH100000014014744389461000103206','WH100000014514744264761000103205','SELLER100000001814744264761000103205','WH100000021514744250631000103200','WH100000021514744250261000103199','WH100000014514744238901000103198','SELLER100000001814744238901000103198','WH100000014514744237851000103197') )  [ RunTime:0.010866s ]
+SQL: SHOW COLUMNS FROM `zuban_product_goods` [ RunTime:0.011313s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`,`product_image`,`product_phone`,`profession`,`region_code` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('102587','102587','102688','102688','102677','102689','102689','102587','102587','102689','102688','102688') )  [ RunTime:0.009348s ]
+ERR: 1054:Unknown column 'status' in 'field list'
+ [ SQL语句 ] : SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`,`product_image`,`product_phone`,`profession`,`region_code` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('102587','102587','102688','102688','102677','102689','102689','102587','102587','102689','102688','102688') ) 
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 239 行.
 
-[ 2017-02-21T19:40:28+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Login&a=login&account=18221830467&password=123456
+[ 2017-02-21T01:26:06+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry=
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000011s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000442s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000505s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000549s ]
+
+[ 2017-02-21T01:26:32+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000008s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000211s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000248s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000275s ]
+
+[ 2017-02-21T01:27:38+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000007s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000175s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000364s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000392s ]
+
+[ 2017-02-21T01:28:19+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_code%22:%221%22,%22num%22:%221%22}]
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000009s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000255s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000240s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000267s ]
+
+[ 2017-02-21T01:29:31+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_code%22:%221%22,%22num%22:%221%22}]&allPrice=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000010s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000396s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000433s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000467s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.010451s ]
+NOTIC: [8] Undefined index: product_sys_code /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 83 行.
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('') )  [ RunTime:0.010342s ]
+ERR: 1054:Unknown column 'status' in 'field list'
+ [ SQL语句 ] : SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('') ) 
+NOTIC: [8] Undefined index: product_sys_code /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 90 行.
+NOTIC: [2] Invalid argument supplied for foreach() /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 91 行.
+NOTIC: [8] Undefined index: order_type /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 77 行.
+
+[ 2017-02-21T01:33:39+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_code%22:%221%22,%22num%22:%221%22}]&allPrice=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000008s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000197s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000246s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000274s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.040583s ]
+NOTIC: [8] Undefined index: product_sys_code /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 83 行.
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('') )  [ RunTime:0.039427s ]
+NOTIC: [8] Undefined index: order_type /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 77 行.
+
+[ 2017-02-21T01:33:43+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_code%22:%221%22,%22num%22:%221%22}]&allPrice=1
 INFO: [ app_init ] --START--
 INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
-INFO: [ app_init ] --END-- [ RunTime:0.000322s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000348s ]
 INFO: [ app_begin ] --START--
-INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000885s ]
-INFO: [ app_begin ] --END-- [ RunTime:0.001146s ]
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000389s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000424s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.010232s ]
+NOTIC: [8] Undefined index: product_sys_code /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 83 行.
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('') )  [ RunTime:0.009879s ]
+NOTIC: [8] Undefined index: order_type /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 77 行.
+
+[ 2017-02-21T01:34:24+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_code%22:%221%22,%22num%22:%221%22}]&allPrice=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000006s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000187s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000222s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000247s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.040526s ]
+NOTIC: [8] Undefined index: product_sys_code /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 83 行.
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('') )  [ RunTime:0.040366s ]
+
+[ 2017-02-21T01:35:25+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_code%22:%221%22,%22num%22:%221%22}]&allPrice=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000008s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000192s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000235s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000260s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.040239s ]
+NOTIC: [8] Undefined index: product_sys_code /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 83 行.
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('') )  [ RunTime:0.039109s ]
+
+[ 2017-02-21T01:37:35+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000007s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000203s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000222s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000246s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.040040s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.040801s ]
+
+[ 2017-02-21T01:38:04+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000009s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000187s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000217s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000241s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.010754s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.009729s ]
+NOTIC: [8] Undefined index: order_type /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 77 行.
+NOTIC: [8] Undefined index: order_type /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 83 行.
+SQL: SHOW COLUMNS FROM `zuban_param` [ RunTime:0.010154s ]
+SQL: SELECT `value` FROM `zuban_param` WHERE ( `is_delete` = 0 AND `code`='ORDER_CODE' ) LIMIT 1   [ RunTime:0.009685s ]
+SQL: UPDATE `zuban_param` SET `value`=value+1 WHERE ( `code`='ORDER_CODE' ) [ RunTime:0.030163s ]
+NOTIC: [8] Undefined index: order_type /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 98 行.
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 99 行.
+SQL: INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876122841000103524',null,null,0,'36',0,0,'','2017-02-21 01:38:04','2017-02-21 01:38:04','','','') [ RunTime:0.009630s ]
+ERR: 1048:Column 'order_type' cannot be null
+ [ SQL语句 ] : INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876122841000103524',null,null,0,'36',0,0,'','2017-02-21 01:38:04','2017-02-21 01:38:04','','','')
+
+[ 2017-02-21T01:39:41+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000024s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000306s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000265s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000295s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.039376s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.038578s ]
+SQL: SELECT `value` FROM `zuban_param` WHERE ( `is_delete` = 0 AND `code`='ORDER_CODE' ) LIMIT 1   [ RunTime:0.039661s ]
+SQL: UPDATE `zuban_param` SET `value`=value+1 WHERE ( `code`='ORDER_CODE' ) [ RunTime:0.052712s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 99 行.
+SQL: INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876123811000103525',1,null,1,'36',1,0,'','2017-02-21 01:39:40','2017-02-21 01:39:40','','','') [ RunTime:0.039433s ]
+ERR: 1048:Column 'product_user' cannot be null
+ [ SQL语句 ] : INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876123811000103525',1,null,1,'36',1,0,'','2017-02-21 01:39:40','2017-02-21 01:39:40','','','')
+
+[ 2017-02-21T01:40:54+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000010s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000294s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000456s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000508s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.009656s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.010005s ]
+SQL: SELECT `value` FROM `zuban_param` WHERE ( `is_delete` = 0 AND `code`='ORDER_CODE' ) LIMIT 1   [ RunTime:0.009659s ]
+SQL: UPDATE `zuban_param` SET `value`=value+1 WHERE ( `code`='ORDER_CODE' ) [ RunTime:0.030024s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 99 行.
+SQL: INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876124531000103526',1,null,1,'36',1,0,'','2017-02-21 01:40:53','2017-02-21 01:40:53','','','') [ RunTime:0.031277s ]
+SQL: INSERT INTO `zuban_order_pay_record` (`order_no`,`payment`,`pay_type`,`pay_price`,`create_time`,`status`) VALUES ('14876124531000103526','ON_LINE','WX',1,'2017-02-21 01:40:53',0) [ RunTime:0.029628s ]
+NOTIC: [8] Array to string conversion /Users/litiefeng/zuban_server/ThinkPHP/Library/Think/Model.class.php 第 255 行.
+ERR: 非法数据对象！:[0=>Array]
+
+[ 2017-02-21T01:42:06+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000731s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000485s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000527s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.040238s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.040128s ]
+SQL: SELECT `value` FROM `zuban_param` WHERE ( `is_delete` = 0 AND `code`='ORDER_CODE' ) LIMIT 1   [ RunTime:0.040268s ]
+SQL: UPDATE `zuban_param` SET `value`=value+1 WHERE ( `code`='ORDER_CODE' ) [ RunTime:0.050085s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 99 行.
+SQL: INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876125261000103527',1,null,1,'36',1,0,'','2017-02-21 01:42:06','2017-02-21 01:42:06','','','') [ RunTime:0.078485s ]
+SQL: INSERT INTO `zuban_order_pay_record` (`order_no`,`payment`,`pay_type`,`pay_price`,`create_time`,`status`) VALUES ('14876125261000103527','ON_LINE','WX',1,'2017-02-21 01:42:06',0) [ RunTime:0.070047s ]
+SQL: INSERT INTO `zuban_order_product` (`product_sys_code`,`order_no`,`dec_price`,`price`,`total_price`,`num`,`status`,`create_time`) VALUES ('1','14876125261000103527','0.00','1.000000',1,1,0,'2017-02-21 01:42:06') [ RunTime:0.066221s ]
+
+[ 2017-02-21T01:42:44+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000007s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000184s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000220s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000244s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.010419s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.009988s ]
+SQL: SELECT `value` FROM `zuban_param` WHERE ( `is_delete` = 0 AND `code`='ORDER_CODE' ) LIMIT 1   [ RunTime:0.010979s ]
+SQL: UPDATE `zuban_param` SET `value`=value+1 WHERE ( `code`='ORDER_CODE' ) [ RunTime:0.027629s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 99 行.
+SQL: INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876125631000103528',1,null,1,'36',1,0,'','2017-02-21 01:42:43','2017-02-21 01:42:43','','','') [ RunTime:0.030957s ]
+SQL: INSERT INTO `zuban_order_pay_record` (`order_no`,`payment`,`pay_type`,`pay_price`,`create_time`,`status`) VALUES ('14876125631000103528','ON_LINE','WX',1,'2017-02-21 01:42:43',0) [ RunTime:0.031710s ]
+SQL: INSERT INTO `zuban_order_product` (`product_sys_code`,`order_no`,`dec_price`,`price`,`total_price`,`num`,`status`,`create_time`) VALUES ('1','14876125631000103528','0.00','1.000000',1,1,0,'2017-02-21 01:42:43') [ RunTime:0.045647s ]
+
+[ 2017-02-21T01:43:43+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000007s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000187s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001172s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001222s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 56 行.
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.040406s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.040236s ]
+SQL: SELECT `value` FROM `zuban_param` WHERE ( `is_delete` = 0 AND `code`='ORDER_CODE' ) LIMIT 1   [ RunTime:0.040476s ]
+SQL: UPDATE `zuban_param` SET `value`=value+1 WHERE ( `code`='ORDER_CODE' ) [ RunTime:0.063208s ]
+NOTIC: [8] Undefined index: product_user /Users/litiefeng/zuban_server/Application/Zb/Controller/OrderController.class.php 第 99 行.
+SQL: INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876126231000103529',1,null,1,'36',1,0,'','2017-02-21 01:43:43','2017-02-21 01:43:43','','','') [ RunTime:0.061697s ]
+SQL: INSERT INTO `zuban_order_pay_record` (`order_no`,`payment`,`pay_type`,`pay_price`,`create_time`,`status`) VALUES ('14876126231000103529','ON_LINE','WX',1,'2017-02-21 01:43:43',0) [ RunTime:0.059613s ]
+SQL: INSERT INTO `zuban_order_product` (`product_sys_code`,`order_no`,`dec_price`,`price`,`total_price`,`num`,`status`,`create_time`) VALUES ('1','14876126231000103529','0.00','1.000000',1,1,0,'2017-02-21 01:43:43') [ RunTime:0.079562s ]
+
+[ 2017-02-21T01:43:57+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=orderCommonFilter&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000009s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000202s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000271s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000298s ]
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.010560s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) LIMIT 1   [ RunTime:0.011635s ]
+SQL: SELECT * FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) ORDER BY `create_time` DESC  LIMIT 0,20   [ RunTime:0.012023s ]
+SQL: SELECT * FROM `zuban_order_product` WHERE ( `order_no` IN ('14876126231000103529') AND `status` >= 0 )  [ RunTime:0.010765s ]
+SQL: SELECT * FROM `zuban_order_pay_record` WHERE ( `order_no` IN ('14876126231000103529') )  [ RunTime:0.010721s ]
+NOTIC: [8] Undefined index: order_id /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 151 行.
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`,`product_image`,`product_phone`,`profession`,`region_code` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.010595s ]
+
+[ 2017-02-21T01:46:26+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1&product_user=738e3568-b01c-362b-49ad-964b6c3817bf
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000010s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000409s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000463s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000505s ]
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.011649s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.010619s ]
+SQL: SELECT `value` FROM `zuban_param` WHERE ( `is_delete` = 0 AND `code`='ORDER_CODE' ) LIMIT 1   [ RunTime:0.011266s ]
+SQL: UPDATE `zuban_param` SET `value`=value+1 WHERE ( `code`='ORDER_CODE' ) [ RunTime:0.131521s ]
+SQL: INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876127851000103530',1,'738e3568-b01c-362b-49ad-964b6c3817bf',1,'36',1,0,'','2017-02-21 01:46:25','2017-02-21 01:46:25','','','') [ RunTime:0.053293s ]
+SQL: INSERT INTO `zuban_order_pay_record` (`order_no`,`payment`,`pay_type`,`pay_price`,`create_time`,`status`) VALUES ('14876127851000103530','ON_LINE','WX',1,'2017-02-21 01:46:25',0) [ RunTime:0.030307s ]
+SQL: INSERT INTO `zuban_order_product` (`product_sys_code`,`order_no`,`dec_price`,`price`,`total_price`,`num`,`status`,`create_time`) VALUES ('1','14876127851000103530','0.00','1.000000',1,1,0,'2017-02-21 01:46:25') [ RunTime:0.457873s ]
+
+[ 2017-02-21T01:46:40+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=orderCommonFilter&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000009s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000435s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000509s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000550s ]
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.012909s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) LIMIT 1   [ RunTime:0.012918s ]
+SQL: SELECT * FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) ORDER BY `create_time` DESC  LIMIT 0,20   [ RunTime:0.013525s ]
+SQL: SELECT * FROM `zuban_order_product` WHERE ( `order_no` IN ('14876127851000103530','14876126231000103529') AND `status` >= 0 )  [ RunTime:0.013506s ]
+SQL: SELECT * FROM `zuban_order_pay_record` WHERE ( `order_no` IN ('14876127851000103530','14876126231000103529') )  [ RunTime:0.013179s ]
+NOTIC: [8] Undefined index: order_id /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 151 行.
+NOTIC: [8] Undefined index: order_id /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 151 行.
+NOTIC: [8] Undefined index: order_id /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 151 行.
+NOTIC: [8] Undefined index: order_id /Users/litiefeng/zuban_server/Application/Zb/Controller/CommonController.class.php 第 151 行.
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`,`product_image`,`product_phone`,`profession`,`region_code` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1','1') )  [ RunTime:0.013430s ]
+
+[ 2017-02-21T01:48:12+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=orderCommonFilter&userId=0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000007s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000185s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000228s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000254s ]
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.038945s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) LIMIT 1   [ RunTime:0.039274s ]
+SQL: SELECT * FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) ORDER BY `create_time` DESC  LIMIT 0,20   [ RunTime:0.039928s ]
+SQL: SELECT * FROM `zuban_order_product` WHERE ( `order_no` IN ('14876127851000103530','14876126231000103529') AND `status` >= 0 )  [ RunTime:0.039562s ]
+SQL: SELECT * FROM `zuban_order_pay_record` WHERE ( `order_no` IN ('14876127851000103530','14876126231000103529') )  [ RunTime:0.039509s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`,`product_image`,`product_phone`,`profession`,`region_code` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1','1') )  [ RunTime:0.039984s ]
+
+[ 2017-02-21T01:51:28+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&token=1111&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1&product_user=738e3568-b01c-362b-49ad-964b6c3817bf
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000010s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000402s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000463s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000506s ]
+SQL: SHOW COLUMNS FROM `zuban_user_info` [ RunTime:0.041519s ]
+ERR: Think\Model:feild方法不存在！
+
+[ 2017-02-21T01:52:01+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&token=1111&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1&product_user=738e3568-b01c-362b-49ad-964b6c3817bf
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000008s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000215s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000242s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000270s ]
+SQL: SELECT `user_id`,`device`,`logitude`,`latitude` FROM `zuban_user_info` WHERE ( `token` = '1111'  )  [ RunTime:0.010305s ]
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.010246s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.010498s ]
+SQL: SELECT `value` FROM `zuban_param` WHERE ( `is_delete` = 0 AND `code`='ORDER_CODE' ) LIMIT 1   [ RunTime:0.010595s ]
+SQL: UPDATE `zuban_param` SET `value`=value+1 WHERE ( `code`='ORDER_CODE' ) [ RunTime:0.049962s ]
+SQL: INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876131211000103531',1,'738e3568-b01c-362b-49ad-964b6c3817bf',1,'36',1,0,'','2017-02-21 01:52:01','2017-02-21 01:52:01','','','') [ RunTime:0.033124s ]
+SQL: INSERT INTO `zuban_order_pay_record` (`order_no`,`payment`,`pay_type`,`pay_price`,`create_time`,`status`) VALUES ('14876131211000103531','ON_LINE','WX',1,'2017-02-21 01:52:01',0) [ RunTime:0.034377s ]
+SQL: INSERT INTO `zuban_order_product` (`product_sys_code`,`order_no`,`dec_price`,`price`,`total_price`,`num`,`status`,`create_time`) VALUES ('1','14876131211000103531','0.00','1.000000',1,1,0,'2017-02-21 01:52:01') [ RunTime:0.030294s ]
+
+[ 2017-02-21T01:53:45+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=createOrder&token=1111&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1&product_user=738e3568-b01c-362b-49ad-964b6c3817bf&check_code=888333
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000010s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000233s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000255s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000285s ]
+SQL: SELECT `user_id`,`device`,`logitude`,`latitude` FROM `zuban_user_info` WHERE ( `token` = '1111'  )  [ RunTime:0.010361s ]
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  )  [ RunTime:0.010447s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `zuban_order` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a' AND `status` = 0 AND `check_code` = '888333'  ) LIMIT 1   [ RunTime:0.012108s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.010082s ]
+SQL: SELECT `value` FROM `zuban_param` WHERE ( `is_delete` = 0 AND `code`='ORDER_CODE' ) LIMIT 1   [ RunTime:0.010499s ]
+SQL: UPDATE `zuban_param` SET `value`=value+1 WHERE ( `code`='ORDER_CODE' ) [ RunTime:0.023692s ]
+SQL: INSERT INTO `zuban_order` (`user_id`,`order_no`,`order_type`,`product_user`,`total_price`,`from_source`,`price`,`status`,`memo`,`create_time`,`update_time`,`receiver`,`phone`,`check_code`) VALUES ('0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a','14876132251000103532',1,'738e3568-b01c-362b-49ad-964b6c3817bf',1,'36',1,0,'','2017-02-21 01:53:45','2017-02-21 01:53:45','','','') [ RunTime:0.039865s ]
+SQL: INSERT INTO `zuban_order_pay_record` (`order_no`,`payment`,`pay_type`,`pay_price`,`create_time`,`status`) VALUES ('14876132251000103532','ON_LINE','WX',1,'2017-02-21 01:53:45',0) [ RunTime:0.038328s ]
+SQL: INSERT INTO `zuban_order_product` (`product_sys_code`,`order_no`,`dec_price`,`price`,`total_price`,`num`,`status`,`create_time`) VALUES ('1','14876132251000103532','0.00','1.000000',1,1,0,'2017-02-21 01:53:45') [ RunTime:0.052933s ]
+
+[ 2017-02-21T01:54:35+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=orderCommonFilter&token=1111
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000028s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000524s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000498s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000541s ]
+SQL: SELECT `user_id`,`device`,`logitude`,`latitude` FROM `zuban_user_info` WHERE ( `token` = '1111'  )  [ RunTime:0.009749s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) LIMIT 1   [ RunTime:0.010992s ]
+SQL: SELECT * FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) ORDER BY `create_time` DESC  LIMIT 0,20   [ RunTime:0.010683s ]
+SQL: SELECT * FROM `zuban_order_product` WHERE ( `order_no` IN ('14876132251000103532','14876131211000103531','14876127851000103530','14876126231000103529') AND `status` >= 0 )  [ RunTime:0.011493s ]
+SQL: SELECT * FROM `zuban_order_pay_record` WHERE ( `order_no` IN ('14876132251000103532','14876131211000103531','14876127851000103530','14876126231000103529') )  [ RunTime:0.010131s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`,`product_image`,`product_phone`,`profession`,`region_code` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1','1','1','1') )  [ RunTime:0.010203s ]
+
+[ 2017-02-21T01:55:23+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=orderCommonFilter&token=1111&status=ALL&pageSize=20&pageIndex=1&type=0
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000008s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000191s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000284s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000313s ]
+SQL: SELECT `user_id`,`device`,`logitude`,`latitude` FROM `zuban_user_info` WHERE ( `token` = '1111'  )  [ RunTime:0.040521s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) LIMIT 1   [ RunTime:0.039668s ]
+SQL: SELECT * FROM `zuban_order` WHERE (  `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a'  AND `is_delete`=0  ) ORDER BY `create_time` DESC  LIMIT 0,20   [ RunTime:0.040455s ]
+SQL: SELECT * FROM `zuban_order_product` WHERE ( `order_no` IN ('14876132251000103532','14876131211000103531','14876127851000103530','14876126231000103529') AND `status` >= 0 )  [ RunTime:0.040683s ]
+SQL: SELECT * FROM `zuban_order_pay_record` WHERE ( `order_no` IN ('14876132251000103532','14876131211000103531','14876127851000103530','14876126231000103529') )  [ RunTime:0.040644s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`,`product_image`,`product_phone`,`profession`,`region_code` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1','1','1','1') )  [ RunTime:0.040062s ]
+
+[ 2017-02-21T19:53:58+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=getOrderDetails&token=1111&order_no=14876127851000103530
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000010s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000532s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.003196s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.003291s ]
+ERR: 参数错误或者未定义:orderNo
+
+[ 2017-02-21T19:54:18+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Order&a=getOrderDetails&token=1111&orderNo=14876127851000103530
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000009s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000331s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000339s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000388s ]
+SQL: SELECT `user_id`,`device`,`logitude`,`latitude` FROM `zuban_user_info` WHERE ( `token` = '1111'  )  [ RunTime:0.010789s ]
+SQL: SELECT * FROM `zuban_order` WHERE ( `user_id` = '0bd37ad9-097c-ed50-9e4a-6e1ce4e7647a' AND `order_no` = '14876127851000103530' ) ORDER BY `create_time` DESC   [ RunTime:0.011174s ]
+SQL: SELECT * FROM `zuban_order_product` WHERE ( `order_no` ='14876127851000103530' AND `status` >= 0 )  [ RunTime:0.011037s ]
+SQL: SELECT * FROM `zuban_order_pay_record` WHERE ( `order_no` ='14876127851000103530' )  [ RunTime:0.009934s ]
+SQL: SELECT `price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`,`product_image`,`product_phone`,`profession`,`region_code` FROM `zuban_product_goods` WHERE ( `product_sys_code` IN ('1') )  [ RunTime:0.009983s ]
 
