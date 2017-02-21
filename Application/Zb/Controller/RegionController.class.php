@@ -12,11 +12,11 @@ class RegionController extends CommonController {
 		获取地区列表
 
 	*/
-    public function getRegionList($code="1",$level=100)
+    public function getRegionList($code="1",$level=100,$mapping=null)
     {
         if(strlen($code) < 0){
             $this->returnErrorNotice("地区编码错误！");
         }
-        $this->returnSuccess($this->region_list($code,$level));
+        $this->returnSuccess($this->region_list($code,$level,$mapping));
     }
 }

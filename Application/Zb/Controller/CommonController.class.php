@@ -57,7 +57,7 @@ class CommonController extends Controller
             if ($isNotice) {
                 return $this->returnErrorNotice("用户标识错误!");
             } else {
-                return $this->returnSuccess(array());
+                return null;
             }
         }
         return $userInfo[0];
@@ -157,10 +157,18 @@ class CommonController extends Controller
     }
 
     //获取地区列表
-    protected function region_list($code,$level=999999)
+    protected function region_list($code,$level=999999,$mapping=null)
     {
+
+        $field  = "";
+        if($mapping){
+            $field = "";
+            foreach ($mapping as $key => $value) {
+                $field .= "`$key` AS $value, ";
+            }
+        }
         $tempBaseRegionModel = M('zuban_temp_base_region','','DB_DSN');
-        $regionRs = $tempBaseRegionModel->where('`status`= 1 AND `level`<='.$level)->field('`code`,`parent_code`,`name`,`level`')->order(" `id` ASC,`level` ASC ")->select();
+        $regionRs = $tempBaseRegionModel->where('`status`= 1 AND `level`<='.$level)->field($field.'`code`,`parent_code`,`name`,`level`')->order(" `id` ASC,`level` ASC ")->select();
 
         return list_to_tree($regionRs,$code,"code","parent_code");
     }
