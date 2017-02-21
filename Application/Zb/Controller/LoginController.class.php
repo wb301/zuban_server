@@ -52,7 +52,6 @@ class LoginController extends Controller
     public function login()
     {
         $this->_POST();
-
         $keyAry = array(
             'account' => "用户名不能为空",
             'password' => "密码不能为空"
@@ -84,15 +83,21 @@ class LoginController extends Controller
     */
     public function wxLogin(){
 
-        if($_SERVER['REQUEST_METHOD'] != 'POST') {
-            $this->returnErrorNotice('请求不是POST');
+        $this->_POST();
+        $keyAry = array(
+            'open_id' => "微信标示不能为空",
+            'nick_name' => "用户昵称不能为空",
+            'region_code' => "",
+            'logitude' => "",
+            'latitude' => ""
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
         }
 
-        if( empty($_POST['open_id']) ) 
-            return $this->returnErrorNotice("微信标示不能为空");
-
-        $openId = $_POST['open_id'];
-
+        $openId = $parameters['open_id'];
         $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
         $userInfo = $userBaseModel->where(array("wx_openid" => $openId))->find();
 
@@ -103,10 +108,10 @@ class LoginController extends Controller
                               "account" => '',
                               "password" => '',
                               "wx_openid" => $openId,
-                              "nick_name" => $_POST['nick_name'],
-                              "region_code" => $_REQUEST['region_code'] ? $_REQUEST['region_code'] : '',
-                              "logitude" => $_REQUEST['logitude'] ? $_REQUEST['logitude'] : '',
-                              "latitude" => $_REQUEST['latitude'] ? $_REQUEST['latitude'] : '',
+                              "nick_name" => $parameters['nick_name'],
+                              "region_code" => $parameters['region_code'] ? $parameters['region_code'] : '',
+                              "logitude" => $parameters['logitude'] ? $parameters['logitude'] : '',
+                              "latitude" => $parameters['latitude'] ? $parameters['latitude'] : '',
                               "register_time" => $nowTime);
 
             //这里新增一下数据
@@ -127,16 +132,21 @@ class LoginController extends Controller
     */
     public function wxBangDingMobile(){
 
-        if( empty($_POST['open_id']) ) 
-            return $this->returnErrorNotice("微信标示不能为空");
-        if( empty($_POST['account']) ) 
-            return $this->returnErrorNotice("手机号码不能为空");
-        if( empty($_POST['code']) ) 
-            return $this->returnErrorNotice("验证码不能为空");
+        $this->_POST();
+        $keyAry = array(
+            'open_id' => "微信标示不能为空",
+            'account' => "手机号码不能为空",
+            'code' => "验证码不能为空"
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
 
-        $openId = $_POST['open_id'];
-        $account = $_POST['account'];
-        $code = $_POST['code'];
+        $openId = $parameters['open_id'];
+        $account = $parameters['account'];
+        $code = $parameters['code'];
 
         $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
         $userInfo = $userBaseModel->where(array("wx_openid" => $openId))->find();

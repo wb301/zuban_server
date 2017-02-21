@@ -17,23 +17,27 @@ class RegisterController extends Controller
     public function registerByMobile()
     {
 
-        if($_SERVER['REQUEST_METHOD'] != 'POST') {
-            $this->returnErrorNotice('请求不是POST');
+        $this->_POST();
+        $keyAry = array(
+            'account' => "手机号不能为空",
+            'code' => "短信验证码不能为空",
+            'password' => "密码不能为空",
+            'region_code' => "地区不能为空",
+            'head_img' => "",
+            'nick_name' => "",
+            'logitude' => "",
+            'latitude' => ""
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
         }
 
-        if( empty($_POST['account']) ) 
-            return $this->returnErrorNotice("手机号不能为空");
-        if( empty($_POST['code']) )
-            return $this->returnErrorNotice("短信验证码不能为空");
-        if( empty($_POST['password']) )
-            return $this->returnErrorNotice("密码不能为空");
-        if( empty($_POST['region_code']) )
-            return $this->returnErrorNotice("地区不能为空");
-
-        $account = $_POST['account'];
-        $code = $_POST['code'];
-        $password = $_POST['password'];
-        $region_code = $_POST['region_code'];
+        $account = $parameters['account'];
+        $code = $parameters['code'];
+        $password = $parameters['password'];
+        $region_code = $parameters['region_code'];
 
         //这里检测一下手机号码和验证码是否正确
         $checkRes = $this->checkAccountByCode($account, $code);
@@ -49,12 +53,12 @@ class RegisterController extends Controller
         $userInfo = array('user_id' => $this->create_guid(),
         				  'account' => $account,
         				  'password' => md5($password),
-        				  'head_img' => $_POST['head_img'] ? $_POST['head_img'] : 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3443117432,1239143495&fm=21&gp=0.jpg',
+        				  'head_img' => $parameters['head_img'] ? $parameters['head_img'] : 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3443117432,1239143495&fm=21&gp=0.jpg',
                           'wx_openid' => '',
         				  'region_code' => $region_code,
-                          'nick_name' => $_POST['nick_name'] ? $_POST['nick_name'] : '',
-        				  'logitude' => $_POST['logitude'] ? $_POST['logitude'] : '',
-        				  'latitude' => $_POST['latitude'] ? $_POST['latitude'] : '',
+                          'nick_name' => $parameters['nick_name'] ? $parameters['nick_name'] : '',
+        				  'logitude' => $parameters['logitude'] ? $parameters['logitude'] : '',
+        				  'latitude' => $parameters['latitude'] ? $parameters['latitude'] : '',
         				  'register_time' => $nowTime
         				  );
         //这里新增一下数据

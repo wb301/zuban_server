@@ -29,28 +29,40 @@ class UserController extends CommonController
      */
     public function updUserInfo(){
 
-        if($_SERVER['REQUEST_METHOD'] != 'POST') {
-            $this->returnErrorNotice('请求不是POST');
+        $this->_POST();
+        $keyAry = array(
+            'head_img' => "",
+            'nick_name' => "",
+            'age' => "",
+            'height' => "",
+            'weight' => "",
+            'professional' => "",
+            'qualifications' => ""
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
         }
 
         $userInfo = $this->checkToken();
         $whereArr = array("user_id" => $userInfo["user_id"]);
         $saveArr = array();
 
-        if( isset($_POST['head_img']) )
-            $saveArr["head_img"] = $_POST['head_img'];
-        if( isset($_POST['nick_name']) )
-            $saveArr["nick_name"] = $_POST['nick_name'];
-        if( isset($_POST['age']) )
-            $saveArr["age"] = $_POST['age'];
-        if( isset($_POST['height']) )
-            $saveArr["height"] = $_POST['height'];
-        if( isset($_POST['weight']) )
-            $saveArr["weight"] = $_POST['weight'];
-        if( isset($_POST['professional']) )
-            $saveArr["professional"] = $_POST['professional'];
-        if( isset($_POST['qualifications']) )
-            $saveArr["qualifications"] = $_POST['qualifications'];
+        if( isset($parameters['head_img']) )
+            $saveArr["head_img"] = $parameters['head_img'];
+        if( isset($parameters['nick_name']) )
+            $saveArr["nick_name"] = $parameters['nick_name'];
+        if( isset($parameters['age']) )
+            $saveArr["age"] = $parameters['age'];
+        if( isset($parameters['height']) )
+            $saveArr["height"] = $parameters['height'];
+        if( isset($parameters['weight']) )
+            $saveArr["weight"] = $parameters['weight'];
+        if( isset($parameters['professional']) )
+            $saveArr["professional"] = $parameters['professional'];
+        if( isset($parameters['qualifications']) )
+            $saveArr["qualifications"] = $parameters['qualifications'];
 
         $userBaseModel = M("zuban_user_base", '', "DB_DSN");
         if(count($saveArr) > 0){
@@ -70,15 +82,19 @@ class UserController extends CommonController
      */
     public function sendMobileCode(){
 
-        if($_SERVER['REQUEST_METHOD'] != 'POST') {
-            $this->returnErrorNotice('请求不是POST');
+        $this->_POST();
+        $keyAry = array(
+            'mobile' => "手机号码不能为空",
+            'from' => ""
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
         }
 
-        if( empty($_POST['mobile']) ) 
-            return $this->returnErrorNotice("手机号码不能为空");
-
-        $phone = $_POST["mobile"];
-        $from = $_POST["from"] ? $_POST["from"] : 1;
+        $phone = $parameters["mobile"];
+        $from = $parameters["from"] ? $parameters["from"] : 1;
 
         $mobile_code = $this->random(6,1);
         if(!$template_code){$template_code='';}
