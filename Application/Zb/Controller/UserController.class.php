@@ -123,16 +123,11 @@ class UserController extends CommonController
         );
 
         // 计算签名并把签名结果加入请求参数
-        //echo $data['Version']."<br>";
-        //echo $data['Timestamp']."<br>";
         $data['Signature'] = $this->computeSignature($data, $accessKeySecret);
         // 发送请求
         $result = $this->https_request($target.http_build_query($data));
-
         $this->saveAccountByCode($phone, $mobile_code, $from);
-
-        // $result = $this->xml_to_array($this->https_request($target.http_build_query($data)));
-        print_r($result);
+        return $this->returnSuccess(true);
     }
     public function https_request($url)
     {
