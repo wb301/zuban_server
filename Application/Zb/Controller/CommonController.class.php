@@ -214,4 +214,118 @@ class CommonController extends Controller
         return array("available" => $availableMoney, "freeze" => $freezeMoney);
     }
 
+
+    public function getVip($userId)
+    {
+        $nowTime = date('Y-m-d H:i:s');
+        //查询是否为会员
+        return M('zuban_user_vip','','DB_DSN')->where("`user_id` = '$userId' AND `start_time` <= '$nowTime' AND `end_time` >= '$nowTime'")->find();
+    }
+
+
+    /**
+        保存手机号码和验证码
+    */
+    protected function saveAccountByCode($account, $code, $from) {
+
+        $validationModel = M("zuban_sms_validation", 0, "DB_DSN");
+        $validationModel->where(array("account" => $account))->save(array("status" => 2));
+
+        $nowTime = date('Y-m-d H:i:s');
+        $validationArr = array("account" => $account,
+                               "code" => $code,
+                               "create_time" => $nowTime,
+                               "update_time" => $nowTime,
+                               "status" => 0,
+                               "from" => $from);
+        $validationModel->add($validationArr);
+    }  
+
+    /**
+        检测手机号码和验证码
+    */
+    protected function checkAccountByCode($account, $code) {
+
+        $validationModel = M("zuban_sms_validation", 0, "DB_DSN");
+
+        $whereArr = array("account" => $account, "code" => $code, "status" => 0);
+        $validationInfo = $validationModel->where($whereArr)->find();
+        if(!$validationInfo){
+            return false;
+        }
+
+        $validationModel->where($whereArr)->save(array("status" => 1));
+        return true;
+    }  
+
+    /**
+        根据token获取用户信息
+    */
+    protected function getUserInfoByToken($token){
+
+        $userInfoModel = M("zuban_user_info", 0, "DB_DSN");
+        $userRes = $userInfoModel->where(array("token" => $token))->find();
+
+        if($userRes === false){
+            return $this->returnErrorNotice("用户标示错误");
+        }
+
+        $userInfo = $this->getUserInfoByUserId($userRes["user_id"]);
+        return $userInfo;
+    }
+
+    /**
+        根据user_id获取用户信息
+    */
+    protected function getUserInfoByUserId($userId){
+
+        $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
+        $userInfo = $userBaseModel->where(array("user_id" => $userId))->find();
+
+        if($userInfo === false){
+            return $this->returnErrorNotice("用户不存在");
+        }
+
+        return $userInfo;
+    }
+
+    /**
+
+        绑定用户信息函数
+
+    */
+    public function getUserInfoByAryList($aryList,$fileName="user_id"){
+        if(!$aryList || count($aryList) <= 0){
+            return array();
+        }
+        $userIdList = array();
+        foreach ($aryList as $key => $value) {
+            if(isset($value[$fileName]) && strlen($value[$fileName]) > 0){
+                array_push($userIdList, $value[$fileName]);
+            }
+        }
+        if(count($userIdList) <= 0){
+            return $aryList;
+        }
+        $userIdListStr = getListString($userIdList);
+
+        $userModel = M('zuban_user_base','','DB_DSN');
+        $userInfoRs = $userModel->where("`user_id` IN ($userIdListStr) ")->select();
+
+        if(!$userInfoRs || count($userInfoRs) <= 0){
+            return $aryList;
+        }
+        foreach ($aryList as $ak => $av) {
+            $userId = $av[$fileName];
+            foreach ($userInfoRs as $uk => $uv) {
+                if($userId == $uv['user_id']){
+                    $aryList[$ak]['userInfo'] = $uv;
+                    break;
+                }
+            }
+        }
+
+        return $aryList;
+    }
+
 }

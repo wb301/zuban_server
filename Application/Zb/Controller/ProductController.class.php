@@ -135,13 +135,11 @@ class ProductController extends CommonController {
                 //是自己
                 $returnUserInfo = $userInfo;
             }else{
-                $nowTime = date('Y-m-d H:i:s');
                 //查询是否为会员
-                $vipModel = M('zuban_user_vip','','DB_DSN');
-                $vipCount = intval($vipModel->where("`user_id` = '$userId' AND `start_time` <= '$nowTime' AND `end_time` >= '$nowTime'")->count());
+                $vipCount = intval($this->getVip($userId));
                 if($vipCount > 0){
                     $userModel = M('zuban_user_base','','DB_DSN');
-                    $returnUserInfo = $userModel->where("`user_id` = '$user_Id' ")->find();
+                    $returnUserInfo = $userModel->where("`user_id` = '$userId' ")->find();
                 }
             }
             if(!empty($returnUserInfo)){

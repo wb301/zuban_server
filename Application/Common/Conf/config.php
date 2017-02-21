@@ -56,6 +56,9 @@ return array(
     'GET' => 'GET',
     'SMS' => 'P_SMS',
 
+    //权重分母
+    'DENO' => 10000,
+
     'ARRAY_IP' => array(),
 
 
