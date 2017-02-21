@@ -17,24 +17,36 @@ class RegisterController extends Controller
     public function registerByMobile()
     {
 
-        if( empty($_REQUEST['account']) ) 
-            return $this->returnErrorNotice("手机号不能为空");
-        if( empty($_REQUEST['code']) )
-            return $this->returnErrorNotice("短信验证码不能为空");
-        if( empty($_REQUEST['password']) )
-            return $this->returnErrorNotice("密码不能为空");
-        if( empty($_REQUEST['nick_name']) )
-            return $this->returnErrorNotice("昵称不能为空");
+        if($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->returnErrorNotice('请求不是POST');
+        }
 
-        $account = $_REQUEST['account'];
-        $code = $_REQUEST['code'];
-        $password = $_REQUEST['password'];
-        $nick_name = $_REQUEST['nick_name'];
+        if( empty($_POST['account']) ) 
+            return $this->returnErrorNotice("手机号不能为空");
+        if( empty($_POST['code']) )
+            return $this->returnErrorNotice("短信验证码不能为空");
+        if( empty($_POST['password']) )
+            return $this->returnErrorNotice("密码不能为空");
+        if( empty($_POST['nick_name']) )
+            return $this->returnErrorNotice("昵称不能为空");
+        if( empty($_POST['region_code']) )
+            return $this->returnErrorNotice("地区不能为空");
+
+        $account = $_POST['account'];
+        $code = $_POST['code'];
+        $password = $_POST['password'];
+        $nick_name = $_POST['nick_name'];
+        $region_code = $_POST['region_code'];
 
         //这里检测一下手机号码和验证码是否正确
         $checkRes = $this->checkAccountByCode($account, $code);
         if(!$checkRes)
             return $this->returnErrorNotice("验证码错误");
+
+        $userBaseModel = M("zuban_user_base", '', "DB_DSN");
+        $userInfo = $userBaseModel->where(array("account" => $account))->find();
+        if($userInfo)
+            return $this->returnErrorNotice("该账号已存在");
 
         $nowTime = date('Y-m-d H:i:s');
         $userInfo = array('user_id' => $this->create_guid(),
@@ -42,14 +54,13 @@ class RegisterController extends Controller
         				  'password' => md5($password),
         				  'wx_openid' => '',
         				  'nick_name' => $nick_name,
-        				  'region_code' => $_REQUEST['region_code'] ? $_REQUEST['region_code'] : '',
-        				  'logitude' => $_REQUEST['logitude'] ? $_REQUEST['logitude'] : '',
-        				  'latitude' => $_REQUEST['latitude'] ? $_REQUEST['latitude'] : '',
+        				  'region_code' => $region_code,
+        				  'logitude' => $_POST['logitude'] ? $_POST['logitude'] : '',
+        				  'latitude' => $_POST['latitude'] ? $_POST['latitude'] : '',
         				  'register_time' => $nowTime
         				  );
 
         //这里新增一下数据
-        $userBaseModel = M("zuban_user_base", '', "DB_DSN");
         $userBaseModel->add($userInfo);
 
         return $this->returnSuccess(true);

@@ -76,9 +76,9 @@ class LoginController extends Controller
     */
     public function wxLogin(){
 
-        // if($_SERVER['REQUEST_METHOD'] != 'POST') {
-        //     $this->returnErrorNotice('请求不是POST');
-        // }
+        if($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->returnErrorNotice('请求不是POST');
+        }
 
         if( empty($_POST['open_id']) ) 
             return $this->returnErrorNotice("微信标示不能为空");

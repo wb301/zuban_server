@@ -1,0 +1,57 @@
+[ 2017-02-21T19:35:49+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=User&a=sendMobileCode?mobile=18221830467
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000037s ]
+INFO: [ app_init ] --END-- [ RunTime:0.002031s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000996s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001088s ]
+ERR: 非法操作:sendMobileCode?mobile=18221830467
+
+[ 2017-02-21T11:36:38+00:00 ] ::1 /zuban_server/index.php?c=Zb&m=User&a=sendMobileCode&mobile=18221830467
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000015s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000618s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000785s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000863s ]
+NOTIC: [8] Undefined index: from /Users/youfan2/zuban_server/Application/Zb/Controller/UserController.class.php 第 48 行.
+NOTIC: [8] Undefined variable: template_code /Users/youfan2/zuban_server/Application/Zb/Controller/UserController.class.php 第 51 行.
+SQL: SHOW COLUMNS FROM `zuban_sms_validation` [ RunTime:0.014756s ]
+SQL: UPDATE `zuban_sms_validation` SET `status`=2 WHERE ( `account` = '18221830467' ) [ RunTime:0.016510s ]
+SQL: INSERT INTO `zuban_sms_validation` (`account`,`code`,`create_time`,`update_time`,`status`,`from`) VALUES ('18221830467','542282','2017-02-21 11:36:38','2017-02-21 11:36:38',0,1) [ RunTime:0.019738s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.002426s ]
+INFO: [ app_end ] --END-- [ RunTime:0.002609s ]
+
+[ 2017-02-21T19:37:19+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Login&a=login&account=18221830467&password=123456
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000012s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000310s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000386s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000433s ]
+
+[ 2017-02-21T19:39:57+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Register&a=registerByMobile&account=18221830467&password=123456&code=542282&nick_name=hjh
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000028s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001066s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000933s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001028s ]
+SQL: SELECT * FROM `zuban_sms_validation` WHERE ( `account` = '18221830467' ) AND ( `code` = '542282' ) AND ( `status` = 0 ) LIMIT 1   [ RunTime:0.013818s ]
+SQL: UPDATE `zuban_sms_validation` SET `status`=1 WHERE ( `account` = '18221830467' ) AND ( `code` = '542282' ) AND ( `status` = 0 ) [ RunTime:0.028652s ]
+SQL: SHOW COLUMNS FROM `zuban_user_base` [ RunTime:0.014741s ]
+SQL: SELECT * FROM `zuban_user_base` WHERE ( `account` = '18221830467' ) LIMIT 1   [ RunTime:0.011872s ]
+NOTIC: [8] Undefined index: region_code /Users/youfan2/zuban_server/Application/Zb/Controller/RegisterController.class.php 第 50 行.
+NOTIC: [8] Undefined index: logitude /Users/youfan2/zuban_server/Application/Zb/Controller/RegisterController.class.php 第 51 行.
+NOTIC: [8] Undefined index: latitude /Users/youfan2/zuban_server/Application/Zb/Controller/RegisterController.class.php 第 52 行.
+SQL: INSERT INTO `zuban_user_base` (`user_id`,`account`,`password`,`wx_openid`,`nick_name`,`region_code`,`logitude`,`latitude`,`register_time`) VALUES ('dcf7ed94-4695-1fd9-152b-d76bd35e9f01','18221830467','e10adc3949ba59abbe56e057f20f883e','','hjh','','','','2017-02-21 19:39:57') [ RunTime:0.022833s ]
+
+[ 2017-02-21T19:40:28+08:00 ] ::1 /zuban_server/index.php?c=Zb&m=Login&a=login&account=18221830467&password=123456
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000322s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000885s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001146s ]
+
