@@ -165,43 +165,49 @@ class ProductController extends CommonController {
     {
         $this->_POST();
         $productInfo = $_POST['productInfo'];
-        if(is_array($productInfo)){
+        if(empty($productInfo)){
             $this->returnErrorNotice("商品参数错误！");
         }
 
-        $keyAry = array(
-            'product_name' => "商品信息不能为空",
-            'price' => "价格不能为空",
-            'price_type' => "结算方式不能为空",
-            'product_info' => "s异常!",
-            'cartList' => "商品异常!",
+        // $keyAry = array(
+        //     'product_name' => "商品信息不能为空",
+        //     'price' => "价格不能为空",
+        //     'price_type' => "结算方式不能为空",
+        //     'product_info' => "s异常!",
+        //     'cartList' => "商品异常!",
+        // );
+        // //参数列
+        // $parameters = $this->getPostparameters($keyAry,$productInfo);
+        // if (!$parameters) {
+        //     $this->returnErrorNotice('请求失败!');
+        // }
+
+        // $userInfo = $this->checkToken();
+        // $userId = $userInfo['user_id'];
+
+        $goodsAry = array(
+
+
+
         );
-        //参数列
-        $parameters = $this->getPostparameters($keyAry,$productInfo);
-        if (!$parameters) {
-            $this->returnErrorNotice('请求失败!');
-        }
 
-        $userInfo = $this->checkToken();
-        $userId = $userInfo['user_id'];
-
-
-          `user_id` varchar(255) NOT NULL COMMENT '用户id',
-          `product_sys_code` varchar(255) NOT NULL DEFAULT '' COMMENT '商品编码',
-          `price` decimal(18,6) NOT NULL COMMENT '价格',
-          // `look_price` decimal(18,6) NOT NULL,
-          `price_type` tinyint(4) NOT NULL COMMENT '价格类型  1.时薪  2.日薪',
-          `product_info` text NOT NULL COMMENT '商品详情',
-          `product_image` varchar(255) NOT NULL,
-          `status` int(5) NOT NULL DEFAULT '0' COMMENT '状态',
-          // `region_info` varchar(255) NOT NULL COMMENT '具体地址  xx-xx-xx',
-          `region_code` varchar(255) NOT NULL DEFAULT '' COMMENT '地区归属地',
-          // `logitude` varchar(255) NOT NULL DEFAULT '' COMMENT '经度',
-          // `latitude` varchar(255) NOT NULL DEFAULT '' COMMENT '纬度',
-          `start_time` datetime NOT NULL COMMENT '开始时间',
-          `end_time` datetime NOT NULL COMMENT '结束时间',
-          `create_time` datetime NOT NULL COMMENT '创建时间',
-          `update_time` datetime NOT NULL COMMENT '修改时间',
+        $rs = $this->getSysConfig();
+          // `user_id` varchar(255) NOT NULL COMMENT '用户id',
+          // // `product_sys_code` varchar(255) NOT NULL DEFAULT '' COMMENT '商品编码',
+          // `price` decimal(18,6) NOT NULL COMMENT '价格',
+          // // `look_price` decimal(18,6) NOT NULL,
+          // `price_type` tinyint(4) NOT NULL COMMENT '价格类型  1.时薪  2.日薪',
+          // `product_info` text NOT NULL COMMENT '商品详情',
+          // `product_image` varchar(255) NOT NULL,
+          // `status` int(5) NOT NULL DEFAULT '0' COMMENT '状态',
+          // // `region_info` varchar(255) NOT NULL COMMENT '具体地址  xx-xx-xx',
+          // `region_code` varchar(255) NOT NULL DEFAULT '' COMMENT '地区归属地',
+          // // `logitude` varchar(255) NOT NULL DEFAULT '' COMMENT '经度',
+          // // `latitude` varchar(255) NOT NULL DEFAULT '' COMMENT '纬度',
+          // `start_time` datetime NOT NULL COMMENT '开始时间',
+          // `end_time` datetime NOT NULL COMMENT '结束时间',
+          // `create_time` datetime NOT NULL COMMENT '创建时间',
+          // `update_time` datetime NOT NULL COMMENT '修改时间',
 
         // $productModel = M('zuban_product_goods','','DB_DSN');
         // $productAry = $productModel->where("`product_sys_code` = '$productCode'")->find();
@@ -223,7 +229,7 @@ class ProductController extends CommonController {
         // }
 
 
-        $this->returnSuccess($productInfo);
+        $this->returnSuccess($rs);
     }
 
 

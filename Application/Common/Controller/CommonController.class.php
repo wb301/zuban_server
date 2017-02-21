@@ -158,8 +158,8 @@ class CommonController extends Controller
 
     //生成六位码
     protected function createCode($code='ORDER_CODE'){
-        $paramModel = M('zuban_param','','DB_DSN');
-        $paramRs = $paramModel->where("`is_delete` = 0 AND `code`='$code'")->getField("`value`");
+        $paramModel = M('admin_system_config','','DB_DSN');
+        $paramRs = $paramModel->where("`status` = 1 AND `is_auto` = 1 AND `code`='$code'")->getField("`value`");
         $paramModel->where("`code`='$code'")->setInc("value");
         return $paramRs+1;
     }
@@ -246,6 +246,18 @@ class CommonController extends Controller
         }
 
         return $userInfo;
+    }
+
+    /**
+        获取系统配置
+    */
+    protected function getSysConfig($key=null){
+        $sysModel = M("admin_system_config", 0, "DB_DSN");
+        $sysAry = $sysModel->where("`status` = 1 AND `is_auto` = 0 ")->getField("config_key,config_value");
+        if($key){
+            return $sysAry[$key];
+        }
+        return $sysAry;
     }
 
 }

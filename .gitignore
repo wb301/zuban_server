@@ -11,3 +11,5 @@ Runtime/Data_Zb/_fields/.zuban_user_base.php
 Runtime/Data_Zb/_fields/.zuban_user_info.php
 Runtime/Data_Zb/_fields/.zuban_product_category.php
 Runtime/Data_Zb/_fields/.zuban_product_gallery.php
+Runtime/Data_Zb/_fields/.admin_system_config.php
+Runtime/Data_Zb/_fields/.zuban_param.php
