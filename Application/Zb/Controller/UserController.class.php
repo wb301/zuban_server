@@ -19,6 +19,7 @@ class UserController extends CommonController
         $userInfo = $this->checkToken();
         $userBase = $this->checkUserId($userInfo["user_id"]);
         $userBase["money"] = $this->getUserMoneyInfo($userInfo["user_id"]);
+        $userBase["vip"] = $this->getVip($userInfo["user_id"]);
 
         return $this->returnSuccess($userBase);
     }
