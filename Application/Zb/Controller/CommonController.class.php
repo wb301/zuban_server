@@ -75,7 +75,6 @@ class CommonController extends Controller
         foreach ($productList AS $key => $value) {
             $productList[$key]['price'] = 0;
             $productList[$key]['look_price'] = 0;
-            $productList[$key]['product_name'] = '';
             $productList[$key]['price_type'] = 1;
             $productList[$key]['status'] = 0;
             $productList[$key]['num'] = $value['num'];
@@ -91,7 +90,6 @@ class CommonController extends Controller
                         if ($v['product_sys_code'] == $proCode) {
                             $productList[$key]['price'] = $v['price'];
                             $productList[$key]['look_price'] = $v['look_price'];
-                            $productList[$key]['product_name'] = $v['product_name'];
                             $productList[$key]['price_type'] = $v['price_type'];
                             $productList[$key]['status'] = $v['status'];
                         }

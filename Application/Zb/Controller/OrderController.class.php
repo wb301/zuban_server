@@ -155,6 +155,111 @@ class OrderController extends CommonController {
 
     }
 
+
+    /**
+     * 会员购买订单
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=createOrder&token=1111&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1&product_user=738e3568-b01c-362b-49ad-964b6c3817bf&check_code=888333
+     * 请求方式:post
+     * 参数:
+     * token     用户id
+     * source     订单来源
+     * allPrice
+     * check_code 验证code
+     * member_code 会员编号
+     * @param $paymentAry    支付信息
+     * 支付列表paymentAry参数: {payment,pay_type}
+     * @param $payment       ON_LINE 在线支付、OFF_LINE 货到付款
+     * @param $pay_type      WX 微信支付、ZFB 支付宝支付、CASH 现金支付、APPLE_PAY 苹果支付
+     */
+    public function createMembersOrder()
+    {
+        $keyAry = array(
+            'source' => "来源信息不能为空",
+            'member_code' => "会员卡编号",
+            'paymentAry' => "支付信息不能为空",   //支付列表集合参数{payment 付款方式 固定值 ON_LINE , pay_type 支付类型(微信或支付宝),amount支付金额}
+            'allPrice' => "支付金额异常!",
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+        //支付方式
+        $paymentAry = json_decode($parameters['paymentAry'], true);
+        if (!isset($paymentAry['payment'])) {
+            $paymentAry['payment'] = "ON_LINE";
+        }
+        if (!isset($paymentAry['pay_type'])) {
+            $this->returnErrorNotice('支付类型异常!');
+        }
+
+        $nowTime = date('Y-m-d H:i:s');
+        //检测用户
+        $userInfo=$this->checkToken(true);
+        $userId=$userInfo['user_id'];
+        if($userId==$parameters['product_user']){
+            $this->returnErrorNotice('不能自己给自己下单!');
+        }
+        $allPrice = $parameters['allPrice'];
+        $this->checkUserId($userId,'', true);
+        // 验证订单是否重复提交
+        $orderModel = M('zuban_order','','DB_DSN');
+        $checkCode = $parameters['check_code'];
+        if ($checkCode && strlen($checkCode) > 0) {
+            $orderCount = intval($orderModel->where("`user_id` = '$userId' AND `status` = 0 AND `check_code` = '$checkCode' ")->count());
+            if ($orderCount > 0) {
+                $this->returnErrorNotice('订单信息已生成!');
+            }
+        }
+        $price=0;
+        //获取会员卡价格
+        if($allPrice<$price){
+            $this->returnErrorNotice('价格错误!');
+        }
+        //生成订单号
+        $orderId=$this->createCode("ORDER_CODE");
+        $orderNo = time() . "" . (1000000000 + $orderId);
+        $newOrderAry = array(
+            'user_id' => $userId,
+            'order_no' => $orderNo,
+            'order_type' => 2,
+            'total_price' => $price, //统计总价
+            'from_source' => $parameters['source'],
+            'price' => $price, //商品统计价
+            'status' => 0,//未支付状态
+            'remark' => '会员卡充值',
+            'create_time' => $nowTime,
+            'update_time' => $nowTime,
+            'phone' => "",
+            'check_code' => '',
+        );
+        $orderId = $orderModel->add($newOrderAry);
+        if ($orderId <= 0) {
+            $this->returnErrorNotice("订单维护中，请稍后再试,");
+        }
+        // 开始生成未支付的记录
+        $newOrderPayAry = array(
+            'order_no' => $orderNo,
+            'payment' => $paymentAry['payment'],
+            'pay_type' => $paymentAry['pay_type'],
+            'pay_price' => $price,
+            'create_time' => $nowTime,
+            'status' => 0 //未支付
+        );
+        $orderPayRecordModel = M('zuban_order_pay_record','','DB_DSN');
+        $orderPayId = $orderPayRecordModel->add($newOrderPayAry);
+        if ($orderPayId <= 0) {
+            $this->returnErrorNotice('订单生成维护中，请稍后再试!');
+        }
+        $rs=array(
+            'price'=>$price,
+            'order_no'=>$orderNo
+        );
+        $this->returnSuccess($rs,'支付成功！');
+
+    }
+
+
     /**
      * 我的订单列表
      * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=orderCommonFilter&token=1111&status=ALL&pageSize=20&pageIndex=1&type=0
