@@ -74,6 +74,85 @@ class UserController extends CommonController
         return $this->returnSuccess($userInfo);
     }
 
+    /**
+     * 修改密码
+     * 请求方式:post
+     * @param token
+     * @param old_password 旧密码
+     * password 新密码
+     */
+    public function changePassword()
+    {
+        $this->_POST();
+        $keyAry = array(
+            'old_password' => "旧密码不能为空",
+            'password' => "新密码不能为空",
+            'token' =>  ""
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+
+        $token = $parameters['token'];
+        $oldPassword = $parameters['old_password'];
+        $password = $parameters['password'];
+
+        if($oldPassword == $password) {
+            $this->returnErrorNotice('新密码不得与旧密码相同');
+        }
+
+        $userInfo = $this->getUserInfoByToken($token);
+        if(!$userInfo) {
+            $this->returnErrorNotice('用户不存在');
+        }
+
+        $pwdDb = $userInfo['password'];
+        $isSame = (md5($oldPassword) === md5($pwdDb));
+        if(!$isSame) {
+            $this->returnErrorNotice('用户输入的旧密码不正确');
+        }
+
+        $userBaseModel = M("zuban_user_base", '', "DB_DSN");
+        $userBaseModel->where(array("user_id" => $userInfo["user_id"]))->save(array("password" => md5($password)));
+
+        $this->returnSuccess(true);
+    }
+
+    /**
+     * 用户找回密码功能，
+     * @param $account   用户手机号码
+     * @param $code  用户输入的手机验证码
+     */
+    public function findPassword()
+    {
+        $this->_POST();
+        $keyAry = array(
+            'account' => "手机号码不能为空",
+            'code' => "验证码不能为空"
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+
+        $account = $parameters['account'];
+        $code = $parameters['code'];
+        //这里检测一下手机号码和验证码是否正确
+        $checkRes = $this->checkAccountByCode($account, $code);
+        if(!$checkRes)
+            return $this->returnErrorNotice("验证码错误");
+
+        $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
+        $userInfo = $userBaseModel->where(array("account" => $account))->find();
+        if( !$userInfo )
+            return $this->returnErrorNotice("帐号不存在");
+
+        $userBaseModel->where(array("user_id" => $userInfo["user_id"]))->save(array("password" => md5("123456")));
+        $this->returnSuccess(true);
+    }
 
     /**
      * 阿里云 短信验证
