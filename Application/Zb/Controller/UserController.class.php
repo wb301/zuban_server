@@ -1,13 +1,13 @@
 <?php
 namespace Zb\Controller;
-use Common\Controller\CommonController AS Controller;
+use Zb\Controller\CommonController;
 
 /**
 
 	控制器层 调用service层
 
 */
-class UserController extends Controller
+class UserController extends CommonController
 {
 
     /**
@@ -28,7 +28,35 @@ class UserController extends Controller
      */
     public function updUserInfo(){
 
+        if($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->returnErrorNotice('请求不是POST');
+        }
+
         $userInfo = $this->checkToken();
+        $whereArr = array("user_id" => $userInfo["user_id"]);
+        $saveArr = array();
+
+        if( isset($_POST['head_img']) )
+            $saveArr["head_img"] = $_POST['head_img'];
+        if( isset($_POST['nick_name']) )
+            $saveArr["nick_name"] = $_POST['nick_name'];
+        if( isset($_POST['age']) )
+            $saveArr["age"] = $_POST['age'];
+        if( isset($_POST['height']) )
+            $saveArr["height"] = $_POST['height'];
+        if( isset($_POST['weight']) )
+            $saveArr["weight"] = $_POST['weight'];
+        if( isset($_POST['professional']) )
+            $saveArr["professional"] = $_POST['professional'];
+        if( isset($_POST['qualifications']) )
+            $saveArr["qualifications"] = $_POST['qualifications'];
+
+        $userBaseModel = M("zuban_user_base", '', "DB_DSN");
+        if(count($saveArr) > 0){
+            $userBaseModel->where($whereArr)->save($saveArr);
+        }
+
+        $userInfo = $userBaseModel->where($whereArr)->find();
         return $this->returnSuccess($userInfo);
     }
 

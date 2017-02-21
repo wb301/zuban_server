@@ -30,7 +30,7 @@ class LoginController extends Controller
         $userInfoModel = M("zuban_user_info", 0, "DB_DSN");
         $userRes = $userInfoModel->where(array("user_id" => $userInfo["user_id"]))->find();
 
-        if( $userRes === false ){
+        if( !$userRes ){
             $userBase["user_id"] = $userInfo["user_id"];
             $userInfoModel->add($userBase);
         }else{
@@ -60,7 +60,7 @@ class LoginController extends Controller
 
         $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
         $userInfo = $userBaseModel->where(array("account" => $account))->find();
-        if( $userInfo === false )
+        if( !$userInfo )
             return $this->returnErrorNotice("帐号不存在");
         if( $userInfo['password'] != md5($password) ) 
             return $this->returnErrorNotice("密码错误");
@@ -133,7 +133,7 @@ class LoginController extends Controller
         $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
         $userInfo = $userBaseModel->where(array("wx_openid" => $openId))->find();
 
-        if( $userInfo === false )
+        if( !$userInfo )
             return $this->returnErrorNotice("帐号不存在");
 
         //这里检测一下手机号码和验证码是否正确
