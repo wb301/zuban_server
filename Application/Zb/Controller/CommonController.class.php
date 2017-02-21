@@ -182,4 +182,38 @@ class CommonController extends Controller
         return list_to_tree($categoryRs,$id);
     }
 
+    /**
+     * 获取用户钱包
+     * params:user_id
+     * return:array
+     */
+    public function getUserMoneyInfo($userId = ''){
+
+        $moneyHistoryModel = M('zuban_user_money_history','','DB_DSN');
+
+        $oldTime = date('Y-m-d H:i:s', time() - 7 * 24 * 60 * 60);
+        $userIdSqlStr = "`user_id` = '$userId'";
+
+        //获取七天前可用余额
+        $zhiChuSqlStr = $userIdSqlStr . " AND `create_time` <= '$oldTime'";
+        $maxZhiChuMoney = $moneyHistoryModel->where($zhiChuSqlStr)->SUM("price");
+        $maxZhiChuMoney = $maxZhiChuMoney ? $maxZhiChuMoney : 0;
+
+        //获取近七天内的提现和余额支付
+        $sevenDaySqlStr = $userIdSqlStr . " AND `create_time` >= '$oldTime' AND `price_type` IN (5,7) ";
+        $sevenDayMoney = $moneyHistoryModel->where($sevenDaySqlStr)->SUM("price");
+        $sevenDayMoney = $sevenDayMoney ? $sevenDayMoney : 0;
+
+        $availableMoney = $maxZhiChuMoney - abs($sevenDayMoney);
+        $availableMoney = $availableMoney ? $availableMoney : 0;
+
+        //获取现在的总金额
+        $maxMoney = $moneyHistoryModel->where($whereArr)->SUM("price");
+
+        //总金额减去可用金额剩余冻结金额
+        $freezeMoney = $maxMoney - $availableMoney * 2;
+
+        return array("available" => $availableMoney, "freeze" => $freezeMoney);
+    }
+
 }

@@ -27,15 +27,12 @@ class RegisterController extends Controller
             return $this->returnErrorNotice("短信验证码不能为空");
         if( empty($_POST['password']) )
             return $this->returnErrorNotice("密码不能为空");
-        if( empty($_POST['nick_name']) )
-            return $this->returnErrorNotice("昵称不能为空");
         if( empty($_POST['region_code']) )
             return $this->returnErrorNotice("地区不能为空");
 
         $account = $_POST['account'];
         $code = $_POST['code'];
         $password = $_POST['password'];
-        $nick_name = $_POST['nick_name'];
         $region_code = $_POST['region_code'];
 
         //这里检测一下手机号码和验证码是否正确
@@ -54,13 +51,12 @@ class RegisterController extends Controller
         				  'password' => md5($password),
         				  'head_img' => $_POST['head_img'] ? $_POST['head_img'] : 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3443117432,1239143495&fm=21&gp=0.jpg',
                           'wx_openid' => '',
-        				  'nick_name' => $nick_name,
         				  'region_code' => $region_code,
+                          'nick_name' => $_POST['nick_name'] ? $_POST['nick_name'] : '',
         				  'logitude' => $_POST['logitude'] ? $_POST['logitude'] : '',
         				  'latitude' => $_POST['latitude'] ? $_POST['latitude'] : '',
         				  'register_time' => $nowTime
         				  );
-
         //这里新增一下数据
         $userBaseModel->add($userInfo);
 

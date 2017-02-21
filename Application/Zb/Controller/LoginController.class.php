@@ -37,6 +37,11 @@ class LoginController extends Controller
             $userInfoModel->where(array("user_id" => $userInfo["user_id"]))->save($userBase);
         }
 
+        //这里需要修改一下用户发布信息的经纬度
+        $productModel = M('zuban_product_goods','','DB_DSN');
+        $productSaveArr = array("logitude" => $userBase["logitude"], "latitude" => $userBase["latitude"]);
+        $productModel->where(array("user_id" => $userInfo["user_id"]))->save($productSaveArr);
+
         $userInfo["token"] = $token;
         return $userInfo;
     }
@@ -48,13 +53,18 @@ class LoginController extends Controller
     {
         $this->_POST();
 
-        if( empty($_POST['account']) ) 
-            return $this->returnErrorNotice("用户名不能为空");
-        if( empty($_POST['password']) )
-            return $this->returnErrorNotice("密码不能为空");
+        $keyAry = array(
+            'account' => "用户名不能为空",
+            'password' => "密码不能为空"
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
 
-        $account = $_POST['account'];
-        $password = $_POST['password'];
+        $account = $parameters['account'];
+        $password = $parameters['password'];
 
         $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
         $userInfo = $userBaseModel->where(array("account" => $account))->find();
