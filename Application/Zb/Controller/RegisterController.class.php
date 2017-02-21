@@ -50,7 +50,7 @@ class RegisterController extends Controller
             return $this->returnErrorNotice("该账号已存在");
 
         $nowTime = date('Y-m-d H:i:s');
-        $userInfo = array('user_id' => $this->create_guid(),
+        $userInfo = array('user_id' => create_guid(),
         				  'account' => $account,
         				  'password' => md5($password),
         				  'head_img' => $parameters['head_img'] ? $parameters['head_img'] : 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3443117432,1239143495&fm=21&gp=0.jpg',

@@ -104,7 +104,7 @@ class LoginController extends Controller
         if(!$userInfo){
 
             $nowTime = date('Y-m-d H:i:s');
-            $userInfo = array("user_id" => $this->create_guid(),
+            $userInfo = array("user_id" => create_guid(),
                               "account" => '',
                               "password" => '',
                               "wx_openid" => $openId,
