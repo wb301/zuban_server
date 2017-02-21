@@ -46,9 +46,7 @@ class LoginController extends Controller
      */
     public function login()
     {
-        if($_SERVER['REQUEST_METHOD'] != 'POST') {
-            $this->returnErrorNotice('请求不是POST');
-        }
+        $this->_POST();
 
         if( empty($_POST['account']) ) 
             return $this->returnErrorNotice("用户名不能为空");

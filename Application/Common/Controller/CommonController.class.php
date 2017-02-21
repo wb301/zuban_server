@@ -39,16 +39,6 @@ class CommonController extends Controller
         }
     }
 
-    /**
-        限定请求方式
-    */
-    protected function astrict_method($method)
-    {
-        if($method !== $_SERVER['REQUEST_METHOD']){
-            $this->returnErrorNotice(C('REQUEST_ERROR')['msg'],C('REQUEST_ERROR')['code']);
-        }
-    }
-
     private $requestTime = 0;
 	private function returnJQuery($data,$msg,$code,$status)
 	{
@@ -66,6 +56,13 @@ class CommonController extends Controller
 
         exit(json_encode($result));
 	}
+
+    protected function _POST()
+    {
+        if($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->returnErrorNotice('请求不是POST');
+        }
+    }
 
     //通用成功返回
     protected function returnSuccess($data=array(),$msg='success',$code=100)
