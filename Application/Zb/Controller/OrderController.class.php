@@ -158,7 +158,7 @@ class OrderController extends CommonController {
 
     /**
      * 会员购买订单
-     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=createOrder&token=1111&source=36&receiver=%E9%99%86%E5%B9%BF&phone=110&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&cartList=[{%22product_sys_code%22:%221%22,%22num%22:%221%22}]&allPrice=1&order_type=1&product_user=738e3568-b01c-362b-49ad-964b6c3817bf&check_code=888333
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=createOrder&token=1111&source=36&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&allPrice=1&member_code=1&check_code=
      * 请求方式:post
      * 参数:
      * token     用户id

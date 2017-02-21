@@ -140,6 +140,52 @@ abstract class BasePay extends CommonController
             $transModel->rollback();
             return $result;
         }
+        //4.消费记录钱包核算
+        $moneyHistory=array();
+        //会员卡充值
+        if($orderRs['order_type']==2){
+            $moneyHistory[]=array(
+                'user_id'=>$orderRs['user_id'],
+                'price_type'=>1,
+                'price_info'=>$orderRs['order_no'],
+                'price'=>$price,
+                'remark'=>'会员充值',
+            );
+            $moneyHistory[]=array(
+                'user_id'=>$orderRs['user_id'],
+                'price_type'=>6,
+                'price_info'=>$orderRs['order_no'],
+                'price'=>-$price,
+                'remark'=>'会员充值',
+            );
+        }
+        if($orderRs['order_type']==0){
+            $moneyHistory[]=array(
+                'user_id'=>$orderRs['user_id'],
+                'price_type'=>1,
+                'price_info'=>$orderRs['order_no'],
+                'price'=>$price,
+                'remark'=>'查看消费充值',
+            );
+            $moneyHistory[]=array(
+                'user_id'=>$orderRs['user_id'],
+                'price_type'=>6,
+                'price_info'=>$orderRs['order_no'],
+                'price'=>-$price,
+                'remark'=>'会员充值',
+            );
+        }
+
+
+
+        $moneyHistoryModel=M('zuban_user_money_history','','DB_DSN');
+        $addMoneyHistoryResult = $transModel->table('zuban_user_money_history')->addAll($moneyHistory);
+        if(!$upOrderPayRecordResult){
+            $this->logPay('notify channel='.$channel.' updatePayrecord sql='.$orderPayRecordModel->getLastSql(), 'ERR');
+            $transModel->rollback();
+            return $result;
+        }
+
         $transModel->commit(); 
         //******事务结束*********
 
