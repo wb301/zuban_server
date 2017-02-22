@@ -25,17 +25,20 @@ class SystemConfigController extends CommonController {
                         array(
                             "img"   =>  "",
                             "level" =>  1,
-                            "price" =>  20
+                            "price" =>  20,
+                            "month" => 1
                         ),
                         array(
                             "img"   =>  "",
                             "level" =>  2,
-                            "price" =>  50
+                            "price" =>  50,
+                            "month" => 3
                         ),
                         array(
                             "img"   =>  "",
                             "level" =>  3,
-                            "price" =>  120
+                            "price" =>  120,
+                            "month" => 12
                         )
                     );
 
