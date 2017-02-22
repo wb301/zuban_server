@@ -82,7 +82,7 @@ class UserController extends CommonController
 
         $this->_POST();
         $keyAry = array(
-            'price' => "提现金额不能为空"
+            "price" => "提现金额不能为空"
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry);
@@ -126,10 +126,18 @@ class UserController extends CommonController
     public function getUserMoneyHistoryList(){
 
         $userInfo = $this->checkToken();
+        $userId = $userInfo["user_id"];
         $whereArr = array("user_id" => $userInfo["user_id"]);
 
+        $whereSqlStr = " `user_id` = '$userId' ";
+        if(isset($_REQUEST["price_type"]) && $_REQUEST["price_type"] > 0){
+
+            $price_type = $_REQUEST["price_type"];
+            $whereSqlStr = $whereSqlStr . " AND `price_type` = $price_type ";
+        }
+
         $userMoneyHistoryModel = M("zuban_user_money_history", '', "DB_DSN");
-        $userMoneyHistoryList = $userMoneyHistoryModel->where($whereArr)->select();
+        $userMoneyHistoryList = $userMoneyHistoryModel->where($whereSqlStr)->select();
 
         if(!$userMoneyHistoryList || count($userMoneyHistoryList) <= 0){
             $userMoneyHistoryList = array();

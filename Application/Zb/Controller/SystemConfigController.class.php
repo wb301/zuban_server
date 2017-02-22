@@ -12,9 +12,7 @@ class SystemConfigController extends CommonController {
     public function getVipPayList()
     {
 
-        $systemConfigModel = M('admin_system_config','','DB_DSN');
-        $vipJson = $systemConfigModel->where("`status` = 1 AND `is_auto` = 0 AND `config_key` = 'VIP_LIST'")->getField("config_value");
-
+        $vipJson = $this->getSysConfig('VIP_LIST');
         $this->returnSuccess($vipJson);
     }
 
