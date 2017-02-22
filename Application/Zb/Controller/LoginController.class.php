@@ -1,13 +1,13 @@
 <?php
 namespace Zb\Controller;
-use Common\Controller\CommonController AS Controller;
+use Zb\Controller\CommonController;
 
 /**
 
 	控制器层 调用service层
 
 */
-class LoginController extends Controller
+class LoginController extends CommonController
 {
 
     /**
