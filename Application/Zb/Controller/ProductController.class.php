@@ -7,7 +7,7 @@ use Zb\Service\CommonService;
 class ProductController extends CommonController {
 
     private $orderByMap = array(
-        'zt' => " ORDER BY g.`status` DESC "
+        'zt' => " ORDER BY g.`status` DESC ",
         'mr' => " ORDER BY g.`update_time` DESC ",  //上新排序
         'jg_0' => " ORDER BY g.`price` ASC, g.`update_time` DESC ",  //价格升序排序
         'jg_1' => " ORDER BY g.`price` DESC, g.`update_time` DESC ",  //价格降序序排序
