@@ -612,7 +612,106 @@ class OrderController extends CommonController {
         $pay->prePay();
     }
 
+    private function settlementPrice($orderInfo)
+    {
+        $price = $orderInfo['price'];
+        $orderNo = $orderInfo['order_no'];
+        $noticeTradeNo = $orderInfo['notice_trade_no'];
+        $nowTime = date('Y-m-d H:i:s');
 
+        $decPrice = 0; //卖家抽成
+        //判断订单类型
+        $orderType = intval($orderInfo['order_type']);
+        if($orderType == 1){ //购买订单
+            $userId = $orderInfo['user_id'];
+            $regRegionCode = M('zuban_user_base','','DB_DSN')->where("`user_id` = '$userId' ")->getField("region_code");//注册地code
+            $serverRegionCode = $orderInfo['from_source'];//服务地code
+            $maxRegionCode = C('MAX_REGION_CODE') //平台默认
+
+            $regionCodeStr = "('$regRegionCode','$serverRegionCode','$maxRegionCode')"
+
+            //查询adminCode
+            $regionAdminAry = M('admin_region_manager','','DB_DSN')->where("`region_code` IN ($regionCodeStr) AND `status` = 1")->getField("region_code, admin_code");
+
+            $maxAdminCode = C('MAX_BOSS_CODE');
+            if(isset($regionAdminAry[$maxRegionCode])){
+                $maxAdminCode = $regionAdminAry[$maxRegionCode];
+            }
+            $regAdminCode = $maxAdminCode;
+            if(isset($regionAdminAry[$regRegionCode])){
+                $regAdminCode = $regionAdminAry[$regRegionCode];
+            }
+            $serverAdminCode = $maxAdminCode;
+            if(isset($regionAdminAry[$serverRegionCode])){
+                $serverAdminCode = $regionAdminAry[$serverRegionCode];
+            }
+            //系统配置
+            $sysAry = M("admin_system_config", 0, "DB_DSN")->where("`status` = 1 AND `is_auto` = 0 ")->getField("config_key,config_value");
+            $toMaxPrice = floatval($sysAry['AS_PLATFORM'] / C('DENO') * $price);
+            $toRegPrice = floatval($sysAry['AS_REGISTERED'] / C('DENO') * $price);
+            $toServerPrice = floatval($sysAry['AS_CONSUM'] / C('DENO') * $price);
+
+            $remark = "服务购买收费,订单号:".$orderNo.",交易流水号:".$noticeTradeNo."。";
+            //插入收入记录
+            M('admin_region_manager','','DB_DSN')->addAll(array(
+                array(//平台
+                    'region_code' => $maxRegionCode
+                    'admin_code' => $maxAdminCode,
+                    'price_type' => 1,
+                    'remark' => $remark,
+                    'price' => $toMaxPrice,
+                    'create_time' => $nowTime
+                ),
+                array(//注册地
+                    'region_code' => $regRegionCode
+                    'admin_code' => $regAdminCode,
+                    'price_type' => 1,
+                    'remark' => $remark,
+                    'price' => $toRegPrice,
+                    'create_time' => $nowTime
+                ),
+                array(//服务地
+                    'region_code' => $serverRegionCode
+                    'admin_code' => $serverAdminCode,
+                    'price_type' => 1,
+                    'remark' => $remark,
+                    'price' => $toServerPrice,
+                    'create_time' => $nowTime
+                )
+            ));
+            $decPrice = $price-$toMaxPrice-$toRegPrice-$toServerPrice;
+        }else{
+            //查看订单,会员充值订单，其他
+            $toMaxPrice = $price;
+            $decPrice = $price - $toMaxPrice;
+            //抽成100%归平台
+            $maxRegionCode = C('MAX_REGION_CODE') //平台默认
+            $maxAdminCode = M('admin_region_manager','','DB_DSN')->where("`region_code` = '$maxRegionCode' AND `status` = 1")->getField("admin_code");
+            if(!$maxAdminCode){
+                $maxAdminCode = C('MAX_BOSS_CODE');
+            }
+            $remarkMap = array(
+                0 => "查看服务信息"
+                2 => "充值会员"
+            );
+            $remark = "其他";
+            if(isset($remarkMap[$orderType])){
+                $remark = $remarkMap[$orderType];
+            }
+            $remark = ."收费,订单号:".$orderNo.",交易流水号:".$noticeTradeNo."。"
+
+            //插入收入记录
+            M('admin_region_manager','','DB_DSN')->add(array(
+                'region_code' => $maxRegionCode
+                'admin_code' => $maxAdminCode,
+                'price_type' => 1,
+                'remark' => $remark,
+                'price' => $toMaxPrice,
+                'create_time' => $nowTime
+            ));
+        }
+        return $decPrice;
+    }
 
 
 }

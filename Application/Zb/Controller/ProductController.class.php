@@ -13,7 +13,6 @@ class ProductController extends CommonController {
         'jg_1' => " ORDER BY g.`price` DESC, g.`update_time` DESC ",  //价格降序序排序
         'jl_0' => " ORDER BY `juli` ASC, g.`update_time` DESC ",  //距离升序排序
         'jl_1' => " ORDER BY `juli` DESC, g.`update_time` DESC ",  //距离降序排序
-        'zh' => " ORDER BY `juli` ASC, g.`price` ASC, g.`update_time` DESC ",  //综合排序
     );
 
     //通用获取服务列表
@@ -85,7 +84,7 @@ class ProductController extends CommonController {
 		获取发布列表
 
 	*/
-    public function getShowProductList($latitude,$logitude,$orderBy='zh',$categoryId=1,$regionCode="1")
+    public function getShowProductList($latitude,$logitude,$orderBy='mr',$categoryId=1,$regionCode="1")
     {
     	$categoryId = intval($categoryId);
         if($categoryId < 0){
@@ -293,7 +292,7 @@ class ProductController extends CommonController {
         $userInfo = $this->checkToken();
         $userId = $userInfo['user_id'];
 
-        //是否为自己的
+        //验证
         $productModel = M('zuban_product_goods','','DB_DSN');
         $productId = intval($productModel->where("`user_id` = '$userId' AND `product_sys_code` = '$productCode'")->getField("id"));
         if($productId <= 0){

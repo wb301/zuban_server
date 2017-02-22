@@ -58,6 +58,8 @@ return array(
 
     //权重分母
     'DENO' => 10000,
+    'MAX_REGION_CODE' => '1',
+    'MAX_BOSS_CODE' => 'BOSS',
 
     'ARRAY_IP' => array(),
 
