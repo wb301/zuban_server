@@ -39,11 +39,46 @@ class ProductController extends CommonController {
         if(isset($this->orderByMap[$orderBy])){
             $order = $this->orderByMap[$orderBy];
         }
-        $sql = "SELECT g.* $fied FROM `zuban_product_goods` AS g LEFT JOIN  `zuban_product_category` AS c ON c.`product_sys_code` = g.`product_sys_code` WHERE $where $order LIMIT ".($this->page-1).",".$this->row.";";
+        $sql = "SELECT g.* $fied FROM `zuban_product_goods` AS g LEFT JOIN  `zuban_product_category` AS c ON c.`product_sys_code` = g.`product_sys_code` WHERE $where $order LIMIT ".($this->page-1)*$this->row.",".$this->row.";";
         $this->pageAry['list'] = $productModel->query($sql);
 
         return $this->pageAry;
     }
+
+    //插入分类
+    private function insertCategory($productCode,$categoryList)
+    {
+        $categoryNewList = array();
+        foreach ($categoryList as $key => $value) {
+            array_push($categoryNewList, array(
+                'product_sys_code' => $productCode,
+                'category_id' => $value['id'],
+                'category_name' => $value['name']
+            ));
+        }
+        $categoryModel = M('zuban_product_category','','DB_DSN');
+        return $categoryModel->addAll($categoryNewList);
+    }
+
+    //插入附图
+    private function insertGallery($productCode,$imageList)
+    {
+        $imageNewList = array();
+        $index = 1;
+        foreach ($imageList as $key => $value) {
+            $push = array(
+                'product_sys_code' => $productCode,
+                'image_url' => $value,
+                'sort' => $index,
+            );
+            array_push($imageNewList, $push);
+            $index++;
+        }
+
+        $galleryModel = M('zuban_product_gallery','','DB_DSN');
+        return $galleryModel->addAll($imageNewList);
+    }
+
 
 	/**
 
@@ -217,45 +252,94 @@ class ProductController extends CommonController {
         );
         $productModel = M('zuban_product_goods','','DB_DSN');
         $productId = $productModel->add($goodsNewAry);
+        if($productId <= 0){
+            $this->returnErrorNotice('服务发布失败!');
+        }
 
         //新增分类关系
-        $categoryList = $productInfo['category_list'];
-        $categoryNewList = array();
-        foreach ($categoryList as $key => $value) {
-            array_push($categoryNewList, array(
-                'product_sys_code' => $productCode,
-                'category_id' => $value['id'],
-                'category_name' => $value['name']
-            ));
-        }
-        $categoryModel = M('zuban_product_category','','DB_DSN');
-        $categoryModel->addAll($categoryNewList);
+        $this->insertCategory($productCode,$productInfo['category_list']);
 
         //新增附图
-        if(!empty($productInfo['image_list'])&& count($productInfo['image_list']) > 0){
-            $imageList = $productInfo['image_list'];
-            $imageNewList = array();
-            $index = 1;
-            foreach ($imageList as $key => $value) {
-                array_push($imageNewList, array(
-                    'product_sys_code' => $productCode,
-                    'image_url' => $value,
-                    'sort' => $index,
-                    'create_time' => $nowTime,
-                    'update_time' => $nowTime
-                ));
-                $index++;
-            }
-
-            $galleryModel = M('zuban_product_gallery','','DB_DSN');
-            $galleryModel->addAll($imageNewList);
+        if(!empty($productInfo['image_list'])){
+            $this->insertGallery($productCode,$productInfo['image_list']);
         }
 
-        $this->returnSuccess($productId);
+        $this->returnSuccess($productCode);
     }
 
 
+    /**
 
+        发布信息编辑
+
+    */
+    public function updateProductInfo()
+    {
+        $this->_POST();
+        $productInfo = $_POST['productInfo'];
+        if(empty($productInfo)){
+            $this->returnErrorNotice("服务参数错误！");
+        }
+
+        $keyAry = array(
+            'product_sys_code' => "服务编码不能为空!"
+        );
+        $parameters = $this->getPostparameters($keyAry,$productInfo);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+
+        $productCode = $productInfo['product_sys_code'];
+        $userInfo = $this->checkToken();
+        $userId = $userInfo['user_id'];
+
+        //是否为自己的
+        $productModel = M('zuban_product_goods','','DB_DSN');
+        $productId = count($productModel->where("`user_id` = 'userId' AND `product_sys_code` = '$productCode'")->getField("id"));
+        if($productId <= 0){
+            $this->returnErrorNotice('数据查询失败!');
+        }
+        //修改商品数据
+        $goodsUpdateAry = array();
+        if(isset($productInfo['price'])){
+            $goodsUpdateAry['price'] = floatval($productInfo['price']);
+        }
+        if(isset($productInfo['price_type'])){
+            $goodsUpdateAry['price_type'] = intval($productInfo['price_type']);
+        }
+        if(isset($productInfo['product_info'])){
+            $goodsUpdateAry['product_info'] = $productInfo['product_info'];
+        }
+        if(isset($productInfo['product_image'])){
+            $goodsUpdateAry['product_image'] = $productInfo['product_image'];
+        }
+        if(isset($productInfo['region_code']) && isset($productInfo['region_name'])){ //地区 编码和名称需同时传入
+            $goodsUpdateAry['region_code'] = $productInfo['region_code'];
+            $goodsUpdateAry['region_name'] = $productInfo['region_name'];
+        }
+        if(isset($productInfo['status'])){ //状态  删除 0
+            $goodsUpdateAry['status'] = intval($productInfo['status']);
+        }
+        $goodsUpdateAry['logitude'] = $userInfo['logitude'];
+        $goodsUpdateAry['latitude'] = $userInfo['latitude'];
+        $goodsUpdateAry['update_time'] = date('Y-m-d H:i:s');
+        $productModel->where("`id` = $productId")->save($goodsUpdateAry);
+
+        //删除并新增分类关系
+        if(!empty($productInfo['category_list'])){
+            $categoryModel = M('zuban_product_category','','DB_DSN');
+            // $categoryModel->where("``")
+            $this->insertCategory($productCode,$productInfo['category_list']);
+        }
+
+        //删除并新增附图
+        if(!empty($productInfo['image_list'])){
+            $galleryModel = M('zuban_product_gallery','','DB_DSN');
+            $this->insertGallery($productCode,$productInfo['image_list']);
+        }
+
+        $this->returnSuccess($productCode);
+    }
 
 
 }

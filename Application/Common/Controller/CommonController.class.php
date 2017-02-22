@@ -34,8 +34,8 @@ class CommonController extends Controller
         if(isset($_REQUEST['page']) && intval($_REQUEST['page']) > 0) {
             $this->page = $_REQUEST['page'];
         }
-        if(isset($_REQUEST['rows']) && intval($_REQUEST['rows']) > 0) {
-            $this->row = $_REQUEST['rows'];
+        if(isset($_REQUEST['row']) && intval($_REQUEST['row']) > 0) {
+            $this->row = $_REQUEST['row'];
         }
     }
 
