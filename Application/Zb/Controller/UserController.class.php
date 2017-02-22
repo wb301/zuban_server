@@ -56,6 +56,8 @@ class UserController extends CommonController
             $saveArr["nick_name"] = $parameters['nick_name'];
         if( isset($parameters['age']) )
             $saveArr["age"] = $parameters['age'];
+        if( isset($parameters['sex']) )
+            $saveArr["sex"] = $parameters['sex'];
         if( isset($parameters['height']) )
             $saveArr["height"] = $parameters['height'];
         if( isset($parameters['weight']) )
