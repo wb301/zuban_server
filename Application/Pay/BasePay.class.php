@@ -105,9 +105,15 @@ abstract class BasePay
         //1.订单状态变更
         $upDataOrder = array(
             'notice_trade_no' => $tradeNo,
-            'status' => 1,
+            'status' => 10,
+            'return_price' =>0,
             'update_time' => $nowTime,
         );
+        //消费订单状态变成已支付
+        if($orderRs['order_type']==1){
+            $upDataOrder['status']=1;
+            $upDataOrder['return_price']=0;//获取
+        }
         $upOrderResult = $transModel->table('zuban_order')->where($whereOrder)->save($upDataOrder);
         if(!$upOrderResult){
             $this->logPay('notify channel='.$channel.' updateOrder sql='.$orderModel->getLastSql(), 'ERR');
@@ -150,15 +156,27 @@ abstract class BasePay
             return $result;
         }
 
-        $transModel->commit(); 
+        //5.会员卡充值 续费会员期限
+        if($orderRs['order_type']==2){
+            $vipTimeAry=$this->getVipTime($orderRs['user_id'],$orderRs['member_code'],$orderRs['price']);
+            $vipModel=M('zuban_user_vip','','DB_DSN');
+            $vipResult = $transModel->table('zuban_user_vip')->add($vipTimeAry);
+            if(!$vipResult){
+                $this->logPay('notify channel='.$channel.' addVipTime sql='.$vipModel->getLastSql(), 'ERR');
+                $transModel->rollback();
+                return $result;
+            }
+        }
+        $transModel->commit();
         //******事务结束*********
 
-        $result['code'] = 1; 
-        $result['message'] = '成功'; 
+        $result['code'] = 1;
+        $result['message'] = '成功';
         return print_r($result);exit;
     }
 
 
+    //消费记录
     protected function getHistyAry($orderType,$userId,$price,$orderNo){
         $moneyHistory=array();
         switch($orderType){
@@ -217,6 +235,37 @@ abstract class BasePay
 
         return $moneyHistory;
 
+    }
+
+    //会员续费
+    protected function getVipTime($userId,$vip,$price){
+        $nowTime=date('Y-m-d H:i:s');
+        $vipAry=array(
+            'user_id'=>$userId,
+            'vip_type'=>$vip,
+            'price'=>$price,
+            'create_time'=>$nowTime,
+        );
+        $sysModel = M("admin_system_config", 0, "DB_DSN");
+        $key=C('VIPLIST');
+        $sysAry = $sysModel->where("`status` = 1 AND `config_key` = '$key' ")->getField("config_value");
+        $time='';
+        $config=json_decode($sysAry,true);
+        foreach($config AS $key=>$value){
+            if($value['level']==$vip){
+                $time= $value['month'];
+                break;
+            }
+        }
+        //查询会员
+        $vipModel=M('zuban_user_vip','','DB_DSN');
+        $startTime=$vipModel->where("`start_time` <= '$nowTime' AND `end_time` > '$nowTime'")->order("`id` desc")->getField("end_time");
+        if(!$startTime){
+            $startTime=$nowTime;
+        }
+        $vipAry['start_time']=$startTime;
+        $vipAry['end_time']=date("Y-m-d H:i:s", strtotime("+$time months", strtotime($startTime)));
+        return $vipAry;
     }
 
     protected function logPay($message,$level='INFO')

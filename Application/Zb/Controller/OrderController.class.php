@@ -158,7 +158,7 @@ class OrderController extends CommonController {
 
     /**
      * 会员购买订单
-     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=createOrder&token=1111&source=36&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&allPrice=1&member_code=1&check_code=
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=createMembersOrder&token=1111&source=36&paymentAry={%22payment%22:%22ON_LINE%22,%22pay_type%22:%22WX%22}&allPrice=20&vip=1&check_code=
      * 请求方式:post
      * 参数:
      * token     用户id
@@ -175,7 +175,7 @@ class OrderController extends CommonController {
     {
         $keyAry = array(
             'source' => "来源信息不能为空",
-            'member_code' => "会员卡编号",
+            'vip' => "请选择充值会员卡类型",
             'paymentAry' => "支付信息不能为空",   //支付列表集合参数{payment 付款方式 固定值 ON_LINE , pay_type 支付类型(微信或支付宝),amount支付金额}
             'allPrice' => "支付金额异常!",
         );
@@ -212,8 +212,15 @@ class OrderController extends CommonController {
             }
         }
         $price=0;
+        $vipList=json_decode($this->getSysConfig(C('VIPLIST')),true);
+        foreach($vipList AS $key=>$value){
+            if($value['level']==$parameters['vip']){
+                $price=$value['price'];
+                break;
+            }
+        }
         //获取会员卡价格
-        if($allPrice<$price){
+        if($allPrice!=$price){
             $this->returnErrorNotice('价格错误!');
         }
         //生成订单号
@@ -228,6 +235,7 @@ class OrderController extends CommonController {
             'price' => $price, //商品统计价
             'status' => 0,//未支付状态
             'remark' => '会员卡充值',
+            'member_code' => $parameters['vip'],
             'create_time' => $nowTime,
             'update_time' => $nowTime,
             'phone' => "",
@@ -433,6 +441,7 @@ class OrderController extends CommonController {
     }
 
     /**
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=deliveryOrder&token=1111&orderNo=14876127851000103530
      * 发货
      */
     public function deliveryOrder($orderNo)
@@ -498,6 +507,7 @@ class OrderController extends CommonController {
 
 
     /**
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=orderConfirm&token=1111&orderNo=14876127851000103530
      * 确认收货接口
      * 请求方式:get
      * 服务名:Order
@@ -529,6 +539,50 @@ class OrderController extends CommonController {
 
 
     /**
+     * 退款
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=orderReturn&token=1111&orderNo=14876127851000103530
+     * 请求方式:get
+     * 服务名:Order
+     * 参数:
+     * @param $orderNo 订单No
+     */
+    public function orderReturn($orderNo){
+        if (strlen($orderNo) <= 0) {
+            $this->returnErrorNotice('参数错误!');
+        }
+        //检测用户userId
+        $userId = $this->checkToken(1)['user_id'];
+        $orderModel = M('zuban_order', '', 'DB_DSN');
+        $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->field("`return_price`,`user_id`,`order_no`,`price`,`status`,`order_type`")->select();
+        if (!$orderRs || count($orderRs) <= 0) {
+            $this->returnErrorNotice('订单编号错误!');
+        }
+        $orderRs = $orderRs[0];
+        if ($orderRs['order_type']!=1) {
+            $this->returnErrorNotice('该订单不支持退款!');
+        }
+        if ($orderRs['status']!=1) {
+            $this->returnErrorNotice('该订单状态有误!');
+        }
+        //退款记录
+        $orderReturnAry = array(
+            'order_no' => $orderNo,
+            'user_id' => $orderRs['user_id'],
+            'reason' => '申请退款',
+            'return_money' => $orderRs['return_price'],
+            'create_time' => date('Y-m-d H:i:s'),
+            'status' => 1
+        );
+        $orderReturnModel = M('zuban_order_return','','DB_DSN');
+        $orderPayId = $orderReturnModel->add($orderReturnAry);
+        if ($orderPayId <= 0) {
+            $this->returnErrorNotice('退款失败，请稍后再试!');
+        }
+        $this->returnSuccess('申请成功!');
+    }
+
+
+    /**
      * @desc 支付回调
      * */
     public function notify()
@@ -557,5 +611,8 @@ class OrderController extends CommonController {
         $pay = \Pay\BasePay::getInstance('wx');
         $pay->prePay();
     }
+
+
+
 
 }
