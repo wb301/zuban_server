@@ -261,7 +261,7 @@ class CommonController extends Controller
             return false;
         }
 
-        $validationModel->where($whereArr)->save(array("status" => 1));
+        // $validationModel->where($whereArr)->save(array("status" => 1));
         return true;
     }  
 
