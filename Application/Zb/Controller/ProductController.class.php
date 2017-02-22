@@ -340,5 +340,15 @@ class ProductController extends CommonController {
         $this->returnSuccess($productCode);
     }
 
+    /**
+
+    获取 VIP LIST
+
+     */
+    public function getVipList(){
+        $rs=$this->getSysConfig(C('VIPLIST'));
+        $this->returnSuccess(json_decode($rs));
+    }
+
 
 }
