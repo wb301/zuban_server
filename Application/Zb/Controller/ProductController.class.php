@@ -295,7 +295,7 @@ class ProductController extends CommonController {
 
         //是否为自己的
         $productModel = M('zuban_product_goods','','DB_DSN');
-        $productId = count($productModel->where("`user_id` = 'userId' AND `product_sys_code` = '$productCode'")->getField("id"));
+        $productId = intval($productModel->where("`user_id` = '$userId' AND `product_sys_code` = '$productCode'")->getField("id"));
         if($productId <= 0){
             $this->returnErrorNotice('数据查询失败!');
         }
@@ -327,14 +327,13 @@ class ProductController extends CommonController {
 
         //删除并新增分类关系
         if(!empty($productInfo['category_list'])){
-            $categoryModel = M('zuban_product_category','','DB_DSN');
-            // $categoryModel->where("``")
+            M('zuban_product_category','','DB_DSN')->where("`product_sys_code` = '$productCode'")->delete();
             $this->insertCategory($productCode,$productInfo['category_list']);
         }
 
         //删除并新增附图
         if(!empty($productInfo['image_list'])){
-            $galleryModel = M('zuban_product_gallery','','DB_DSN');
+            M('zuban_product_gallery','','DB_DSN')->where("`product_sys_code` = '$productCode'")->delete();;
             $this->insertGallery($productCode,$productInfo['image_list']);
         }
 
