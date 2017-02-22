@@ -75,6 +75,69 @@ class UserController extends CommonController
     }
 
     /**
+     * 用户发起提现申请
+     * @param $token    用户标示
+     */
+    public function userApplyWithdraw(){
+
+        $this->_POST();
+        $keyAry = array(
+            'price' => "提现金额不能为空"
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+
+        $userInfo = $this->checkToken();
+        $whereArr = array("user_id" => $userInfo["user_id"]);
+
+        $price = $parameters["price"];
+        if(!is_numeric($price)){
+            $this->returnErrorNotice('提现金额必须为数字!');
+        }
+
+        if($price <= 0){
+            $this->returnErrorNotice('提现金额必须大于0!');
+        }
+
+        $userMoneyInfo = $this->getUserMoneyInfo($userInfo["user_id"]);
+        $available = $userMoneyInfo["available"];
+
+        if($price > $available){
+            $this->returnErrorNotice('提现金额不能大于可提现金额!');
+        }
+
+        $addArr = array("user_id" => $userInfo["user_id"],
+                        "price" => $price,
+                        "create_time" => date('Y-m-d H:i:s'));
+
+        $withdrawHistoryModel = M("zuban_user_withdraw_history", '', "DB_DSN");
+        $withdrawHistoryModel->add($addArr);
+
+        return $this->returnSuccess(true);
+    }
+
+    /**
+     * 获取用户的交易记录
+     * @param $token    用户标示
+     */
+    public function getUserMoneyHistoryList(){
+
+        $userInfo = $this->checkToken();
+        $whereArr = array("user_id" => $userInfo["user_id"]);
+
+        $userMoneyHistoryModel = M("zuban_user_money_history", '', "DB_DSN");
+        $userMoneyHistoryList = $userMoneyHistoryModel->where($whereArr)->select();
+
+        if(!$userMoneyHistoryList || count($userMoneyHistoryList) <= 0){
+            $userMoneyHistoryList = array();
+        }
+        return $this->returnSuccess($userMoneyHistoryList);
+    }
+
+    /**
      * 修改密码
      * 请求方式:post
      * @param token

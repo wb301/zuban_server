@@ -23,6 +23,7 @@ class RegisterController extends CommonController
             'code' => "短信验证码不能为空",
             'password' => "密码不能为空",
             'region_code' => "地区不能为空",
+            'region_name' => "地区名称不能为空",
             'head_img' => "",
             'nick_name' => "",
             'logitude' => "",
@@ -38,6 +39,7 @@ class RegisterController extends CommonController
         $code = $parameters['code'];
         $password = $parameters['password'];
         $region_code = $parameters['region_code'];
+        $region_name = $parameters['region_name'];
 
         //这里检测一下手机号码和验证码是否正确
         $checkRes = $this->checkAccountByCode($account, $code);

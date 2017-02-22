@@ -209,7 +209,13 @@ class CommonController extends Controller
         $sevenDayMoney = $moneyHistoryModel->where($sevenDaySqlStr)->SUM("price");
         $sevenDayMoney = $sevenDayMoney ? $sevenDayMoney : 0;
 
-        $availableMoney = $maxZhiChuMoney - abs($sevenDayMoney);
+        //提现中的金额
+        $withdrawHistoryModel = M("zuban_user_withdraw_history", '', "DB_DSN");
+        $withdrawHistorySqlStr = $userIdSqlStr . " AND `status` = 2 ";
+        $withdrawMoney = $withdrawHistoryModel->where($withdrawHistorySqlStr)->SUM("price");
+
+        //七天前的可提现金额  - 近七天内的余额支付和提现 - 提现中的金额
+        $availableMoney = $maxZhiChuMoney - abs($sevenDayMoney) - $withdrawMoney;
         $availableMoney = $availableMoney ? $availableMoney : 0;
 
         //获取现在的总金额
