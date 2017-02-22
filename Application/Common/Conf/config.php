@@ -74,6 +74,16 @@ return array(
 
 
 
+
+    'URL_MODEL'             =>  3,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：// 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式)  默认为PATHINFO 模式
+    'URL_ROUTER_ON'         =>  true,   // 是否开启URL路由
+    'URL_ROUTE_RULES'       =>  array(  // 默认路由规则 针对模块
+        'notify'=>'Order/notify',//回调通知地址
+        'prePay'=>'Order/prePay',//获取预支付订单
+    ),
+
+
+
     /*
     * 微信支付配置
     *   * APPID：绑定支付的APPID

@@ -7,7 +7,7 @@ use Pay\AliPay\AliPay;
 use Pay\WxPay\WxPay;
 use Common\Controller\CommonController;
 
-abstract class BasePay extends CommonController
+abstract class BasePay
 {
     protected $config = array();
     const CHANNEL_WX = 'wx';
@@ -141,47 +141,11 @@ abstract class BasePay extends CommonController
             return $result;
         }
         //4.消费记录钱包核算
-        $moneyHistory=array();
-        //会员卡充值
-        if($orderRs['order_type']==2){
-            $moneyHistory[]=array(
-                'user_id'=>$orderRs['user_id'],
-                'price_type'=>1,
-                'price_info'=>$orderRs['order_no'],
-                'price'=>$price,
-                'remark'=>'会员充值',
-            );
-            $moneyHistory[]=array(
-                'user_id'=>$orderRs['user_id'],
-                'price_type'=>6,
-                'price_info'=>$orderRs['order_no'],
-                'price'=>-$price,
-                'remark'=>'会员充值',
-            );
-        }
-        if($orderRs['order_type']==0){
-            $moneyHistory[]=array(
-                'user_id'=>$orderRs['user_id'],
-                'price_type'=>1,
-                'price_info'=>$orderRs['order_no'],
-                'price'=>$price,
-                'remark'=>'查看消费充值',
-            );
-            $moneyHistory[]=array(
-                'user_id'=>$orderRs['user_id'],
-                'price_type'=>6,
-                'price_info'=>$orderRs['order_no'],
-                'price'=>-$price,
-                'remark'=>'会员充值',
-            );
-        }
-
-
-
+        $moneyHistory=$this->getHistyAry($orderRs['order_type'],$orderRs['user_id'],$price,$orderRs['order_no']);
         $moneyHistoryModel=M('zuban_user_money_history','','DB_DSN');
         $addMoneyHistoryResult = $transModel->table('zuban_user_money_history')->addAll($moneyHistory);
         if(!$upOrderPayRecordResult){
-            $this->logPay('notify channel='.$channel.' updatePayrecord sql='.$orderPayRecordModel->getLastSql(), 'ERR');
+            $this->logPay('notify channel='.$channel.' addMoneyHistory sql='.$moneyHistoryModel->getLastSql(), 'ERR');
             $transModel->rollback();
             return $result;
         }
@@ -192,6 +156,61 @@ abstract class BasePay extends CommonController
         $result['code'] = 1; 
         $result['message'] = '成功'; 
         return $result;
+    }
+
+
+    protected function getHistyAry($orderType,$userId,$price,$orderNo){
+        $moneyHistory=array();
+        switch($orderType){
+            case 0:
+                $moneyHistory[]=array(
+                    'user_id'=>$userId,
+                    'price_type'=>1,
+                    'price_info'=>$orderNo,
+                    'price'=>$price,
+                    'remark'=>'查看消费充值',
+                );
+                $moneyHistory[]=array(
+                    'user_id'=>$userId,
+                    'price_type'=>2,
+                    'price_info'=>$orderNo,
+                    'price'=>-$price,
+                    'remark'=>'查看消费',
+                );break;
+            case 1:
+                $moneyHistory[]=array(
+                    'user_id'=>$userId,
+                    'price_type'=>1,
+                    'price_info'=>$orderNo,
+                    'price'=>$price,
+                    'remark'=>'购买消费充值',
+                );
+                $moneyHistory[]=array(
+                    'user_id'=>$userId,
+                    'price_type'=>2,
+                    'price_info'=>$orderNo,
+                    'price'=>-$price,
+                    'remark'=>'购买消费',
+                );break;
+            case 2:
+                $moneyHistory[]=array(
+                    'user_id'=>$userId,
+                    'price_type'=>1,
+                    'price_info'=>$orderNo,
+                    'price'=>$price,
+                    'remark'=>'会员充值',
+                );
+                $moneyHistory[]=array(
+                    'user_id'=>$userId,
+                    'price_type'=>6,
+                    'price_info'=>$orderNo,
+                    'price'=>-$price,
+                    'remark'=>'会员充值',
+                );break;
+        }
+
+        return $moneyHistory;
+
     }
 
     protected function logPay($message,$level='INFO')
