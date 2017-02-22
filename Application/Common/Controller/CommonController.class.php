@@ -118,10 +118,10 @@ class CommonController extends Controller
 
 
     //生成六位码
-    protected function createCode($code='ORDER_CODE'){
+    protected function createCode($configKey='ORDER_CODE'){
         $paramModel = M('admin_system_config','','DB_DSN');
-        $paramRs = $paramModel->where("`status` = 1 AND `is_auto` = 1 AND `code`='$code'")->getField("`value`");
-        $paramModel->where("`code`='$code'")->setInc("value");
+        $paramRs = $paramModel->where("`status` = 1 AND `is_auto` = 1 AND `config_key`='$configKey'")->getField("config_value");
+        $paramModel->where("`config_key`='$configKey'")->setInc("config_value");
         return $paramRs+1;
     }
 

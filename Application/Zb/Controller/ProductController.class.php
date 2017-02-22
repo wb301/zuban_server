@@ -180,13 +180,16 @@ class ProductController extends CommonController {
             'price_type' => "结算方式不能为空",
             'product_image' => "服务主图不能为空",
             'region_code' => "地区编码不能为空!",
-            'region_info' => "地区信息不能为空!",
-            'category_list' => "服务类型不能为空!"
+            'region_name' => "地区信息不能为空!",
+            'category_list' => "服务类型不能为空!",
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry,$productInfo);
         if (!$parameters) {
             $this->returnErrorNotice('请求失败!');
+        }
+        if(empty($productInfo['category_list'])|| count($productInfo['category_list']) <= 0){
+            $this->returnErrorNotice('请添加服务类型!');
         }
 
         $userInfo = $this->checkToken();
@@ -194,55 +197,61 @@ class ProductController extends CommonController {
 
         $productCode = $this->createCode("PRODUCT_CODE");
         $lookPrice = floatval($this->getSysConfig("LOOK_PRICE"));
-
-        $price = $productInfo['price'];
-
-
+        $nowTime = date('Y-m-d H:i:s');
         //新增商品数据
-        $goodsAry = array(
-
-
-
+        $goodsNewAry = array(
+            'user_id' => $userId,
+            'product_sys_code' => $productCode,
+            'price' => floatval($productInfo['price']),
+            'look_price' => $lookPrice,
+            'price_type' => intval($productInfo['price_type']),
+            'product_info' => $productInfo['product_info'],
+            'product_image' => $productInfo['product_image'],
+            'region_code' => $productInfo['region_code'],
+            'region_name' => $productInfo['region_name'],
+            'logitude' => $userInfo['logitude'],
+            'latitude' => $userInfo['latitude'],
+            'create_time' => $nowTime,
+            'update_time' => $nowTime,
+            'status' => 1
         );
+        $productModel = M('zuban_product_goods','','DB_DSN');
+        $productId = $productModel->add($goodsNewAry);
 
-          // `user_id` varchar(255) NOT NULL COMMENT '用户id',
-          // // `product_sys_code` varchar(255) NOT NULL DEFAULT '' COMMENT '服务编码',
-          // `price` decimal(18,6) NOT NULL COMMENT '价格',
-          // // `look_price` decimal(18,6) NOT NULL,
-          // `price_type` tinyint(4) NOT NULL COMMENT '价格类型  1.时薪  2.日薪',
-          // `product_info` text NOT NULL COMMENT '服务详情',
-          // `product_image` varchar(255) NOT NULL,
-          // `status` int(5) NOT NULL DEFAULT '0' COMMENT '状态',
-          // // `region_info` varchar(255) NOT NULL COMMENT '具体地址  xx-xx-xx',
-          // `region_code` varchar(255) NOT NULL DEFAULT '' COMMENT '地区归属地',
-          // // `logitude` varchar(255) NOT NULL DEFAULT '' COMMENT '经度',
-          // // `latitude` varchar(255) NOT NULL DEFAULT '' COMMENT '纬度',
-          // `start_time` datetime NOT NULL COMMENT '开始时间',
-          // `end_time` datetime NOT NULL COMMENT '结束时间',
-          // `create_time` datetime NOT NULL COMMENT '创建时间',
-          // `update_time` datetime NOT NULL COMMENT '修改时间',
+        //新增分类关系
+        $categoryList = $productInfo['category_list'];
+        $categoryNewList = array();
+        foreach ($categoryList as $key => $value) {
+            array_push($categoryNewList, array(
+                'product_sys_code' => $productCode,
+                'category_id' => $value['id'],
+                'category_name' => $value['name']
+            ));
+        }
+        $categoryModel = M('zuban_product_category','','DB_DSN');
+        $categoryModel->addAll($categoryNewList);
 
-        // $productModel = M('zuban_product_goods','','DB_DSN');
-        // $productAry = $productModel->where("`product_sys_code` = '$productCode'")->find();
-        // if(empty($productAry)){
-        //     $this->returnErrorNotice("服务信息错误！");
-        // }
-        // //分类列表
-        // $categoryModel = M('zuban_product_category','','DB_DSN');
-        // $categoryRs = $categoryModel->where("`product_sys_code` = '$productCode'")->field("`category_id`,`category_name`")->select();
-        // if(empty($categoryRs)){
-        //     $this->returnErrorNotice("分类信息错误！");
-        // }
+        //新增附图
+        if(!empty($productInfo['image_list'])&& count($productInfo['image_list']) > 0){
+            $imageList = $productInfo['image_list'];
+            $imageNewList = array();
+            $index = 1;
+            foreach ($imageList as $key => $value) {
+                array_push($imageNewList, array(
+                    'product_sys_code' => $productCode,
+                    'image_url' => $value,
+                    'sort' => $index,
+                    'create_time' => $nowTime,
+                    'update_time' => $nowTime
+                ));
+                $index++;
+            }
 
-        // //图片列表  image_list
-        // $galleryModel = M('zuban_product_gallery','','DB_DSN');
-        // $galleryRs = $galleryModel->where("`product_sys_code` = '$productCode'")->order("sort ASC ")->getField("image_url", true);
-        // if(empty($galleryRs)){
-        //     $galleryRs = array();
-        // }
+            $galleryModel = M('zuban_product_gallery','','DB_DSN');
+            $galleryModel->addAll($imageNewList);
+        }
 
-
-        $this->returnSuccess($rs);
+        $this->returnSuccess($productId);
     }
 
 
