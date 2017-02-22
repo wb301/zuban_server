@@ -44,7 +44,7 @@ abstract class BasePay
         }
         return $config;
     }
-    protected function payOrder($orderNo,$price,$tradeNo, $channel)
+    public function payOrder($orderNo,$price,$tradeNo, $channel)
     {
         $result = array(
             'code' => -1,
@@ -116,7 +116,7 @@ abstract class BasePay
         }
         if(in_array($orderRs['order_type'],array(0,1))) {
             //2.订单商品状态变更
-            $upOrderProductResult = $transModel->db(0, 'DB_DSN')->table('mbfun_order_product')->where($whereOrderProduct)->setField("status", 1);
+            $upOrderProductResult = $transModel->db(0, 'DB_DSN')->table('zuban_order_product')->where($whereOrderProduct)->setField("status", 1);
             if (!$upOrderProductResult) {
                 $this->logPay('notify channel=' . $channel . ' updateOrderProduct sql=' . $orderProductModel->getLastSql(), 'ERR');
                 $transModel->rollback();
@@ -144,7 +144,7 @@ abstract class BasePay
         $moneyHistory=$this->getHistyAry($orderRs['order_type'],$orderRs['user_id'],$price,$orderRs['order_no']);
         $moneyHistoryModel=M('zuban_user_money_history','','DB_DSN');
         $addMoneyHistoryResult = $transModel->table('zuban_user_money_history')->addAll($moneyHistory);
-        if(!$upOrderPayRecordResult){
+        if(!$addMoneyHistoryResult){
             $this->logPay('notify channel='.$channel.' addMoneyHistory sql='.$moneyHistoryModel->getLastSql(), 'ERR');
             $transModel->rollback();
             return $result;
@@ -155,7 +155,7 @@ abstract class BasePay
 
         $result['code'] = 1; 
         $result['message'] = '成功'; 
-        return $result;
+        return print_r($result);exit;
     }
 
 
@@ -169,6 +169,7 @@ abstract class BasePay
                     'price_info'=>$orderNo,
                     'price'=>$price,
                     'remark'=>'查看消费充值',
+                    'create_time'=>date('Y-m-d H:i:s'),
                 );
                 $moneyHistory[]=array(
                     'user_id'=>$userId,
@@ -176,6 +177,7 @@ abstract class BasePay
                     'price_info'=>$orderNo,
                     'price'=>-$price,
                     'remark'=>'查看消费',
+                    'create_time'=>date('Y-m-d H:i:s'),
                 );break;
             case 1:
                 $moneyHistory[]=array(
@@ -184,6 +186,7 @@ abstract class BasePay
                     'price_info'=>$orderNo,
                     'price'=>$price,
                     'remark'=>'购买消费充值',
+                    'create_time'=>date('Y-m-d H:i:s'),
                 );
                 $moneyHistory[]=array(
                     'user_id'=>$userId,
@@ -191,6 +194,7 @@ abstract class BasePay
                     'price_info'=>$orderNo,
                     'price'=>-$price,
                     'remark'=>'购买消费',
+                    'create_time'=>date('Y-m-d H:i:s'),
                 );break;
             case 2:
                 $moneyHistory[]=array(
@@ -199,6 +203,7 @@ abstract class BasePay
                     'price_info'=>$orderNo,
                     'price'=>$price,
                     'remark'=>'会员充值',
+                    'create_time'=>date('Y-m-d H:i:s'),
                 );
                 $moneyHistory[]=array(
                     'user_id'=>$userId,
@@ -206,6 +211,7 @@ abstract class BasePay
                     'price_info'=>$orderNo,
                     'price'=>-$price,
                     'remark'=>'会员充值',
+                    'create_time'=>date('Y-m-d H:i:s'),
                 );break;
         }
 
