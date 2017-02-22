@@ -120,6 +120,42 @@ class UserController extends CommonController
     }
 
     /**
+     * 获取用户的提现记录
+     * @param $token    用户标示
+     */
+    public function getUserWithdrawHistoryList(){
+
+        $this->_POST();
+        $keyAry = array(
+            "status" => ""
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+        $status = $parameters["status"] ? $parameters["status"] : 0;
+
+        $userInfo = $this->checkToken();
+        $userId = $userInfo["user_id"];
+        $whereSqlStr = " `user_id` = '$userId' ";
+        if($status > 0){
+
+            $whereSqlStr = $whereSqlStr . " AND `status` = $status ";
+        }
+
+        $withdrawHistoryModel = M("zuban_user_withdraw_history", '', "DB_DSN");
+        $this->pageAry["total"] = $withdrawHistoryModel->where($whereSqlStr)->count();
+        if($this->pageAry["total"] > 0){
+
+            $this->setPageRow();
+            $this->pageAry["list"] = $withdrawHistoryModel->where($whereSqlStr)->page($this->page, $this->row)->select();
+        }
+
+        return $this->returnSuccess($this->pageAry);
+    }
+
+    /**
      * 获取用户的交易记录
      * @param $token    用户标示
      */
@@ -137,12 +173,14 @@ class UserController extends CommonController
         }
 
         $userMoneyHistoryModel = M("zuban_user_money_history", '', "DB_DSN");
-        $userMoneyHistoryList = $userMoneyHistoryModel->where($whereSqlStr)->select();
+        $this->pageAry["total"] = $userMoneyHistoryModel->where($whereSqlStr)->count();
+        if($this->pageAry["total"] > 0){
 
-        if(!$userMoneyHistoryList || count($userMoneyHistoryList) <= 0){
-            $userMoneyHistoryList = array();
+            $this->setPageRow();
+            $this->pageAry["list"] = $userMoneyHistoryModel->where($whereSqlStr)->page($this->page, $this->row)->select();
         }
-        return $this->returnSuccess($userMoneyHistoryList);
+
+        return $this->returnSuccess($this->pageAry);
     }
 
     /**
