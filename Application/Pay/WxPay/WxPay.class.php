@@ -114,7 +114,7 @@ class WxPay extends BasePay
         $data = array();
 
         $data["appid"] = $this->config["APPID"]; //公众账号ID
-        $data["body"] = '有范订单'.$request['out_trade_no']; //商品描述 eg '有范订单11312321321312'
+        $data["body"] = '租伴网订单'.$request['out_trade_no']; //商品描述 eg '有范订单11312321321312'
         $data["mch_id"] = $partnerId;
 
         $data["nonce_str"] = $nonceStr;          
@@ -122,7 +122,7 @@ class WxPay extends BasePay
         $data["out_trade_no"] = $request['out_trade_no']; //订单号
         $data["spbill_create_ip"] = $this->get_client_ip(); //客户端ip
         $data["total_fee"] = $request['total_fee'];  //支付金额（分）
-        $data["trade_type"] = "APP";
+        $data["trade_type"] = "JSAPI";
         $data['sign'] = $this->makeSign($data); //md5签名
 
         $xml = $this->arrayToXml($data); //转换成xml对象

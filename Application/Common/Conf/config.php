@@ -98,8 +98,8 @@ return array(
         * */
 
     'PAY_CONFIG_WX' => array(
-        'APPID' => 'wxa320b84bf762d6e4',
-        'MCHID' => '1345361901',
+        'APPID' => 'wx3c5e318a8146f352',//租伴
+        'MCHID' => '1426145902',//租伴
         'KEY' => '6034e6f15423f86507eg794cf7b0519e',
         'APP_KEY' => '',
         'APPSECRET' => 'ce225e4db87c20dbcb619e594624f8c5',
