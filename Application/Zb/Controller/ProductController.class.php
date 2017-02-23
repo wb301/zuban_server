@@ -94,17 +94,8 @@ class ProductController extends CommonController {
             $this->returnErrorNotice("地区编码错误！");
         }
         //条件格式化
-        $categoryList = $this->category_list($categoryId);
-        if(empty($categoryList)){
-            $this->returnErrorNotice("分类信息错误！");
-        }
-        $regionList = $this->region_list($regionCode);
-        if(empty($regionList)){
-            $this->returnErrorNotice("地区信息错误！");
-        }
-
-        $categoryIdList = array_merge(array($categoryId),array_column(tree_to_List($categoryList), 'id'));
-        $regionCodeList = array_merge(array($regionCode),array_column(tree_to_List($regionList), 'code'));
+        $categoryIdList = array_merge(array($categoryId),array_column(tree_to_List($this->category_list($categoryId)), 'id'));
+        $regionCodeList = array_merge(array($regionCode),array_column(tree_to_List($this->region_list($regionCode)), 'code'));
 
         $categoryIdListStr = join(",",$categoryIdList);
         $regionCodeListStr = getListString($regionCodeList);
