@@ -172,7 +172,7 @@ class CommonController extends Controller
     {
         $field = $this->formatMapping($mapping);
         $tempBaseRegionModel = M('zuban_temp_base_region','','DB_DSN');
-        $regionRs = $tempBaseRegionModel->where('`status`= 1 AND `level`<='.$level)->field($field.'`code`,`parent_code`,`name`,`level`')->order(" `id` ASC,`level` ASC ")->select();
+        $regionRs = $tempBaseRegionModel->where("`status`= 1 AND `level`<= $level")->field("$field `code`,`parent_code`,`name`,`level`")->order(" `id` ASC,`level` ASC ")->select();
 
         return list_to_tree($regionRs,$code,"code","parent_code");
     }
@@ -182,7 +182,7 @@ class CommonController extends Controller
     {
         $field = $this->formatMapping($mapping);
         $tempCategoryModel = M('admin_product_category','','DB_DSN');
-        $categoryRs = $tempCategoryModel->where('`status`= 1 AND `level`<='.$level)->field($field.'`id`,`parent_id`,`category_name`,`level`,`img`')->order(" `sort` ASC,`level` ASC ")->select();
+        $categoryRs = $tempCategoryModel->where("`status`= 1 AND `level`<= $level")->field("$field `id`,`parent_id`,`category_name`,`level` ")->order(" `sort` ASC,`level` ASC ")->select();
 
         return list_to_tree($categoryRs,$id);
     }

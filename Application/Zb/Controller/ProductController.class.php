@@ -44,19 +44,33 @@ class ProductController extends CommonController {
         return $this->pageAry;
     }
 
-    //插入分类
-    private function insertCategory($productCode,$categoryList)
+    //获取查看价格
+    private function getLookPrice($isFree=1)
     {
-        $categoryNewList = array();
-        foreach ($categoryList as $key => $value) {
-            array_push($categoryNewList, array(
-                'product_sys_code' => $productCode,
-                'category_id' => $value['id'],
-                'category_name' => $value['name']
-            ));
+        $lookPrice = 0;
+        if($isFree <= 0){
+            $lookPrice = floatval($this->getSysConfig("LOOK_PRICE"));
         }
+        return $lookPrice;
+    }
+
+    //获取分类信息
+    private function getCategoryAry($categoryId)
+    {
+        $categoryId = intval($categoryId);
+        return M('admin_product_category','','DB_DSN')->where("`status`= 1 AND `id` = $categoryId")->find();
+    }
+
+    //插入分类
+    private function saveCategory($productCode,$category,$isUpdate=0)
+    {
         $categoryModel = M('zuban_product_category','','DB_DSN');
-        return $categoryModel->addAll($categoryNewList);
+        if($isUpdate <= 0){
+            $category['product_sys_code'] = $productCode;
+            return $categoryModel->add($category);
+        }else{
+            return $categoryModel->where("`product_sys_code` = '$productCode'")->save($category);
+        }
     }
 
     //插入附图
@@ -146,7 +160,7 @@ class ProductController extends CommonController {
         }
         //分类列表
         $categoryModel = M('zuban_product_category','','DB_DSN');
-        $categoryRs = $categoryModel->where("`product_sys_code` = '$productCode'")->field("`category_id`,`category_name`")->select();
+        $categoryRs = $categoryModel->where("`product_sys_code` = '$productCode'")->field("`category_id`,`category_name`")->find();
         if(empty($categoryRs)){
             $this->returnErrorNotice("分类信息错误！");
         }
@@ -178,7 +192,7 @@ class ProductController extends CommonController {
                 $returnUserInfo = base64_encode(json_encode($returnUserInfo));
             }
         }
-        $productAry['category_list'] = $categoryRs;
+        $productAry['category'] = $categoryRs;
         $productAry['image_list'] = $galleryRs;
         $productAry['user_info'] = $returnUserInfo;
 
@@ -206,22 +220,27 @@ class ProductController extends CommonController {
             'product_image' => "服务主图不能为空",
             'region_code' => "地区编码不能为空!",
             'region_name' => "地区信息不能为空!",
-            'category_list' => "服务类型不能为空!",
+            'category_id' => "服务类型不能为空!",
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry,$productInfo);
         if (!$parameters) {
             $this->returnErrorNotice('请求失败!');
         }
-        if(empty($productInfo['category_list'])|| count($productInfo['category_list']) <= 0){
+        if(intval($productInfo['category_id']) <= 0){
             $this->returnErrorNotice('请添加服务类型!');
+        }
+        //查询分类信息
+        $categoryAry = $this->getCategoryAry($productInfo['category_id']);
+        if(empty($categoryAry)){
+            $this->returnErrorNotice('服务类型错误!');
         }
 
         $userInfo = $this->checkToken();
         $userId = $userInfo['user_id'];
 
         $productCode = $this->createCode("PRODUCT_CODE");
-        $lookPrice = floatval($this->getSysConfig("LOOK_PRICE"));
+        $lookPrice = $this->getLookPrice($categoryAry['is_free']);
         $nowTime = date('Y-m-d H:i:s');
         //新增商品数据
         $goodsNewAry = array(
@@ -247,7 +266,10 @@ class ProductController extends CommonController {
         }
 
         //新增分类关系
-        $this->insertCategory($productCode,$productInfo['category_list']);
+        $this->saveCategory($productCode,array(
+            'category_id' => $productInfo['category_id'],
+            'category_name' => $categoryAry['category_name']
+        ));
 
         //新增附图
         if(!empty($productInfo['image_list'])){
@@ -289,7 +311,7 @@ class ProductController extends CommonController {
         if($productId <= 0){
             $this->returnErrorNotice('数据查询失败!');
         }
-        //修改商品数据
+        //格式化商品数据
         $goodsUpdateAry = array();
         if(isset($productInfo['price'])){
             $goodsUpdateAry['price'] = floatval($productInfo['price']);
@@ -310,15 +332,27 @@ class ProductController extends CommonController {
         if(isset($productInfo['status'])){ //状态  删除 0
             $goodsUpdateAry['status'] = intval($productInfo['status']);
         }
+        //检测服务类型
+        $categoryAry = null;
+        if(intval($productInfo['category_id']) > 0){
+            $categoryAry = $this->getCategoryAry($productInfo['category_id']);
+            if(empty($categoryAry)){
+                $this->returnErrorNotice('服务类型错误!');
+            }
+            $goodsUpdateAry['look_price'] = $this->getLookPrice($categoryAry['is_free']);
+        }
+        //修改商品数据
         $goodsUpdateAry['logitude'] = $userInfo['logitude'];
         $goodsUpdateAry['latitude'] = $userInfo['latitude'];
         $goodsUpdateAry['update_time'] = date('Y-m-d H:i:s');
         $productModel->where("`id` = $productId")->save($goodsUpdateAry);
 
-        //删除并新增分类关系
-        if(!empty($productInfo['category_list'])){
-            M('zuban_product_category','','DB_DSN')->where("`product_sys_code` = '$productCode'")->delete();
-            $this->insertCategory($productCode,$productInfo['category_list']);
+        //更新分类关系
+        if($categoryAry){
+            $this->saveCategory($productCode,array(
+                'category_id' => $productInfo['category_id'],
+                'category_name' => $categoryAry['category_name']
+            ),1);
         }
 
         //删除并新增附图
