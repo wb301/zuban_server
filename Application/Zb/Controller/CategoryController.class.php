@@ -12,7 +12,7 @@ class CategoryController extends CommonController {
 		获取分类列表
 
 	*/
-    public function getCategoryList($id=1,$level=100,$mapping=null)
+    public function getCategoryList($id=1,$level=3,$mapping=null)
     {
     	$id = intval($id);
         if($id < 0){
