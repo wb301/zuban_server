@@ -102,6 +102,16 @@ abstract class BasePay
         //*******事务开始*********
         $transModel = M();
         $transModel->startTrans();
+        //0.抽成
+        $rakePrice=$this->settlementPrice($orderRs,$tradeNo);
+        $returnPrice=$rakePrice['decPrice'];
+        $regionMoney=M('admin_region_money_history','','DB_DSN');
+        $insertRegionMoneyResult = $transModel->db(0, 'DB_DSN')->table('admin_region_money_history')->addAll($rakePrice['add']);
+        if(!$insertRegionMoneyResult){
+            $this->logPay('notify channel='.$channel.' insertRegionMoney sql='.$regionMoney->getLastSql(), 'ERR');
+            $transModel->rollback();
+            return $result;
+        }
         //1.订单状态变更
         $upDataOrder = array(
             'notice_trade_no' => $tradeNo,
@@ -112,9 +122,9 @@ abstract class BasePay
         //消费订单状态变成已支付
         if($orderRs['order_type']==1){
             $upDataOrder['status']=1;
-            $upDataOrder['return_price']=0;//获取
+            $upDataOrder['return_price']=$returnPrice;//获取
         }
-        $upOrderResult = $transModel->table('zuban_order')->where($whereOrder)->save($upDataOrder);
+        $upOrderResult = $transModel->db(0, 'DB_DSN')->table('zuban_order')->where($whereOrder)->save($upDataOrder);
         if(!$upOrderResult){
             $this->logPay('notify channel='.$channel.' updateOrder sql='.$orderModel->getLastSql(), 'ERR');
             $transModel->rollback();
@@ -140,16 +150,16 @@ abstract class BasePay
             'pay_type' => $channel,
         );
         $orderPayRecordModel=M('zuban_order_pay_record','','DB_DSN');
-        $upOrderPayRecordResult = $transModel->table('zuban_order_pay_record')->where($whereOrderPayRecord)->save($upDataOrderPayRecord);
+        $upOrderPayRecordResult = $transModel->db(0, 'DB_DSN')->table('zuban_order_pay_record')->where($whereOrderPayRecord)->save($upDataOrderPayRecord);
          if(!$upOrderPayRecordResult){
             $this->logPay('notify channel='.$channel.' updatePayrecord sql='.$orderPayRecordModel->getLastSql(), 'ERR');
             $transModel->rollback();
             return $result;
         }
         //4.消费记录钱包核算
-        $moneyHistory=$this->getHistyAry($orderRs['order_type'],$orderRs['user_id'],$price,$orderRs['order_no']);
+        $moneyHistory=$this->getHistyAry($orderRs,$price,$returnPrice);
         $moneyHistoryModel=M('zuban_user_money_history','','DB_DSN');
-        $addMoneyHistoryResult = $transModel->table('zuban_user_money_history')->addAll($moneyHistory);
+        $addMoneyHistoryResult = $transModel->db(0, 'DB_DSN')->table('zuban_user_money_history')->addAll($moneyHistory);
         if(!$addMoneyHistoryResult){
             $this->logPay('notify channel='.$channel.' addMoneyHistory sql='.$moneyHistoryModel->getLastSql(), 'ERR');
             $transModel->rollback();
@@ -160,7 +170,7 @@ abstract class BasePay
         if($orderRs['order_type']==2){
             $vipTimeAry=$this->getVipTime($orderRs['user_id'],$orderRs['member_code'],$orderRs['price']);
             $vipModel=M('zuban_user_vip','','DB_DSN');
-            $vipResult = $transModel->table('zuban_user_vip')->add($vipTimeAry);
+            $vipResult = $transModel->db(0, 'DB_DSN')->table('zuban_user_vip')->add($vipTimeAry);
             if(!$vipResult){
                 $this->logPay('notify channel='.$channel.' addVipTime sql='.$vipModel->getLastSql(), 'ERR');
                 $transModel->rollback();
@@ -177,56 +187,66 @@ abstract class BasePay
 
 
     //消费记录
-    protected function getHistyAry($orderType,$userId,$price,$orderNo){
+    protected function getHistyAry($orderInfo,$price,$lastPrice){
         $moneyHistory=array();
-        switch($orderType){
+        switch($orderInfo['order_type']){
             case 0:
                 $moneyHistory[]=array(
-                    'user_id'=>$userId,
+                    'user_id'=>$orderInfo['user_id'],
                     'price_type'=>1,
-                    'price_info'=>$orderNo,
+                    'price_info'=>$orderInfo['order_no'],
                     'price'=>$price,
                     'remark'=>'查看消费充值',
                     'create_time'=>date('Y-m-d H:i:s'),
                 );
                 $moneyHistory[]=array(
-                    'user_id'=>$userId,
+                    'user_id'=>$orderInfo['user_id'],
                     'price_type'=>2,
-                    'price_info'=>$orderNo,
+                    'price_info'=>$orderInfo['order_no'],
                     'price'=>-$price,
                     'remark'=>'查看消费',
                     'create_time'=>date('Y-m-d H:i:s'),
                 );break;
             case 1:
                 $moneyHistory[]=array(
-                    'user_id'=>$userId,
+                    'user_id'=>$orderInfo['user_id'],
                     'price_type'=>1,
-                    'price_info'=>$orderNo,
+                    'price_info'=>$orderInfo['order_no'],
                     'price'=>$price,
                     'remark'=>'购买消费充值',
                     'create_time'=>date('Y-m-d H:i:s'),
                 );
                 $moneyHistory[]=array(
-                    'user_id'=>$userId,
+                    'user_id'=>$orderInfo['user_id'],
                     'price_type'=>2,
-                    'price_info'=>$orderNo,
+                    'price_info'=>$orderInfo['order_no'],
                     'price'=>-$price,
                     'remark'=>'购买消费',
                     'create_time'=>date('Y-m-d H:i:s'),
-                );break;
+                );
+                if($lastPrice>0){
+                    $moneyHistory[]=array(
+                        'user_id'=>$orderInfo['product_user'],
+                        'price_type'=>3,
+                        'price_info'=>$orderInfo['order_no'],
+                        'price'=>$lastPrice,
+                        'remark'=>'收入',
+                        'create_time'=>date('Y-m-d H:i:s'),
+                    );break;
+                }
             case 2:
                 $moneyHistory[]=array(
-                    'user_id'=>$userId,
+                    'user_id'=>$orderInfo['user_id'],
                     'price_type'=>1,
-                    'price_info'=>$orderNo,
+                    'price_info'=>$orderInfo['order_no'],
                     'price'=>$price,
                     'remark'=>'会员充值',
                     'create_time'=>date('Y-m-d H:i:s'),
                 );
                 $moneyHistory[]=array(
-                    'user_id'=>$userId,
+                    'user_id'=>$orderInfo['user_id'],
                     'price_type'=>6,
-                    'price_info'=>$orderNo,
+                    'price_info'=>$orderInfo['order_no'],
                     'price'=>-$price,
                     'remark'=>'会员充值',
                     'create_time'=>date('Y-m-d H:i:s'),
@@ -295,6 +315,107 @@ abstract class BasePay
         }else{
             $m->where($where)->setInc('times', 1);
         }
+    }
+
+
+    private function settlementPrice($orderInfo,$tradeNo)
+    {
+        $price = $orderInfo['price'];
+        $orderNo = $orderInfo['order_no'];
+        $nowTime = date('Y-m-d H:i:s');
+        $decPrice = 0; //卖家抽成
+        //判断订单类型
+        $orderType = intval($orderInfo['order_type']);
+        $addAry=array();
+        if($orderType == 1){ //购买订单
+            $userId = $orderInfo['user_id'];
+            $regRegionCode = M('zuban_user_base','','DB_DSN')->where("`user_id` = '$userId' ")->getField("region_code");//注册地code
+            $serverRegionCode = $orderInfo['from_source'];//服务地code
+            $maxRegionCode = C('MAX_REGION_CODE');//平台默认
+
+            $regionCodeStr = "'$regRegionCode','$serverRegionCode','$maxRegionCode'";
+
+            //查询adminCode
+            $regionAdminAry = M('admin_region_manager','','DB_DSN')->where("`region_code` IN ($regionCodeStr) AND `status` = 1")->getField("region_code, admin_code");
+
+            $maxAdminCode = C('MAX_BOSS_CODE');
+            if(isset($regionAdminAry[$maxRegionCode])){
+                $maxAdminCode = $regionAdminAry[$maxRegionCode];
+            }
+            $regAdminCode = $maxAdminCode;
+            if(isset($regionAdminAry[$regRegionCode])){
+                $regAdminCode = $regionAdminAry[$regRegionCode];
+            }
+            $serverAdminCode = $maxAdminCode;
+            if(isset($regionAdminAry[$serverRegionCode])){
+                $serverAdminCode = $regionAdminAry[$serverRegionCode];
+            }
+            //系统配置
+            $sysAry = M("admin_system_config", 0, "DB_DSN")->where("`status` = 1 AND `is_auto` = 0 ")->getField("config_key,config_value");
+            $toMaxPrice = floatval($sysAry['AS_PLATFORM'] / C('DENO') * $price);
+            $toRegPrice = floatval($sysAry['AS_REGISTERED'] / C('DENO') * $price);
+            $toServerPrice = floatval($sysAry['AS_CONSUM'] / C('DENO') * $price);
+
+            $remark = "服务购买收费,订单号:".$orderNo.",交易流水号:".$tradeNo."。";
+            //插入收入记录
+            $addAry=array(
+                array(//平台
+                    'region_code' => $maxRegionCode,
+                    'admin_code' => $maxAdminCode,
+                    'price_type' => 1,
+                    'remark' => $remark,
+                    'price' => $toMaxPrice,
+                    'create_time' => $nowTime
+                ),
+                array(//注册地
+                    'region_code' => $regRegionCode,
+                    'admin_code' => $regAdminCode,
+                    'price_type' => 1,
+                    'remark' => $remark,
+                    'price' => $toRegPrice,
+                    'create_time' => $nowTime
+                ),
+                array(//服务地
+                    'region_code' => $serverRegionCode,
+                    'admin_code' => $serverAdminCode,
+                    'price_type' => 1,
+                    'remark' => $remark,
+                    'price' => $toServerPrice,
+                    'create_time' => $nowTime
+                )
+            );
+            $decPrice = $price-$toMaxPrice-$toRegPrice-$toServerPrice;
+        }else{
+            //查看订单,会员充值订单，其他
+            $toMaxPrice = $price;
+            $decPrice = $price - $toMaxPrice;
+            //抽成100%归平台
+            $maxRegionCode = C('MAX_REGION_CODE'); //平台默认
+            $maxAdminCode = M('admin_region_manager','','DB_DSN')->where("`region_code` = '$maxRegionCode' AND `status` = 1")->getField("admin_code");
+            if(!$maxAdminCode){
+                $maxAdminCode = C('MAX_BOSS_CODE');
+            }
+            $remarkMap = array(
+                0 => "查看服务信息",
+                2 => "充值会员"
+            );
+            $remark = "其他";
+            if(isset($remarkMap[$orderType])){
+                $remark = $remarkMap[$orderType];
+            }
+            $remark .="收费,订单号:".$orderNo.",交易流水号:".$tradeNo."。";
+            $addAry=array(
+                array(
+                    'region_code' => $maxRegionCode,
+                    'admin_code' => $maxAdminCode,
+                    'price_type' => 1,
+                    'remark' => $remark,
+                    'price' => $toMaxPrice,
+                    'create_time' => $nowTime
+                )
+            );
+        }
+        return array('decPrice'=>$decPrice,'add'=>$addAry);
     }
 
 }
