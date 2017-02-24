@@ -21,7 +21,7 @@ class RegionController extends CommonController {
         if($fixAll > 0){
             $push = $regionList[0];
             unset($push['children']);
-            $regionList = $this->fixAllForTree($regionList,$push,$level-2,$mapping,"全部","name","code","parent_code");
+            $regionList = $this->fixAllForTree($regionList,$push,$level-2,$mapping,"全国","name","code","parent_code");
         }
         $this->returnSuccess($regionList);
     }
