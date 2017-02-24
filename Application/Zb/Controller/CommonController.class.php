@@ -207,7 +207,6 @@ class CommonController extends Controller
                 }else{
                     $push = $value;
                 }
-                $push = $value;
                 $set = $value[$name];
                 unset($push[$children]);
                 $list[$key][$children] = $this->fixAllForTree($value[$children],$push,$level,$mapping,$set,$name,$pk,$ppk,$children);
