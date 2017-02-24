@@ -38,7 +38,7 @@ class ProductController extends CommonController {
         if(isset($this->orderByMap[$orderBy])){
             $order = $this->orderByMap[$orderBy];
         }
-        $sql = "SELECT g.* $fied FROM `zuban_product_goods` AS g LEFT JOIN  `zuban_product_category` AS c ON c.`product_sys_code` = g.`product_sys_code` WHERE $where $order LIMIT ".($this->page-1)*$this->row.",".$this->row.";";
+        $sql = "SELECT c.`category_id`,c.`category_name`,g.* $fied FROM `zuban_product_goods` AS g LEFT JOIN  `zuban_product_category` AS c ON c.`product_sys_code` = g.`product_sys_code` WHERE $where $order LIMIT ".($this->page-1)*$this->row.",".$this->row.";";
         $this->pageAry['list'] = $productModel->query($sql);
 
         return $this->pageAry;
