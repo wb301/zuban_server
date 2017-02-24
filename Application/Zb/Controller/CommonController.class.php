@@ -77,12 +77,13 @@ class CommonController extends Controller
             $productList[$key]['look_price'] = 0;
             $productList[$key]['price_type'] = 1;
             $productList[$key]['status'] = 0;
+            $productList[$key]['product_info'] = '';
             $productList[$key]['num'] = $value['num'];
             array_push($proCodeList, $value['product_sys_code']);
         }
         $proCodeListStr = getListString($proCodeList);
         $productGoodsModel = M('zuban_product_goods', '', 'DB_DSN');
-        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`look_price`")->select();
+        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`look_price`,`product_info`")->select();
         if (count($productRs) > 0) {
             foreach ($productList AS $key => $value) {
                 $proCode = $value['product_sys_code'];
@@ -91,12 +92,12 @@ class CommonController extends Controller
                             $productList[$key]['price'] = $v['price'];
                             $productList[$key]['look_price'] = $v['look_price'];
                             $productList[$key]['price_type'] = $v['price_type'];
+                            $productList[$key]['product_info'] = $v['product_info'];
                             $productList[$key]['status'] = $v['status'];
                         }
                     }
                 }
             }
-
         return $productList;
 
     }
@@ -109,7 +110,7 @@ class CommonController extends Controller
     public function  getProductListByCode($productCodeList){
         $proCodeListStr = getListString($productCodeList);
         $productGoodsModel = M('zuban_product_goods', '', 'DB_DSN');
-        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`product_name`,`look_price`,`product_image`,`product_phone`,`profession`,`region_code`")->select();
+        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`look_price`,`product_image`,`region_name`,`region_code`,`product_info`")->select();
         return $productRs;
 
     }
