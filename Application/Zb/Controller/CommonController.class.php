@@ -187,6 +187,34 @@ class CommonController extends Controller
         return list_to_tree($categoryRs,$id);
     }
 
+    protected function fixAllForTree($list,$p,$level,$mapping=null,$set,$name,$pk,$ppk,$children="children")
+    {
+        $p[$name] = $set;
+        $p[$pk] = $p[$ppk];
+        if($mapping){
+            $p[$mapping[$name]] = $p[$name];
+            $p[$mapping[$pk]] = $p[$pk];
+        }
+        if($level > 0){
+            $p[$children] = [];
+        }
+        $level--;
+        $list = array_merge(array($p), $list);
+        foreach ($list as $key => $value) {
+            if(isset($value[$children])){
+                if(count($value[$children]) > 0){
+                    $push = $value[$children][0];
+                }else{
+                    $push = $value;
+                }
+                unset($push[$children]);
+                $list[$key][$children] = $this->fixAllForTree($value[$children],$push,$level,$mapping,$set,$name,$pk,$ppk,$children);
+            }
+
+        }
+        return $list;
+    }
+
     /**
      * 获取用户钱包
      * params:user_id
