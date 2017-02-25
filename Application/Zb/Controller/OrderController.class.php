@@ -289,7 +289,9 @@ class OrderController extends CommonController {
         $statusMap = array(
             'ALL' => array(),
             'WaitingPay' => array(0),
-            'End' => array(6, 10, 15),
+            'WaitingConfirm' => array(1),
+            'Ongoing' => array(5),
+            'End' => array(6,10),
         );
 
         $rs = array(
