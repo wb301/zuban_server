@@ -137,7 +137,7 @@ class ProductController extends CommonController {
         if($status >= 0 && $status <= 2){
             $where .= " AND `status` = $status";
         }
-        $this->pageAry = $this->getProductList($where,$orderBy);
+        $this->pageAry = $this->getProductList($where,null,$orderBy);
 
         $this->returnSuccess($this->pageAry);
     }
