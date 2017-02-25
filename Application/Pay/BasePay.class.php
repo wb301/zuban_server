@@ -224,7 +224,7 @@ abstract class BasePay
                     'remark'=>'购买消费',
                     'create_time'=>date('Y-m-d H:i:s'),
                 );
-                if($lastPrice>0){
+                /*if($lastPrice>0){
                     $moneyHistory[]=array(
                         'user_id'=>$orderInfo['product_user'],
                         'price_type'=>3,
@@ -233,7 +233,7 @@ abstract class BasePay
                         'remark'=>'收入',
                         'create_time'=>date('Y-m-d H:i:s'),
                     );break;
-                }
+                }*/
             case 2:
                 $moneyHistory[]=array(
                     'user_id'=>$orderInfo['user_id'],

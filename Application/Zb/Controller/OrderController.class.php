@@ -322,13 +322,22 @@ class OrderController extends CommonController {
             $this->returnSuccess($rs);
         }
         $orderNoList = array();
+        $userIdList=array();
         foreach ($orderRs as $key => $value) {
             $status = $value['status'];
-            if ($status <= 5 && $status > 0) {
-                $status = 5;
-            }
-            $orderRs[$key]['status_name'] = $this->getSatusOrder($status, 0);
+            $orderRs[$key]['status_name'] = $this->getSatusOrder($status);
             array_push($orderNoList, $value['order_no']);
+            if(isset($value['user_id'])&&strlen($value['user_id'])>0){
+                array_push($userIdList,$value['user_id']);
+            }
+            if(isset($value['product_user'])&&strlen($value['product_user'])>0){
+                array_push($userIdList,$value['product_user']);
+            }
+        }
+        if(count($userIdList)>0){
+            $userBaseModel = M("zuban_user_base", '', "DB_DSN");
+            $where['user_id']=array('IN',$userIdList);
+            $userInfo = $userBaseModel->where($where)->getField("`user_id`,`head_img`,`nick_name`",true);
         }
         $orderNoListStr = getListString($orderNoList);
         $orderProductModel = M('zuban_order_product', '', 'DB_DSN');
@@ -363,6 +372,8 @@ class OrderController extends CommonController {
         //绑定到订单
         foreach ($orderRs as $key => $value) {
             $orderNo = $value['order_no'];
+            $orderRs[$key]['buyers'] = $userInfo[$value['user_id']];
+            $orderRs[$key]['seller'] = $userInfo[$value['product_user']];
             $orderRs[$key]['productList'] = array();
             foreach ($orderProductRs as $ok => $ov) {
                 if ($orderNo == $ov['order_no']) {
@@ -482,7 +493,7 @@ class OrderController extends CommonController {
         //检测用户userId
         $userId = $this->checkToken(1)['user_id'];
         $orderModel = M('zuban_order', '', 'DB_DSN');
-        $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->field("`id`,`user_id`,`order_no`,`price`,`status`,`create_time`")->select();
+        $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->field("`return_price`,`user_id`,`order_no`,`price`,`status`,`product_user`")->select();
         if (!$orderRs || count($orderRs) <= 0) {
             $this->returnErrorNotice('订单编号错误!');
         }
@@ -507,7 +518,7 @@ class OrderController extends CommonController {
 
 
     /**
-     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=orderConfirm&token=1111&orderNo=14876127851000103530
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=orderConfirm&token=a69c61a9416b393cf4ad28a2fd575839&orderNo=14878564061001000007
      * 确认收货接口
      * 请求方式:get
      * 服务名:Order
@@ -520,6 +531,19 @@ class OrderController extends CommonController {
         $rs=$this->updateOrderStatus($orderNo,5,6);
         if(count($rs)<=0){
             $this->returnErrorNotice('确认失败!');
+        }
+        $moneyHistory=array(
+            'user_id'=>$rs['product_user'],
+            'price_type'=>3,
+            'price_info'=>$rs['order_no'],
+            'price'=>$rs['return_price'],
+            'remark'=>'收入',
+            'create_time'=>date('Y-m-d H:i:s'),
+        );
+        $moneyHistoryModel=M('zuban_user_money_history','','DB_DSN');
+        $addMoneyHistoryResult = $moneyHistoryModel->add($moneyHistory);
+        if(!$addMoneyHistoryResult){
+            $this->returnErrorNotice('收货异常');
         }
         $orderProductModel = M('zuban_order_product','','DB_DSN');
         $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
