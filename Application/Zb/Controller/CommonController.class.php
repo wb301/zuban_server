@@ -111,6 +111,13 @@ class CommonController extends Controller
         $proCodeListStr = getListString($productCodeList);
         $productGoodsModel = M('zuban_product_goods', '', 'DB_DSN');
         $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`look_price`,`product_image`,`region_name`,`region_code`,`product_info`")->select();
+        //获取分类名称
+        $productCategoryModel = M('zuban_product_category', '', 'DB_DSN');
+        $category = $productCategoryModel->where("`product_sys_code` IN ($proCodeListStr)")->getField("`product_sys_code`,`category_name`");
+
+        foreach($productRs AS $key=>$vale){
+            $productRs[$key]['category_name']=$category[$vale['product_sys_code']];
+        }
         return $productRs;
 
     }
