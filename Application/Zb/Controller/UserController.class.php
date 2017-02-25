@@ -18,8 +18,12 @@ class UserController extends CommonController
 
         $userInfo = $this->checkToken();
         $userBase = $this->checkUserId($userInfo["user_id"]);
+        $userBase["nick_name"] = $userBase["nick_name"] ? $userBase["nick_name"] : '昵称';
         $userBase["money"] = $this->getUserMoneyInfo($userInfo["user_id"]);
         $userBase["vip"] = $this->getVip($userInfo["user_id"]);
+
+        $tempBaseRegionModel = M('zuban_temp_base_region','','DB_DSN');
+        $userBase["region_name"] = $tempBaseRegionModel->where("`code` = " . $userBase["region_code"])->getField("name");
 
         return $this->returnSuccess($userBase);
     }
@@ -50,22 +54,24 @@ class UserController extends CommonController
         $whereArr = array("user_id" => $userInfo["user_id"]);
         $saveArr = array();
 
-        if( isset($parameters['head_img']) )
+        if( !empty($parameters['head_img']) )
             $saveArr["head_img"] = $parameters['head_img'];
-        if( isset($parameters['nick_name']) )
+        if( !empty($parameters['nick_name']) )
             $saveArr["nick_name"] = $parameters['nick_name'];
-        if( isset($parameters['age']) )
+        if( !empty($parameters['age']) )
             $saveArr["age"] = $parameters['age'];
-        if( isset($parameters['sex']) )
+        if( !empty($parameters['sex']) )
             $saveArr["sex"] = $parameters['sex'];
-        if( isset($parameters['height']) )
+        if( !empty($parameters['height']) )
             $saveArr["height"] = $parameters['height'];
-        if( isset($parameters['weight']) )
+        if( !empty($parameters['weight']) )
             $saveArr["weight"] = $parameters['weight'];
-        if( isset($parameters['professional']) )
+        if( !empty($parameters['professional']) )
             $saveArr["professional"] = $parameters['professional'];
-        if( isset($parameters['qualifications']) )
+        if( !empty($parameters['qualifications']) )
             $saveArr["qualifications"] = $parameters['qualifications'];
+        if( !empty($parameters['wx_account']) )
+            $saveArr["wx_account"] = $parameters['wx_account'];
 
         $userBaseModel = M("zuban_user_base", '', "DB_DSN");
         if(count($saveArr) > 0){
@@ -73,6 +79,9 @@ class UserController extends CommonController
         }
 
         $userInfo = $userBaseModel->where($whereArr)->find();
+        $tempBaseRegionModel = M('zuban_temp_base_region','','DB_DSN');
+        $userInfo["region_name"] = $tempBaseRegionModel->where("`code` = " . $userInfo["region_code"])->getField("name");
+
         return $this->returnSuccess($userInfo);
     }
 
@@ -196,9 +205,9 @@ class UserController extends CommonController
     {
         $this->_POST();
         $keyAry = array(
-            'old_password' => "旧密码不能为空",
-            'password' => "新密码不能为空",
-            'token' =>  ""
+            'account' => "手机号码不能为空",
+            'code' => "验证码不能为空",
+            'password' => "新密码不能为空"
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry);
@@ -206,28 +215,20 @@ class UserController extends CommonController
             $this->returnErrorNotice('请求失败!');
         }
 
-        $token = $parameters['token'];
-        $oldPassword = $parameters['old_password'];
+        $account = $parameters['account'];
+        $code = $parameters['code'];
         $password = $parameters['password'];
+        //这里检测一下手机号码和验证码是否正确
+        $checkRes = $this->checkAccountByCode($account, $code);
+        if(!$checkRes)
+            return $this->returnErrorNotice("验证码错误");
 
-        if($oldPassword == $password) {
-            $this->returnErrorNotice('新密码不得与旧密码相同');
-        }
+        $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
+        $userInfo = $userBaseModel->where(array("account" => $account))->find();
+        if( !$userInfo )
+            return $this->returnErrorNotice("帐号不存在");
 
-        $userInfo = $this->getUserInfoByToken($token);
-        if(!$userInfo) {
-            $this->returnErrorNotice('用户不存在');
-        }
-
-        $pwdDb = $userInfo['password'];
-        $isSame = (md5($oldPassword) === md5($pwdDb));
-        if(!$isSame) {
-            $this->returnErrorNotice('用户输入的旧密码不正确');
-        }
-
-        $userBaseModel = M("zuban_user_base", '', "DB_DSN");
         $userBaseModel->where(array("user_id" => $userInfo["user_id"]))->save(array("password" => md5($password)));
-
         $this->returnSuccess(true);
     }
 
@@ -286,6 +287,14 @@ class UserController extends CommonController
 
         $phone = $parameters["mobile"];
         $from = $parameters["from"] ? $parameters["from"] : 1;
+
+        if($from == 1){
+            $userBaseModel = M("zuban_user_base", '', "DB_DSN");
+            $userCount = $userBaseModel->where(array("account" => $phone))->count();
+            if($userCount){
+                $this->returnErrorNotice('该手机号码已注册!');
+            }
+        }
 
         $mobile_code = $this->random(6,1);
         if(!$template_code){$template_code='';}
