@@ -132,9 +132,9 @@ class CommonController extends Controller
 
         $statusNameAry=array(
             '0'=>'待付款',
-            '1'=>'待发货',
-            '5'=>'已发货',
-            '6'=>'交易完成',
+            '1'=>'待确认',
+            '5'=>'进行中',
+            '6'=>'已完成',
             '15'=>'交易关闭',
         );
         return $statusNameAry[$status];
