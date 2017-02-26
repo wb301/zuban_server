@@ -281,12 +281,13 @@ class OrderController extends CommonController {
      * @param $pageSize 页数
      * @param $isDelete 是否删除
      */
-    public function orderCommonFilter($token, $status = "ALL", $page = 1, $row = 10,$type = 0)
+    public function orderCommonFilter($token, $status = "ALL",$type = 0)
     {
 
         if (!$token || strlen($token) <= 0 || !$status || strlen($status) < 0) {
             $this->returnErrorNotice('参数错误!');
         }
+        $this->setPageRow();
         $statusMap = array(
             'ALL' => array(),
             'WaitingPay' => array(0),
@@ -314,13 +315,13 @@ class OrderController extends CommonController {
             $statusListStr = getListString($statusList);
             $whereSql .= "AND `status` IN ($statusListStr) ";
         }
-        $whereSql.=" AND `is_delete`=0 ";
+        $whereSql.=" AND `is_delete`=0  AND `order_type`!= 2 ";
         $orderModel = M('zuban_order', '', 'DB_DSN');
         $orderCount = $orderModel->where($whereSql)->count();
         if ($orderCount <= 0) {
             $this->returnSuccess($rs);
         }
-        $orderRs = $orderModel->where($whereSql)->order("`create_time` DESC ")->page($page, $row)->select();
+        $orderRs = $orderModel->where($whereSql)->order("`create_time` DESC ")->page($this->page, $this->row)->select();
         if (count($orderRs) <= 0) {
             $this->returnSuccess($rs);
         }
