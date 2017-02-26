@@ -84,7 +84,7 @@ return array(
         'prePay'=>'Order/prePay',//获取预支付订单
     ),
 
-
+    'VIPLIST'             =>  'VIP_LIST',
 
     /*
     * 微信支付配置

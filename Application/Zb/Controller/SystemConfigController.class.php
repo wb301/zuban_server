@@ -12,8 +12,11 @@ class SystemConfigController extends CommonController {
     public function getVipPayList()
     {
 
-        $vipJson = $this->getSysConfig('VIP_LIST');
-        $this->returnSuccess($vipJson);
+        $userInfo = $this->checkToken();
+        $vipInfo = $this->getVip($userInfo["user_id"]);
+        $vipConfig = json_decode($this->getSysConfig('VIP_LIST'), true);
+
+        $this->returnSuccess(array("info" => $vipInfo, "config" => $vipConfig));
     }
 
     /**
@@ -24,18 +27,21 @@ class SystemConfigController extends CommonController {
         $vipList = array(
                         array(
                             "img"   =>  "",
+                            "name" => "银卡会员",
                             "level" =>  1,
                             "price" =>  20,
                             "month" => 1
                         ),
                         array(
                             "img"   =>  "",
+                            "name" => "金卡会员",
                             "level" =>  2,
                             "price" =>  50,
                             "month" => 3
                         ),
                         array(
                             "img"   =>  "",
+                            "name" => "钻卡会员",
                             "level" =>  3,
                             "price" =>  120,
                             "month" => 12
