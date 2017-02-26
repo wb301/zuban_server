@@ -281,10 +281,10 @@ class OrderController extends CommonController {
      * @param $pageSize 页数
      * @param $isDelete 是否删除
      */
-    public function orderCommonFilter($token, $status = "ALL", $pageIndex = 1, $pageSize = 20,$type = 0)
+    public function orderCommonFilter($token, $status = "ALL", $page = 1, $row = 10,$type = 0)
     {
 
-        if (!$token || strlen($token) <= 0 || $pageIndex < 0 || $pageSize < 0 || !$status || strlen($status) < 0) {
+        if (!$token || strlen($token) <= 0 || !$status || strlen($status) < 0) {
             $this->returnErrorNotice('参数错误!');
         }
         $statusMap = array(
@@ -320,7 +320,7 @@ class OrderController extends CommonController {
         if ($orderCount <= 0) {
             $this->returnSuccess($rs);
         }
-        $orderRs = $orderModel->where($whereSql)->order("`create_time` DESC ")->page($pageIndex, $pageSize)->select();
+        $orderRs = $orderModel->where($whereSql)->order("`create_time` DESC ")->page($page, $row)->select();
         if (count($orderRs) <= 0) {
             $this->returnSuccess($rs);
         }
