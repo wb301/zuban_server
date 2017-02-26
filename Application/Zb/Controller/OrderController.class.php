@@ -268,6 +268,7 @@ class OrderController extends CommonController {
     }
 
 
+
     /**
      * 我的订单列表
      * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=orderCommonFilter&token=1111&status=ALL&pageSize=20&pageIndex=1&type=0
@@ -394,7 +395,7 @@ class OrderController extends CommonController {
 
     /**
      * 订单详情
-     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=getOrderDetails&token=1111&orderNo=14876127851000103530
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=getOrderDetails&token=422c7de3a240bbc32b684657cd947bd9&orderNo=14878565271001000008
      * */
     public function getOrderDetails($orderNo,$token){
 
@@ -412,6 +413,13 @@ class OrderController extends CommonController {
         $orderRs=$orderRs[0];
         $orderNo=$orderRs['order_no'];
         $orderRs['status_name']=$this->getSatusOrder($orderRs['status']);
+        $userIdList[]=$orderRs['user_id'];
+        $userIdList[]=$orderRs['product_user'];
+        if(count($userIdList)>0){
+            $userBaseModel = M("zuban_user_base", '', "DB_DSN");
+            $where['user_id']=array('IN',$userIdList);
+            $userInfo = $userBaseModel->where($where)->getField("`user_id`,`head_img`,`nick_name`",true);
+        }
         $orderProductModel = M('zuban_order_product','','DB_DSN');
         $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->select();
         if (!$orderProductRs || count($orderProductRs) <= 0) {
@@ -441,6 +449,8 @@ class OrderController extends CommonController {
         }
         //绑定到订单
         $orderRs['productList']=$orderProductRs[0];
+        $orderRs['buyers'] = $userInfo[$orderRs['user_id']];
+        $orderRs['seller'] = $userInfo[$orderRs['product_user']];
         $this->returnSuccess($orderRs);
 
     }

@@ -116,7 +116,7 @@ class WxPay extends BasePay
         $data["appid"] = $this->config["APPID"]; //公众账号ID
         $data["body"] = '租伴网订单'.$request['out_trade_no']; //商品描述 eg '有范订单11312321321312'
         $data["mch_id"] = $partnerId;
-
+        $data["openid"] = $request['openid'];//微信的openid
         $data["nonce_str"] = $nonceStr;          
         $data["notify_url"] = $this->config['NOTIFY_URL']; //异步通知地址
         $data["out_trade_no"] = $request['out_trade_no']; //订单号
