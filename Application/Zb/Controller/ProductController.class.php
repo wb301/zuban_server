@@ -172,28 +172,22 @@ class ProductController extends CommonController {
             $galleryRs = array();
         }
 
+        $userId = $productAry['user_id'];
         //查询当前用户
         $userInfo = $this->checkToken(0);
+        //查询是否为会员
+        $vipLevel = intval($this->getVip($userId));
         $returnUserInfo = "";
-        if(!empty($userInfo)){
-            $userId = $userInfo['user_id'];
-            if($userId == $productAry['user_id']){
-                //是自己
-                $returnUserInfo = $userInfo;
-            }else{
-                //查询是否为会员
-                $vipCount = intval($this->getVip($userId));
-                if($vipCount > 0){
-                    $userModel = M('zuban_user_base','','DB_DSN');
-                    $returnUserInfo = $userModel->where("`user_id` = '$userId' ")->find();
-                }
-            }
-            if(!empty($returnUserInfo)){
-                $returnUserInfo = base64_encode(json_encode($returnUserInfo));
-            }
+        if(!empty($userInfo) && $userInfo['user_id'] == $userId){
+            //是自己
+            $returnUserInfo = $userInfo;
+        }else{
+            $userModel = M('zuban_user_base','','DB_DSN');
+            $returnUserInfo = $userModel->where("`user_id` = '$userId' ")->find();
         }
         $productAry['category'] = $categoryRs;
         $productAry['image_list'] = $galleryRs;
+        $productAry['vip_level'] = $vipLevel;
         $productAry['user_info'] = $returnUserInfo;
 
         $this->returnSuccess($productAry);
