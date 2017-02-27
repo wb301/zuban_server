@@ -58,6 +58,7 @@ class RegisterController extends CommonController
         				  'head_img' => $parameters['head_img'] ? $parameters['head_img'] : 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3443117432,1239143495&fm=21&gp=0.jpg',
                           'wx_openid' => '',
         				  'region_code' => $region_code,
+                          'region_name' => $region_name,
                           'nick_name' => $parameters['nick_name'] ? $parameters['nick_name'] : '',
         				  'logitude' => $parameters['logitude'] ? $parameters['logitude'] : '',
         				  'latitude' => $parameters['latitude'] ? $parameters['latitude'] : '',
