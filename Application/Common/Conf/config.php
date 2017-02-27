@@ -73,6 +73,7 @@ return array(
     'CODE_LOGIN_ERROR' => -103, //查无此用户
     'CODE_VERIFY_ERROR' => -102, //验证码验证错误
     'CODE_SESSION_ERROR' => -103, //session错误
+    'WXTOKEN'=>'zuban666',//微信公众号token
 
 
 
@@ -82,6 +83,7 @@ return array(
     'URL_ROUTE_RULES'       =>  array(  // 默认路由规则 针对模块
         'notify'=>'Order/notify',//回调通知地址
         'prePay'=>'Order/prePay',//获取预支付订单
+        'wx'=>'Wx/',//微信验证
     ),
 
     'VIPLIST'             =>  'VIP_LIST',

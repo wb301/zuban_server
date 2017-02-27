@@ -137,4 +137,24 @@ class CommonController extends Controller
         return $sysAry;
     }
 
+
+    //验证签名
+    public function valid()
+    {
+        $request=$_REQUEST;
+        $echoStr = $request['echostr'];
+        $signature = $request['signature'];
+        $timestamp = $request['timestamp'];
+        $nonce = $request['nonce'];
+        $token = C('WXTOKEN');
+        $tmpArr = array($token, $timestamp, $nonce);
+        sort($tmpArr, SORT_STRING);
+        $tmpStr = implode($tmpArr);
+        $tmpStr = sha1($tmpStr);
+        if ($tmpStr == $signature) {
+            echo $echoStr;
+            exit;
+        }
+    }
+
 }
