@@ -79,8 +79,22 @@ class UserController extends CommonController
         }
 
         $userInfo = $userBaseModel->where($whereArr)->find();
-        $tempBaseRegionModel = M('zuban_temp_base_region','','DB_DSN');
-        $userInfo["region_name"] = $tempBaseRegionModel->where("`code` = " . $userInfo["region_code"])->getField("name");
+
+        $is_complete = 1;
+        foreach ($userInfo as $key => $value) {
+            if($key == "wx_openid" || $key == "is_complete"){
+                continue;
+            }else{
+                if( (is_numeric($value) && $value <= 0) || strlen($value) <= 0 ){
+                    $is_complete = 0;
+                }
+            }
+        }
+
+        if($is_complete != $userInfo["is_complete"]){
+            $userInfo["is_complete"] = $is_complete;
+            $userBaseModel->where($whereArr)->setField("is_complete", $is_complete);
+        }
 
         return $this->returnSuccess($userInfo);
     }
