@@ -47,11 +47,14 @@ class WeiXinLoginModel{
         $refresh_token = $result["refresh_token"];
         if(!$refresh_token){
             $url = self::getOauthRedirect($url,$state=123,$scope);
+            header('Access-Control-Allow-Origin: *');
+            header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+            header('Access-Control-Allow-Methods: GET, POST, PUT');
             header("Location:$url"); //$url中会带上code
         }
+        //print_r($result);exit;
         //刷新access token并续期
         $data = self::getOauthRefreshToken($refresh_token);
-
         setcookie($domain,'',time()-1);
 
         setcookie($domain,json_encode($data),time()+7200);
@@ -82,6 +85,7 @@ class WeiXinLoginModel{
         $code = isset($_GET['code'])?$_GET['code']:'';
         if (!$code) return false;
         $result = self::http_get(self::API_BASE_URL_PREFIX.self::OAUTH_TOKEN_URL.'appid='.C('APPID_WX').'&secret='.C('APPSECRET_WX').'&code='.$code.'&grant_type=authorization_code');
+        print_r($result);exit;
         if ($result)
         {
             $json = json_decode($result,true);

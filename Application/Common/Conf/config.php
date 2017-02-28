@@ -79,7 +79,7 @@ return array(
     'THIRD_LOGIN' => 'http://test.guleshop.com/',
     //微信appid,appsecret
     'APPID_WX' => 'wx3c5e318a8146f352',
-    'APPSECRET_WX' =>'ce225e4db87c20dbcb619e594624f8c5',
+    'APPSECRET_WX' =>'f8f83a2db7fa19ba7335e41aef642749',
 
   /*  //微信appid,appsecret
     'APPID_WX' => 'wxc58bff0ef94a2ecc',
@@ -114,7 +114,7 @@ return array(
         'MCHID' => '1426145902',//租伴
         'KEY' => '6034e609io23f86507eg79887tb0519e',
         'APP_KEY' => '',
-        'APPSECRET' => 'ce225e4db87c20dbcb619e594624f8c5',
+        'APPSECRET' => 'f8f83a2db7fa19ba7335e41aef642749',
         'NOTIFY_URL' => 'http://stylistpay.51mb.com//index.php/notify/channel/wx',
         'SSLCERT_PATH' => APP_PATH.'Pay/Wx/cert/apiclient_cert.pem',
         'SSLKEY_PATH' => APP_PATH.'Pay/Wx/cert/apiclient_key.pem',

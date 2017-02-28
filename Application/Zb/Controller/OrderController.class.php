@@ -458,6 +458,47 @@ class OrderController extends CommonController {
 
 
     /**
+     * 确认订单 订单价格
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=getOderPrice&productSysCode=100022&num=1&type=0
+     * */
+    public function getOderPrice($productSysCode,$num,$type=0){
+
+        $rs=array(
+            'product'=>array(),
+            'userInfo'=>array(),
+        );
+        $product=$this->getProductListByCode(array($productSysCode));
+        foreach($product AS $key=>$value){
+            if($value['status']!=1){
+                $this->returnErrorNotice('商品已下架!');
+            }
+            if($type==0) {
+                if($value['look_price']<=0){
+                    $this->returnErrorNotice('商品查看价格异常!');
+                }
+                $rs['product']['product_price'] = $value['look_price'];
+                if($num!=1){
+                    $this->returnErrorNotice('购买一次即可!');
+                }
+            }else{
+                if($value['price']<=0){
+                    $this->returnErrorNotice('商品价格异常!');
+                }
+                $rs['product']['product_price'] = $value['price'];
+            }
+            $rs['product']['num']= $num;
+            $rs['product']['allPrice']= $num*$rs['product']['product_price'];
+        }
+        $userId=$product[0]['user_id'];
+        $rs['userInfo']=$this->getUserInfoByUserId($userId);
+        if(count($rs['product'])<=0||count($rs['userInfo'])<=0){
+            $this->returnErrorNotice('数据异常!');
+        }
+        $this->returnSuccess($rs);
+    }
+
+
+    /**
      * 删除订单
      * */
     public function deleteOrder(){

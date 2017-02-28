@@ -50,6 +50,9 @@ class ThirdLoginController extends CommonController
                     }else{
                         $url_param = $redirect_url."?user=".$return_data;
                     }
+                    header('Access-Control-Allow-Origin: *');
+                    header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+                    header('Access-Control-Allow-Methods: GET, POST, PUT');
                     header("Location:$url_param");
                 }else{
                     $this->returnErrorNotice('','获取用户信息失败');
