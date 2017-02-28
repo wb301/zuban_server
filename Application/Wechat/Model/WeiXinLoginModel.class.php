@@ -47,12 +47,8 @@ class WeiXinLoginModel{
         $refresh_token = $result["refresh_token"];
         if(!$refresh_token){
             $url = self::getOauthRedirect($url,$state=123,$scope);
-            header('Access-Control-Allow-Origin: *');
-            header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
-            header('Access-Control-Allow-Methods: GET, POST, PUT');
             header("Location:$url"); //$url中会带上code
         }
-        //print_r($result);exit;
         //刷新access token并续期
         $data = self::getOauthRefreshToken($refresh_token);
         setcookie($domain,'',time()-1);
@@ -252,74 +248,7 @@ class WeiXinLoginModel{
 
         return true;
     }
-    /**
-     * version：2.0.0
-     * info： 快捷封装，客户端的请求成功
-     * params:result
-     * return:
-     */
-    protected function returnSuccess($result = null,$info = "")
-    {
-        if (isset($_GET["callback"])) {
 
-            $this->returnJQuery($result,$info);
-        }else{
-            $this->ajaxReturn($result, $info, C('AJAX_STATUS_SUCCESS'));
-        }
-    }
-    /**
-     * version：2.0.0
-     * info： 提示信息
-     * params:infoStr 提示信息
-     * return:
-     */
-    protected function returnErrorNotice($infoStr = '',$data='error'){
-        if (isset($_GET["callback"])) {
-            $this->returnJQueryError(C('AJAX_STATUS_ERROR'), $infoStr,$data);
-        }else {
-            $this->ajaxReturn($data, $infoStr, C('AJAX_STATUS_ERROR'));
-        }
-    }
-
-    protected function ajaxReturn($data,$type='') {
-        if(func_num_args()>2) {// 兼容3.0之前用法
-            $args           =   func_get_args();
-            array_shift($args);
-            $info           =   array();
-            if(is_array($data))
-                $info['data']   =   $data ? $data : array();
-            else
-                $info['data']   =   $data ? $data : '';
-            $info['info']   =   array_shift($args);
-            $status = array_shift($args);
-            $info['status'] =   $status ? $status : C('CODE_ERROR');
-            $data           =   $info;
-            $type           =   $args?array_shift($args):'';
-        }
-        if(empty($type)) $type  =   C('DEFAULT_AJAX_RETURN');
-        switch (strtoupper($type)){
-            case 'JSON' :
-                // 返回JSON数据格式到客户端 包含状态信息
-                header('Content-Type:application/json; charset=utf-8');
-                exit(json_encode($data));
-            case 'XML'  :
-                // 返回xml格式数据
-                header('Content-Type:text/xml; charset=utf-8');
-                exit(xml_encode($data));
-            case 'JSONP':
-                // 返回JSON数据格式到客户端 包含状态信息
-                header('Content-Type:application/json; charset=utf-8');
-                $handler  =   isset($_GET[C('VAR_JSONP_HANDLER')]) ? $_GET[C('VAR_JSONP_HANDLER')] : C('DEFAULT_JSONP_HANDLER');
-                exit($handler.'('.json_encode($data).');');
-            case 'EVAL' :
-                // 返回可执行的js脚本
-                header('Content-Type:text/html; charset=utf-8');
-                exit($data);
-            default     :
-                // 用于扩展其他返回格式数据
-                tag('ajax_return',$data);
-        }
-    }
     /**
      * GET 请求
      * @param string $url

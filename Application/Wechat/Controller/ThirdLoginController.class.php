@@ -10,9 +10,6 @@ class ThirdLoginController extends CommonController
      * @param $redirect_url 需跳转地址
      * */
     public function wxLogin(){
-        header('Access-Control-Allow-Origin: *');
-        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
-        header('Access-Control-Allow-Methods: GET, POST, PUT');
         $domain = isset($_REQUEST['domain'])?$_REQUEST['domain']:'';
         $redirect_url = isset($_GET['redirect_url'])?$_GET['redirect_url']:'';
         $code = $_GET['code'];
@@ -40,22 +37,12 @@ class ThirdLoginController extends CommonController
                 $userData = $weixin->loginByOauth($userInfo);
                 if($userData){
                     $return_data = array(
-                        'user_id'=> $userData['user_id'],
                         'token' => $userData['token'],
-                        'head_img'=>$userData['head_img'],
-                        'nickname'=>$data['nick_name'],
-                        'openid'=>$data['openid'],
+                        'acccount'=>$userData['acccount'],
+                        'openid'=>$data['openid']
                     );
                     $return_data = json_encode($return_data);
-                    $is_check = strpos($redirect_url,'?');
-                    if($is_check !==false){
-                        $url_param = $redirect_url."&user=".$return_data;
-                    }else{
-                        $url_param = $redirect_url."?user=".$return_data;
-                    }
-                    header('Access-Control-Allow-Origin: *');
-                    header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
-                    header('Access-Control-Allow-Methods: GET, POST, PUT');
+                    $url_param = $redirect_url."/".$return_data;
                     header("Location:$url_param");
                 }else{
                     $this->returnErrorNotice('','获取用户信息失败');
