@@ -458,6 +458,7 @@ class OrderController extends CommonController {
 
 
     /**
+     * 0 查看订单，1购买订单
      * 确认订单 订单价格
      * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=getOderPrice&productSysCode=100022&num=1&type=0
      * */
