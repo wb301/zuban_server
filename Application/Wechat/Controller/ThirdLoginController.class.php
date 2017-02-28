@@ -55,12 +55,12 @@ class ThirdLoginController extends CommonController
                     }
                     header("Location:$url_param");
                 }else{
-                    $this->returnError('','获取用户信息失败');
+                    $this->returnErrorNotice('','获取用户信息失败');
                 }
 
             }
         }else{
-            $this->returnError('','获取openid失败');
+            $this->returnErrorNotice('','获取openid失败');
         }
     }
 
@@ -227,7 +227,7 @@ class ThirdLoginController extends CommonController
     }
     public function getThirdLogin($id,$type){
         if(!id) return false;
-        $thirdLoginModel = M('whfun_third_login','','DB_DSN');
+        $thirdLoginModel = M('zuban_third_login','','DB_DSN');
         $data = $thirdLoginModel->where("`id`='$id' and `type`=$type ")->find();
         if($data){
             return $data['url'];
