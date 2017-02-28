@@ -131,7 +131,7 @@ class WxPay extends BasePay
         //调用统一下单接口
         $url = $this->config['PRE_PAY_URL'];
         $response = $this->postXmlCurl($xml, $url);
-        print_r($response);exit;
+        //print_r($response);exit;
         if(!$response){
             echo json_encode($response);
             return ;
