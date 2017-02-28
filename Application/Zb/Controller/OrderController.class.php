@@ -99,7 +99,7 @@ class OrderController extends CommonController {
             'from_source' => $parameters['source'],
             'price' => $price, //商品统计价
             'status' => 0,//未支付状态
-            'memo' => '',
+            'memo' => $parameters['memo'],
             'create_time' => $nowTime,
             'update_time' => $nowTime,
             'receiver' => "",
