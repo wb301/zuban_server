@@ -10,6 +10,9 @@ class ThirdLoginController extends CommonController
      * @param $redirect_url 需跳转地址
      * */
     public function wxLogin(){
+        header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+        header('Access-Control-Allow-Methods: GET, POST, PUT');
         $domain = isset($_REQUEST['domain'])?$_REQUEST['domain']:'';
         $redirect_url = isset($_GET['redirect_url'])?$_GET['redirect_url']:'';
         $code = $_GET['code'];

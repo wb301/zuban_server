@@ -85,7 +85,6 @@ class WeiXinLoginModel{
         $code = isset($_GET['code'])?$_GET['code']:'';
         if (!$code) return false;
         $result = self::http_get(self::API_BASE_URL_PREFIX.self::OAUTH_TOKEN_URL.'appid='.C('APPID_WX').'&secret='.C('APPSECRET_WX').'&code='.$code.'&grant_type=authorization_code');
-        print_r($result);exit;
         if ($result)
         {
             $json = json_decode($result,true);
