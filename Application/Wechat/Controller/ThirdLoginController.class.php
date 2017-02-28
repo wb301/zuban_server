@@ -25,7 +25,7 @@ class ThirdLoginController extends CommonController
             $redirect_url = $this->getThirdLogin($redirect_url,1);
         }
         $return_id = self::insertIntoThirdLogin($redirect_url,1);
-        $url = C('THIRD_LOGIN')."api/zuban_server/index.php/wechat/ThirdLogin/wxLogin?redirect_url={$return_id}&";
+        $url = C('THIRD_LOGIN')."youfan/api/index.php?c=Wechat&m=ThirdLogin&a=wxLogin&redirect_url={$return_id}&";
         $weixin = new WeiXinLoginModel();
         $data = $weixin->getOpenId($domain,$url);
         if($data){
@@ -210,7 +210,7 @@ class ThirdLoginController extends CommonController
 
     public function insertIntoThirdLogin($url,$type){
         if(!$url) return false;
-        $thirdLoginModel = M('whfun_third_login','','DB_DSN');
+        $thirdLoginModel = M('zuban_third_login','','DB_DSN');
         $data = $thirdLoginModel->where("`url`='$url' and `type`=$type ")->find();
         $return_id = 0;
         if($data){

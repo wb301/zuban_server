@@ -76,10 +76,14 @@ return array(
     'WXTOKEN'=>'zuban666',//微信公众号token
 
     /*************第三方登陆******************/
-    'THIRD_LOGIN' => 'http://stylistpay.51mb.com/',
-    //微信appid,appsecret
+    'THIRD_LOGIN' => 'http://test.guleshop.com/',
+   /* //微信appid,appsecret
     'APPID_WX' => 'wx3c5e318a8146f352',
-    'APPSECRET_WX' =>'ce225e4db87c20dbcb619e594624f8c5',
+    'APPSECRET_WX' =>'ce225e4db87c20dbcb619e594624f8c5',*/
+
+    //微信appid,appsecret
+    'APPID_WX' => 'wxc58bff0ef94a2ecc',
+    'APPSECRET_WX' =>'2e3f7e6642efb15eeb85c52b282a4c17',
 
 
     'URL_MODEL'             =>  3,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：// 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式)  默认为PATHINFO 模式
@@ -88,6 +92,8 @@ return array(
         'notify'=>'Order/notify',//回调通知地址
         'prePay'=>'Order/prePay',//获取预支付订单
         'wx'=>'Wx/',//微信验证
+        'wechat/ThirdLogin/wxLogin'=>'Wechat/ThirdLogin/wxLogin'
+
     ),
 
     'VIPLIST'             =>  'VIP_LIST',
