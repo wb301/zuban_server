@@ -117,6 +117,7 @@ class WxPay extends BasePay
         $data["body"] = '租伴网订单'.$request['out_trade_no']; //商品描述 eg '有范订单11312321321312'
         $data["mch_id"] = $partnerId;
         $data["openid"] = $request['openid'];//微信的openid
+        //$data["openid"] = 'oUt4luIpi7rr_i41zZ0p6orWPoQw';//微信的openid
         $data["nonce_str"] = $nonceStr;          
         $data["notify_url"] = $this->config['NOTIFY_URL']; //异步通知地址
         $data["out_trade_no"] = $request['out_trade_no']; //订单号
@@ -130,6 +131,7 @@ class WxPay extends BasePay
         //调用统一下单接口
         $url = $this->config['PRE_PAY_URL'];
         $response = $this->postXmlCurl($xml, $url);
+        print_r($response);exit;
         if(!$response){
             echo json_encode($response);
             return ;

@@ -25,7 +25,7 @@ return  array(
     'ACTION_SUFFIX'         =>  '', // 操作方法后缀
     'MULTI_MODULE'          =>  false, // 是否允许多模块 如果为false 则必须设置
     'MODULE_DENY_LIST'      =>  array('Common,Vendor'),
-    'CONTROLLER_LEVEL'      =>  2,
+    'CONTROLLER_LEVEL'      =>  1,
     'APP_AUTOLOAD_LAYER'    =>  'Controller', // 自动加载的应用类库层 关闭APP_USE_NAMESPACE后有效
     'APP_AUTOLOAD_PATH'     =>  '', // 自动加载的路径 关闭APP_USE_NAMESPACE后有效
 
