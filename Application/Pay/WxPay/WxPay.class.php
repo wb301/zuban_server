@@ -131,7 +131,6 @@ class WxPay extends BasePay
         //调用统一下单接口
         $url = $this->config['PRE_PAY_URL'];
         $response = $this->postXmlCurl($xml, $url);
-        //print_r($response);exit;
         if(!$response){
             echo json_encode($response);
             return ;
@@ -142,17 +141,17 @@ class WxPay extends BasePay
             echo json_encode($result);
             return;
         }
-
         $result['isSuccess'] = true;
         $result['prePayId'] = $response['prepay_id'];
+        $package='prepay_id='.$response['prepay_id'];
+        $result['package'] = $package;
         //签名sign
         $paramPaySign = array(
-            'appid' => $this->config["APPID"],
-            'partnerid' => $this->config['MCHID'],
-            'prepayid' => $response['prepay_id'],
-            'package' => 'Sign=WXPay',
-            'noncestr' => $nonceStr,
-            'timestamp' => $time,
+            'appId' => $this->config["APPID"],
+            'timeStamp' => $time,
+            'nonceStr' => $nonceStr,
+            'package' => $package,
+            'signType' => 'MD5',
         );
         $result['sign'] = $this->makeSign($paramPaySign);
         echo json_encode($result);
@@ -180,10 +179,11 @@ class WxPay extends BasePay
                 unset($parameters[$k]);
             }
         }
+        //print_r($parameters);
         //签名步骤一：按字典序排序参数
         ksort($parameters);
         $string = $this->formatBizQueryParaMap($parameters, false);
-        //echo "【string】 =".$String."</br>";
+        //echo "【string】 =".$string."</br>";
         //签名步骤二：在string后加入KEY
         $string = $string."&key=".$this->config['KEY'];
         //签名步骤三：MD5加密
@@ -290,7 +290,7 @@ class WxPay extends BasePay
             {
                $v = urlencode($v);
             }
-            $buff .= strtolower($k) . "=" . $v . "&";
+            $buff .= $k . "=" . $v . "&";
         }
         $reqPar;
         if (strlen($buff) > 0) 
