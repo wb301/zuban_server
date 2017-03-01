@@ -378,4 +378,36 @@ class CommonController extends Controller
         return $aryList;
     }
 
+    /**
+
+        绑定用户信息函数
+
+    */
+    public function updUserInfoByOpendId($userInfo, $openId, $isUpd = true){
+
+        $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
+        if(strlen($openId) > 0){
+
+            $openIdArr = array("wx_openid" => $openId);
+            $openIdInfo = $userBaseModel->where($openIdArr)->find();
+
+            $newUserInfo = array("wx_openid" => $openId);
+            if(strlen($userInfo["head_img"]) <= 0)
+                $newUserInfo["head_img"] = $openIdInfo["head_img"];
+            if(strlen($userInfo["nick_name"]) <= 0)
+                $newUserInfo["nick_name"] = $openIdInfo["nick_name"];
+
+            if($isUpd){
+                $userBaseModel->where(array("account" => $userInfo["account"]))->save($newUserInfo);
+            }else{
+                $userInfo["wx_openid"] = $openId;
+                $userInfo["head_img"] = $openIdInfo["head_img"];
+                $userInfo["nick_name"] = $openIdInfo["nick_name"];
+            }
+            $userBaseModel->where($openIdArr)->delete();
+        }
+
+        return $userInfo;
+    }
+
 }

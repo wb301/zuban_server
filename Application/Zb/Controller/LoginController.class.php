@@ -54,7 +54,8 @@ class LoginController extends CommonController
         $this->_POST();
         $keyAry = array(
             'account' => "用户名不能为空",
-            'password' => "密码不能为空"
+            'password' => "密码不能为空",
+            'openId' => ""
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry);
@@ -64,6 +65,7 @@ class LoginController extends CommonController
 
         $account = $parameters['account'];
         $password = $parameters['password'];
+        $openId = $parameters['openId'];
 
         $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
         $userInfo = $userBaseModel->where(array("account" => $account))->find();
@@ -73,6 +75,7 @@ class LoginController extends CommonController
             return $this->returnErrorNotice("密码错误");
 
         //登陆成功存token
+        $userInfo = $this->updUserInfoByOpendId($userInfo, $openId);
         $userInfo = $this->updUserInfo( $userInfo );
         return $this->returnSuccess($userInfo);
     }
@@ -86,7 +89,6 @@ class LoginController extends CommonController
         $this->_POST();
         $keyAry = array(
             'open_id' => "微信标示不能为空",
-            'nick_name' => "用户昵称不能为空",
             'region_code' => "",
             'logitude' => "",
             'latitude' => ""
@@ -101,25 +103,8 @@ class LoginController extends CommonController
         $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
         $userInfo = $userBaseModel->where(array("wx_openid" => $openId))->find();
 
-        if(!$userInfo){
-
-            $nowTime = date('Y-m-d H:i:s');
-            $userInfo = array("user_id" => create_guid(),
-                              "account" => '',
-                              "password" => '',
-                              "wx_openid" => $openId,
-                              "nick_name" => $parameters['nick_name'],
-                              "region_code" => $parameters['region_code'] ? $parameters['region_code'] : '',
-                              "logitude" => $parameters['logitude'] ? $parameters['logitude'] : '',
-                              "latitude" => $parameters['latitude'] ? $parameters['latitude'] : '',
-                              "register_time" => $nowTime);
-
-            //这里新增一下数据
-            $userBaseModel->add($userInfo);
-        }
-
-        if(empty($userInfo["account"])){
-            return $this->returnErrorNotice("请绑定手机号", -101);
+        if(empty($userInfo["account"]) || empty($userInfo["password"])){
+            return $this->returnErrorNotice("请前往注册页", -101);
         }
 
         //登陆成功存token
@@ -127,44 +112,6 @@ class LoginController extends CommonController
         return $this->returnSuccess($userInfo);
     }
 
-    /**
-        微信绑定手机号
-    */
-    public function wxBangDingMobile(){
-
-        $this->_POST();
-        $keyAry = array(
-            'open_id' => "微信标示不能为空",
-            'account' => "手机号码不能为空",
-            'code' => "验证码不能为空"
-        );
-        //参数列
-        $parameters = $this->getPostparameters($keyAry);
-        if (!$parameters) {
-            $this->returnErrorNotice('请求失败!');
-        }
-
-        $openId = $parameters['open_id'];
-        $account = $parameters['account'];
-        $code = $parameters['code'];
-
-        $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
-        $userInfo = $userBaseModel->where(array("wx_openid" => $openId))->find();
-
-        if( !$userInfo )
-            return $this->returnErrorNotice("帐号不存在");
-
-        //这里检测一下手机号码和验证码是否正确
-        $checkRes = $this->checkAccountByCode($account, $code);
-        if(!$checkRes)
-            return $this->returnErrorNotice("验证码错误");
-
-        $userBaseModel->where(array("wx_openid" => $openId))->save(array("account" => $account));
-
-        //登陆成功存token
-        $userInfo = $this->updUserInfo( $userInfo );
-        return $this->returnSuccess($userInfo);
-    }
 
 
 }

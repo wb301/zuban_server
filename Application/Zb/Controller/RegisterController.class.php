@@ -24,10 +24,9 @@ class RegisterController extends CommonController
             'password' => "密码不能为空",
             'region_code' => "地区不能为空",
             'region_name' => "地区名称不能为空",
-            'head_img' => "",
-            'nick_name' => "",
             'logitude' => "",
-            'latitude' => ""
+            'latitude' => "",
+            'openId' => ""
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry);
@@ -40,6 +39,7 @@ class RegisterController extends CommonController
         $password = $parameters['password'];
         $region_code = $parameters['region_code'];
         $region_name = $parameters['region_name'];
+        $openId = $parameters['openId'];
 
         //这里检测一下手机号码和验证码是否正确
         $checkRes = $this->checkAccountByCode($account, $code);
@@ -55,15 +55,20 @@ class RegisterController extends CommonController
         $userInfo = array('user_id' => create_guid(),
         				  'account' => $account,
         				  'password' => md5($password),
-        				  'head_img' => $parameters['head_img'] ? $parameters['head_img'] : 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3443117432,1239143495&fm=21&gp=0.jpg',
-                          'wx_openid' => '',
+                          'wx_openid' => $openId,
         				  'region_code' => $region_code,
                           'region_name' => $region_name,
-                          'nick_name' => $parameters['nick_name'] ? $parameters['nick_name'] : '',
-        				  'logitude' => $parameters['logitude'] ? $parameters['logitude'] : '',
-        				  'latitude' => $parameters['latitude'] ? $parameters['latitude'] : '',
+                          'head_img' => "",
+                          'nick_name' => "",
+        				  'logitude' => $parameters['logitude'],
+        				  'latitude' => $parameters['latitude'],
         				  'register_time' => $nowTime
         				  );
+
+        $userInfo = $this->updUserInfoByOpendId($userInfo, $openId, false);
+        if(strlen($userInfo["head_img"]) <= 0){
+            $userInfo["head_img"] = 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3443117432,1239143495&fm=21&gp=0.jpg';
+        }
         //这里新增一下数据
         $userBaseModel->add($userInfo);
 
