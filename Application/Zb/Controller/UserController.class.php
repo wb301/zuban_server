@@ -17,13 +17,12 @@ class UserController extends CommonController
     public function getUserInfo(){
 
         $userInfo = $this->checkToken();
-        $userBase = $this->checkUserId($userInfo["user_id"]);
+        $userId = $userInfo["user_id"];
+        $userBase = $this->checkUserId($userId);
         $userBase["nick_name"] = $userBase["nick_name"] ? $userBase["nick_name"] : '昵称';
-        $userBase["money"] = $this->getUserMoneyInfo($userInfo["user_id"]);
-        $userBase["vip"] = $this->getVip($userInfo["user_id"]);
-
-        $tempBaseRegionModel = M('zuban_temp_base_region','','DB_DSN');
-        $userBase["region_name"] = $tempBaseRegionModel->where("`code` = " . $userBase["region_code"])->getField("name");
+        $userBase["money"] = $this->getUserMoneyInfo($userId);
+        $userBase["vip"] = $this->getVip($userId);
+        $this->updUserGeographicPosition($userId);
 
         return $this->returnSuccess($userBase);
     }

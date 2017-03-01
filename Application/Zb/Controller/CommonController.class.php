@@ -410,4 +410,24 @@ class CommonController extends Controller
         return $userInfo;
     }
 
+    /**
+
+        修改用户地理位置
+
+    */
+    public function updUserGeographicPosition($userId){
+
+        $userArr = array();
+        if(isset($_REQUEST["logitude"])){
+            $userArr["logitude"] = $_REQUEST["logitude"];
+        }
+        if(isset($_REQUEST["latitude"])){
+            $userArr["latitude"] = $_REQUEST["latitude"];
+        }
+        if(count($userArr) > 0){
+            $userInfoModel = M("zuban_user_info", 0, "DB_DSN");
+            $userInfoModel->where(array("user_id" => $userId))->save($userArr);
+        }
+    }
+
 }
