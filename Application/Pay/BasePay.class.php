@@ -182,7 +182,7 @@ abstract class BasePay
 
         $result['code'] = 1;
         $result['message'] = '成功';
-        return print_r($result);exit;
+        return $result;
     }
 
 

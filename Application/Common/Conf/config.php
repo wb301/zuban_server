@@ -115,7 +115,7 @@ return array(
         'KEY' => '6034e609io23f86507eg79887tb0519e',
         'APP_KEY' => '',
         'APPSECRET' => 'f8f83a2db7fa19ba7335e41aef642749',
-        'NOTIFY_URL' => 'http://stylistpay.51mb.com//index.php/notify/channel/wx',
+        'NOTIFY_URL' => 'http://test.guleshop.com/youfan/api/index.php/notify/channel/wx',
         'SSLCERT_PATH' => APP_PATH.'Pay/Wx/cert/apiclient_cert.pem',
         'SSLKEY_PATH' => APP_PATH.'Pay/Wx/cert/apiclient_key.pem',
         'PRE_PAY_URL' => 'https://api.mch.weixin.qq.com/pay/unifiedorder',
