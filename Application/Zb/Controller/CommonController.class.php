@@ -427,6 +427,9 @@ class CommonController extends Controller
         if(count($userArr) > 0){
             $userInfoModel = M("zuban_user_info", 0, "DB_DSN");
             $userInfoModel->where(array("user_id" => $userId))->save($userArr);
+
+            $productModel = M('zuban_product_goods','','DB_DSN');
+            $productModel->where(array("user_id" => $userId))->save($userArr);
         }
     }
 
