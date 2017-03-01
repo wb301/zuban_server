@@ -397,6 +397,7 @@ class CommonController extends Controller
             if(strlen($userInfo["nick_name"]) <= 0)
                 $newUserInfo["nick_name"] = $openIdInfo["nick_name"];
 
+            $userBaseModel->where($openIdArr)->delete();
             if($isUpd){
                 $userBaseModel->where(array("account" => $userInfo["account"]))->save($newUserInfo);
             }else{
@@ -404,7 +405,6 @@ class CommonController extends Controller
                 $userInfo["head_img"] = $openIdInfo["head_img"];
                 $userInfo["nick_name"] = $openIdInfo["nick_name"];
             }
-            $userBaseModel->where($openIdArr)->delete();
         }
 
         return $userInfo;
