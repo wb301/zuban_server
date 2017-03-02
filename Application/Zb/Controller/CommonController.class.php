@@ -261,7 +261,7 @@ class CommonController extends Controller
         //总金额减去可用金额剩余冻结金额
         $freezeMoney = $maxMoney - $availableMoney * 2;
 
-        return array("available" => $availableMoney, "freeze" => $freezeMoney);
+        return array("maxMoney" => $maxMoney, "available" => $availableMoney, "freeze" => $freezeMoney);
     }
 
 

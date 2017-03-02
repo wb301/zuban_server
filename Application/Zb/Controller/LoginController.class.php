@@ -20,12 +20,18 @@ class LoginController extends CommonController
 
         $userBase['token'] = $token;
         $userBase["update_time"] = $nowTime;
-        $userBase["device"] = $_REQUEST['device'] ? $_REQUEST['device'] : '';
-        $userBase["version"] = $_REQUEST['version'] ? $_REQUEST['version'] : '';
-        $userBase["app_name"] = $_REQUEST['app_name'] ? $_REQUEST['app_name'] : '';
-        $userBase["os_mode"] = $_REQUEST['os_mode'] ? $_REQUEST['os_mode'] : '';
-        $userBase["logitude"] = $_REQUEST['logitude'] ? $_REQUEST['logitude'] : '';
-        $userBase["latitude"] = $_REQUEST['latitude'] ? $_REQUEST['latitude'] : '';
+        if(isset($_REQUEST['device']))
+            $userBase["device"] = $_REQUEST['device'];
+        if(isset($_REQUEST['version']))
+            $userBase["version"] = $_REQUEST['version'];
+        if(isset($_REQUEST['app_name']))
+            $userBase["app_name"] = $_REQUEST['app_name'];
+        if(isset($_REQUEST['os_mode']))
+            $userBase["os_mode"] = $_REQUEST['os_mode'];
+        if(isset($_REQUEST['logitude']))
+            $userBase["logitude"] = $_REQUEST['logitude'];
+        if(isset($_REQUEST['latitude']))
+            $userBase["latitude"] = $_REQUEST['latitude'];
 
         $userInfoModel = M("zuban_user_info", 0, "DB_DSN");
         $userRes = $userInfoModel->where(array("user_id" => $userInfo["user_id"]))->find();
@@ -79,39 +85,5 @@ class LoginController extends CommonController
         $userInfo = $this->updUserInfo( $userInfo );
         return $this->returnSuccess($userInfo);
     }
-
-
-    /**
-        微信登录
-    */
-    public function wxLogin(){
-
-        $this->_POST();
-        $keyAry = array(
-            'open_id' => "微信标示不能为空",
-            'region_code' => "",
-            'logitude' => "",
-            'latitude' => ""
-        );
-        //参数列
-        $parameters = $this->getPostparameters($keyAry);
-        if (!$parameters) {
-            $this->returnErrorNotice('请求失败!');
-        }
-
-        $openId = $parameters['open_id'];
-        $userBaseModel = M("zuban_user_base", 0, "DB_DSN");
-        $userInfo = $userBaseModel->where(array("wx_openid" => $openId))->find();
-
-        if(empty($userInfo["account"]) || empty($userInfo["password"])){
-            return $this->returnErrorNotice("请前往注册页", -101);
-        }
-
-        //登陆成功存token
-        $userInfo = $this->updUserInfo( $userInfo );
-        return $this->returnSuccess($userInfo);
-    }
-
-
 
 }
