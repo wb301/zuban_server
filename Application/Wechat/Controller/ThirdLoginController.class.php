@@ -38,7 +38,7 @@ class ThirdLoginController extends CommonController
                 if($userData){
                     $return_data = array(
                         'token' => $userData['token'],
-                        'acccount'=>$userData['acccount'],
+                        'account'=>$userData['account'],
                         'openid'=>$data['openid']
                     );
                     $return_data = json_encode($return_data);
