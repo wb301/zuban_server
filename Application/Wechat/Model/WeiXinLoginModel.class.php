@@ -170,6 +170,7 @@ class WeiXinLoginModel{
         $nowTime = date('Y-m-d H:i:s');
         $userBaseModel = M("zuban_user_base", '', "DB_DSN");
         $userInfo = $userBaseModel->where(array("wx_openid" => $wx_openid))->find();
+        $token;
         if(!$userInfo){
             $nickName = $data['nickname'];
             $headPortrait = $data['headimgurl'];
@@ -191,28 +192,31 @@ class WeiXinLoginModel{
             );
             //这里新增一下数据
             $userBaseModel->add($userInfo);
-        }elseif (strlen($userInfo['account']) > 0) {
-            //绑定过手机号
-            $token = md5($userInfo['user_id'].time());
-            $userBase['token'] = $token;
-            $userBase["update_time"] = $nowTime;
-            $userBase["device"] = $_REQUEST['device'] ? $_REQUEST['device'] : '';
-            $userBase["version"] = $_REQUEST['version'] ? $_REQUEST['version'] : '';
-            $userBase["app_name"] = $_REQUEST['app_name'] ? $_REQUEST['app_name'] : '';
-            $userBase["os_mode"] = $_REQUEST['os_mode'] ? $_REQUEST['os_mode'] : '';
-            $userBase["logitude"] = $_REQUEST['logitude'] ? $_REQUEST['logitude'] : '';
-            $userBase["latitude"] = $_REQUEST['latitude'] ? $_REQUEST['latitude'] : '';
-            $userInfoModel = M("zuban_user_info", 0, "DB_DSN");
-            $userRes = $userInfoModel->where(array("user_id" => $userInfo["user_id"]))->find();
-            if( !$userRes ){
-                $userBase["user_id"] = $userInfo["user_id"];
-                $userInfoModel->add($userBase);
-            }else{
-                $userInfoModel->where(array("user_id" => $userInfo["user_id"]))->save($userBase);
+        }else{
+            if (strlen($userInfo['account']) > 0) {
+                //绑定过手机号
+                $token = md5($userInfo['user_id'].time());
+                $userBase['token'] = $token;
+                $userBase["update_time"] = $nowTime;
+                $userBase["device"] = $_REQUEST['device'] ? $_REQUEST['device'] : '';
+                $userBase["version"] = $_REQUEST['version'] ? $_REQUEST['version'] : '';
+                $userBase["app_name"] = $_REQUEST['app_name'] ? $_REQUEST['app_name'] : '';
+                $userBase["os_mode"] = $_REQUEST['os_mode'] ? $_REQUEST['os_mode'] : '';
+                $userBase["logitude"] = $_REQUEST['logitude'] ? $_REQUEST['logitude'] : '';
+                $userBase["latitude"] = $_REQUEST['latitude'] ? $_REQUEST['latitude'] : '';
+                $userInfoModel = M("zuban_user_info", 0, "DB_DSN");
+                $userRes = $userInfoModel->where(array("user_id" => $userInfo["user_id"]))->find();
+                if( !$userRes ){
+                    $userBase["user_id"] = $userInfo["user_id"];
+                    $userInfoModel->add($userBase);
+                }else{
+                    $userInfoModel->where(array("user_id" => $userInfo["user_id"]))->save($userBase);
+                }
             }
         }
-        $userInfo['openid']=$data['openid'];
+
         $userInfo['token']=$token;
+        $userInfo['openid']=$data['openid'];
         return $userInfo;
 
     }
