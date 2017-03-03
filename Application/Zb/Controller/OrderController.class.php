@@ -51,9 +51,6 @@ class OrderController extends CommonController {
         //检测用户
         $userInfo=$this->checkToken(true);
         $userId=$userInfo['user_id'];
-        if($userId==$parameters['product_user']){
-            $this->returnErrorNotice('不能自己给自己下单!');
-        }
         $allPrice = $parameters['allPrice'];
         $this->checkUserId($userId,'', true);
         // 验证订单是否重复提交
@@ -67,6 +64,10 @@ class OrderController extends CommonController {
         }
         $productList = json_decode($parameters['cartList'], true);
         $productList=$this->getProductPrice($productList);
+        $product_user=$productList[0]['user_id'];
+        if($userId==$product_user){
+            $this->returnErrorNotice('不能自己给自己下单!');
+        }
         $price=0;
         foreach ($productList as $key => $value) {
             if($value['price']<0){
@@ -94,7 +95,7 @@ class OrderController extends CommonController {
             'user_id' => $userId,
             'order_no' => $orderNo,
             'order_type' => $parameters['order_type'],
-            'product_user' => $parameters['product_user'],
+            'product_user' => $product_user,
             'total_price' => $price, //统计总价
             'from_source' => $parameters['source'],
             'price' => $price, //商品统计价

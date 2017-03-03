@@ -83,7 +83,7 @@ class CommonController extends Controller
         }
         $proCodeListStr = getListString($proCodeList);
         $productGoodsModel = M('zuban_product_goods', '', 'DB_DSN');
-        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`look_price`,`product_info`")->select();
+        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`look_price`,`product_info`,`user_id`")->select();
         if (count($productRs) > 0) {
             foreach ($productList AS $key => $value) {
                 $proCode = $value['product_sys_code'];
