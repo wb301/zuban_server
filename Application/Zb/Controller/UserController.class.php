@@ -106,7 +106,9 @@ class UserController extends CommonController
 
         $this->_POST();
         $keyAry = array(
-            "price" => "提现金额不能为空"
+            "price" => "提现金额不能为空",
+            "account" => "账号不能为空",
+            "from" => "来源不能为空"
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry);
@@ -118,6 +120,8 @@ class UserController extends CommonController
         $whereArr = array("user_id" => $userInfo["user_id"]);
 
         $price = $parameters["price"];
+        $account = $parameters["account"];
+        $from = $parameters["from"];
         if(!is_numeric($price)){
             $this->returnErrorNotice('提现金额必须为数字!');
         }
@@ -135,6 +139,8 @@ class UserController extends CommonController
 
         $addArr = array("user_id" => $userInfo["user_id"],
                         "price" => $price,
+                        "account" => $account,
+                        "from" => $from,
                         "create_time" => date('Y-m-d H:i:s'));
 
         $withdrawHistoryModel = M("zuban_user_withdraw_history", '', "DB_DSN");
