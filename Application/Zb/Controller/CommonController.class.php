@@ -135,6 +135,8 @@ class CommonController extends Controller
             '1'=>'待确认',
             '5'=>'进行中',
             '6'=>'已完成',
+            '9'=>'已取消',
+            '10'=>'已完成',
             '15'=>'交易关闭',
         );
         return $statusNameAry[$status];

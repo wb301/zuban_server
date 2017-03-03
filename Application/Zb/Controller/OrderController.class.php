@@ -293,7 +293,7 @@ class OrderController extends CommonController {
             'WaitingPay' => array(0),
             'WaitingConfirm' => array(1),
             'Ongoing' => array(5),
-            'End' => array(6,10),
+            'End' => array(6,9,10,15),
         );
 
         $rs = array(
@@ -307,15 +307,15 @@ class OrderController extends CommonController {
         //检测用户
         $userInfo=$this->checkToken(true);
         $userId=$userInfo['user_id'];
-        $whereSql = " `user_id` = '$userId' ";
+        $whereSql = " `user_id` = '$userId'  AND `order_type`!= 2 ";
         if($type){
-            $whereSql = " `product_user` = '$userId' ";
+            $whereSql = " `product_user` = '$userId' AND `order_type`= 1 ";
         }
         if ($statusList && count($statusList) > 0) {
             $statusListStr = getListString($statusList);
             $whereSql .= "AND `status` IN ($statusListStr) ";
         }
-        $whereSql.=" AND `is_delete`=0  AND `order_type`!= 2 ";
+        $whereSql.=" AND `is_delete`=0 ";
         $orderModel = M('zuban_order', '', 'DB_DSN');
         $orderCount = $orderModel->where($whereSql)->count();
         if ($orderCount <= 0) {
@@ -419,7 +419,7 @@ class OrderController extends CommonController {
         if(count($userIdList)>0){
             $userBaseModel = M("zuban_user_base", '', "DB_DSN");
             $where['user_id']=array('IN',$userIdList);
-            $userInfo = $userBaseModel->where($where)->getField("`user_id`,`head_img`,`nick_name`",true);
+            $userInfo = $userBaseModel->where($where)->getField("`user_id`,`head_img`,`nick_name`,`account`",true);
         }
         $orderProductModel = M('zuban_order_product','','DB_DSN');
         $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->select();
@@ -527,7 +527,17 @@ class OrderController extends CommonController {
             );
             $productModel->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
         }
-        $this->returnSuccess('发货成功！');
+        $this->returnSuccess(5);
+    }
+
+
+    public function orderCancel($orderNo)
+    {
+        $rs=$this->updateOrderStatus($orderNo,0,9);
+        if(count($rs)<=0){
+            $this->returnErrorNotice('取消失败!');
+        }
+        $this->returnSuccess(9);
     }
 
 
@@ -548,7 +558,7 @@ class OrderController extends CommonController {
         //检测用户userId
         $userId = $this->checkToken(1)['user_id'];
         $orderModel = M('zuban_order', '', 'DB_DSN');
-        $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->field("`return_price`,`user_id`,`order_no`,`price`,`status`,`product_user`")->select();
+        $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->field("`return_price`,`user_id`,`order_no`,`price`,`status`,`product_user`,`from_source`,`notice_trade_no`")->select();
         if (!$orderRs || count($orderRs) <= 0) {
             $this->returnErrorNotice('订单编号错误!');
         }
@@ -566,6 +576,108 @@ class OrderController extends CommonController {
             $this->returnErrorNotice('订单状态变更失败!');
         }
         return $orderRs;
+    }
+
+
+    //关闭订单
+    public function orderShut($orderNo, $check)
+    {
+        if (!in_array($check, array(1, 5))) {
+            $this->returnErrorNotice('当前订单不可申请退款!');
+        }
+        $rs = $this->updateOrderStatus($orderNo, $check, 6);
+        if (count($rs) <= 0) {
+            $this->returnErrorNotice('关闭失败!');
+        }
+        $moneyHistory = array(
+            'user_id' => $rs['product_user'],
+            'price_type' => 4,
+            'price_info' => $rs['order_no'],
+            'price' => $rs['price'],
+            'remark' => '关闭交易退款',
+            'create_time' => date('Y-m-d H:i:s'),
+        );
+        $moneyHistoryModel = M('zuban_user_money_history', '', 'DB_DSN');
+        $addMoneyHistoryResult = $moneyHistoryModel->add($moneyHistory);
+        if (!$addMoneyHistoryResult) {
+            $this->returnErrorNotice('关闭异常');
+        }
+        $decPrice=0;
+        $nowTime = date('Y-m-d H:i:s');
+        $userId = $rs['user_id'];
+        $price=$rs['price'];
+        $regRegionCode = M('zuban_user_base', '', 'DB_DSN')->where("`user_id` = '$userId' ")->getField("region_code");//注册地code
+        $serverRegionCode = $rs['from_source'];//服务地code
+        $maxRegionCode = C('MAX_REGION_CODE');//平台默认
+
+        $regionCodeStr = "'$regRegionCode','$serverRegionCode','$maxRegionCode'";
+
+        //查询adminCode
+        $regionAdminAry = M('admin_region_manager', '', 'DB_DSN')->where("`region_code` IN ($regionCodeStr) AND `status` = 1")->getField("region_code, admin_code");
+
+        $maxAdminCode = C('MAX_BOSS_CODE');
+        if (isset($regionAdminAry[$maxRegionCode])) {
+            $maxAdminCode = $regionAdminAry[$maxRegionCode];
+        }
+        $regAdminCode = $maxAdminCode;
+        if (isset($regionAdminAry[$regRegionCode])) {
+            $regAdminCode = $regionAdminAry[$regRegionCode];
+        }
+        $serverAdminCode = $maxAdminCode;
+        if (isset($regionAdminAry[$serverRegionCode])) {
+            $serverAdminCode = $regionAdminAry[$serverRegionCode];
+        }
+        //系统配置
+        $sysAry = M("admin_system_config", 0, "DB_DSN")->where("`status` = 1 AND `is_auto` = 0 ")->getField("config_key,config_value");
+        $toMaxPrice = floatval($sysAry['AS_PLATFORM'] / C('DENO') * $price);
+        $toRegPrice = floatval($sysAry['AS_REGISTERED'] / C('DENO') * $price);
+        $toServerPrice = floatval($sysAry['AS_CONSUM'] / C('DENO') * $price);
+        $remark = "服务购买收费,订单号:" . $orderNo . ",交易流水号:" . $rs['notice_trade_no'] . "。";
+        //插入收入记录
+        $addAry = array(
+            array(//平台
+                'region_code' => $maxRegionCode,
+                'admin_code' => $maxAdminCode,
+                'price_type' => 1,
+                'remark' => $remark,
+                'price' => $toMaxPrice,
+                'create_time' => $nowTime
+            ),
+            array(//注册地
+                'region_code' => $regRegionCode,
+                'admin_code' => $regAdminCode,
+                'price_type' => 1,
+                'remark' => $remark,
+                'price' => $toRegPrice,
+                'create_time' => $nowTime
+            ),
+            array(//服务地
+                'region_code' => $serverRegionCode,
+                'admin_code' => $serverAdminCode,
+                'price_type' => 1,
+                'remark' => $remark,
+                'price' => $toServerPrice,
+                'create_time' => $nowTime
+            )
+        );
+        $decPrice = $price - $toMaxPrice - $toRegPrice - $toServerPrice;
+        $regionMoney=M('admin_region_money_history','','DB_DSN');
+        $insertRegionMoneyResult = $regionMoney->table('admin_region_money_history')->addAll($addAry);
+        if(!$insertRegionMoneyResult){
+            $this->returnErrorNotice('关闭异常');
+        }
+        // 开始付款后的状态变更
+        $updateAry = array(
+            'return_price' => $decPrice,
+            'update_time' => date('Y-m-d H:i:s')
+        );
+        $orderModel = M('zuban_order', '', 'DB_DSN');
+        $result = $orderModel->where("`order_no` ='$orderNo'")->save($updateAry);
+        if (!$result || count($result) <= 0) {
+            $this->returnErrorNotice('关闭异常!');
+        }
+        $this->returnSuccess(15);
+
     }
 
 
@@ -611,7 +723,7 @@ class OrderController extends CommonController {
             );
             $productModel->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
         }
-        $this->returnSuccess('确认成功！');
+        $this->returnSuccess(6);
 
     }
 

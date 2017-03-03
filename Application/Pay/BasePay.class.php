@@ -105,12 +105,14 @@ abstract class BasePay
         //0.抽成
         $rakePrice=$this->settlementPrice($orderRs,$tradeNo);
         $returnPrice=$rakePrice['decPrice'];
-        $regionMoney=M('admin_region_money_history','','DB_DSN');
-        $insertRegionMoneyResult = $transModel->db(0, 'DB_DSN')->table('admin_region_money_history')->addAll($rakePrice['add']);
-        if(!$insertRegionMoneyResult){
-            $this->logPay('notify channel='.$channel.' insertRegionMoney sql='.$regionMoney->getLastSql(), 'ERR');
-            $transModel->rollback();
-            return $result;
+        if(count($rakePrice['add'])>0){
+            $regionMoney=M('admin_region_money_history','','DB_DSN');
+            $insertRegionMoneyResult = $transModel->db(0, 'DB_DSN')->table('admin_region_money_history')->addAll($rakePrice['add']);
+            if(!$insertRegionMoneyResult){
+                $this->logPay('notify channel='.$channel.' insertRegionMoney sql='.$regionMoney->getLastSql(), 'ERR');
+                $transModel->rollback();
+                return $result;
+            }
         }
         //1.订单状态变更
         $upDataOrder = array(
@@ -328,7 +330,7 @@ abstract class BasePay
         $orderType = intval($orderInfo['order_type']);
         $addAry=array();
         if($orderType == 1){ //购买订单
-            $userId = $orderInfo['user_id'];
+           /* $userId = $orderInfo['user_id'];
             $regRegionCode = M('zuban_user_base','','DB_DSN')->where("`user_id` = '$userId' ")->getField("region_code");//注册地code
             $serverRegionCode = $orderInfo['from_source'];//服务地code
             $maxRegionCode = C('MAX_REGION_CODE');//平台默认
@@ -384,8 +386,9 @@ abstract class BasePay
                     'create_time' => $nowTime
                 )
             );
-            $decPrice = $price-$toMaxPrice-$toRegPrice-$toServerPrice;
-        }else{
+            $decPrice = $price-$toMaxPrice-$toRegPrice-$toServerPrice;*/
+        }
+        else{
             //查看订单,会员充值订单，其他
             $toMaxPrice = $price;
             $decPrice = $price - $toMaxPrice;
