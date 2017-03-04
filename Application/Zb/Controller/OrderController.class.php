@@ -513,7 +513,7 @@ class OrderController extends CommonController {
      */
     public function deliveryOrder($orderNo)
     {
-        $rs=$this->updateOrderStatus($orderNo,1,5);
+        $rs=$this->updateOrderStatus($orderNo,1,5,1);
         if(count($rs)<=0){
             $this->returnErrorNotice('发货失败!');
         }
@@ -550,7 +550,7 @@ class OrderController extends CommonController {
      * @param $status 状态
      * @return bool
      */
-    protected function updateOrderStatus($orderNo, $checkStatus, $status)
+    protected function updateOrderStatus($orderNo, $checkStatus, $status,$type=0)
     {
 
         if (strlen($orderNo) <= 0) {
@@ -558,10 +558,14 @@ class OrderController extends CommonController {
         }
         //检测用户userId
         $userId = $this->checkToken(1)['user_id'];
+        $where="`user_id` = '$userId' ";
+        if($type){
+            $where="`product_user` = '$userId' ";
+        }
         $orderModel = M('zuban_order', '', 'DB_DSN');
-        $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->field("`return_price`,`user_id`,`order_no`,`price`,`status`,`product_user`,`from_source`,`notice_trade_no`")->select();
+        $orderRs = $orderModel->where(" $where AND `order_no` = '$orderNo' ")->field("`return_price`,`user_id`,`order_no`,`price`,`status`,`product_user`,`from_source`,`notice_trade_no`")->select();
         if (!$orderRs || count($orderRs) <= 0) {
-            $this->returnErrorNotice('订单编号错误!');
+            $this->returnErrorNotice('订单异常!');
         }
         $orderRs = $orderRs[0];
         if (intval($orderRs['status']) != $checkStatus) {
@@ -583,12 +587,15 @@ class OrderController extends CommonController {
     //关闭订单
     public function orderShut($orderNo, $check)
     {
-        if (!in_array($check, array(1, 5))) {
-            $this->returnErrorNotice('当前订单不可申请退款!');
+        if (!in_array($check, array(0,1, 5))) {
+            $this->returnErrorNotice('当前订单不可关闭!');
         }
-        $rs = $this->updateOrderStatus($orderNo, $check, 6);
+        $rs = $this->updateOrderStatus($orderNo,$check,15,1);
         if (count($rs) <= 0) {
             $this->returnErrorNotice('关闭失败!');
+        }
+        if($check==0){
+            $this->returnSuccess(15);
         }
         $moneyHistory = array(
             'user_id' => $rs['product_user'],
@@ -744,6 +751,11 @@ class OrderController extends CommonController {
         }
         //检测用户userId
         $userId = $this->checkToken(1)['user_id'];
+        $orderReturnModel = M('zuban_order_return','','DB_DSN');
+        $orderReturnRs = $orderReturnModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->find();
+        if ($orderReturnRs || count($orderReturnRs) >0) {
+            $this->returnErrorNotice('申请退款已提交等待后台审核!');
+        }
         $orderModel = M('zuban_order', '', 'DB_DSN');
         $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->field("`return_price`,`user_id`,`order_no`,`price`,`status`,`order_type`")->select();
         if (!$orderRs || count($orderRs) <= 0) {
