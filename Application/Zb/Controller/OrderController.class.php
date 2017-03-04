@@ -342,7 +342,7 @@ class OrderController extends CommonController {
         if(count($userIdList)>0){
             $userBaseModel = M("zuban_user_base", '', "DB_DSN");
             $where['user_id']=array('IN',$userIdList);
-            $userInfo = $userBaseModel->where($where)->getField("`user_id`,`head_img`,`nick_name`",true);
+            $userInfo = $userBaseModel->where($where)->getField("`user_id`,`head_img`,`nick_name`,`account`",true);
         }
         $orderNoListStr = getListString($orderNoList);
         $orderProductModel = M('zuban_order_product', '', 'DB_DSN');
