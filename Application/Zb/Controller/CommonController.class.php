@@ -55,7 +55,7 @@ class CommonController extends Controller
         $userInfo = $userInfoModel->where("`token` = '$token' ")->field("`user_id`,`device`,`logitude`,`latitude`")->select();
         if (!$userInfo || count($userInfo) <= 0) {
             if ($isNotice) {
-                return $this->returnErrorNotice("用户标识错误!");
+                return $this->returnErrorNotice("用户标识错误!", -999);
             } else {
                 return null;
             }
