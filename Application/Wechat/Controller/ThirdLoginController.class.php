@@ -25,7 +25,7 @@ class ThirdLoginController extends CommonController
             $redirect_url = $this->getThirdLogin($redirect_url,1);
         }
         $return_id = self::insertIntoThirdLogin($redirect_url,1);
-        $url = C('THIRD_LOGIN')."youfan/api/index.php?c=Wechat&m=ThirdLogin&a=wxLogin&redirect_url={$return_id}&";
+        $url = C('THIRD_LOGIN')."/index.php?c=Wechat&m=ThirdLogin&a=wxLogin&redirect_url={$return_id}&";
         $weixin = new WeiXinLoginModel();
         $data = $weixin->getOpenId($domain,$url);
         if($data){
@@ -73,7 +73,7 @@ class ThirdLoginController extends CommonController
             $redirect_url = $this->getThirdLogin($redirect_url,2);
         }
         $return_id = self::insertIntoThirdLogin($redirect_url,2);
-        $url =  C('THIRD_LOGIN')."api/youfan_merchant/index.php/wechat/ThirdLogin/qqLogin?redirect_url={$return_id}&";
+        $url =  C('THIRD_LOGIN')."/index.php/wechat/ThirdLogin/qqLogin?redirect_url={$return_id}&";
         $qq = new QqLoginModel();
         $data = $qq->index($domain,$url);
         if($data){
@@ -147,7 +147,7 @@ class ThirdLoginController extends CommonController
             $redirect_url = $this->getThirdLogin($redirect_url,3);
         }
         $return_id = self::insertIntoThirdLogin($redirect_url,3);
-        $url =  C('THIRD_LOGIN')."api/youfan_merchant/index.php/wechat/ThirdLogin/zfbLogin?redirect_url={$return_id}";
+        $url =  C('THIRD_LOGIN')."/index.php/wechat/ThirdLogin/zfbLogin?redirect_url={$return_id}";
         $zfb = new ZfbLoginModel();
         $userInfo = $zfb->getUser($url);
         if($userInfo){
