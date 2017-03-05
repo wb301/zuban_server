@@ -281,7 +281,7 @@ abstract class BasePay
         }
         //查询会员
         $vipModel=M('zuban_user_vip','','DB_DSN');
-        $startTime=$vipModel->where("`start_time` <= '$nowTime' AND `end_time` > '$nowTime'")->order("`id` desc")->getField("end_time");
+        $startTime=$vipModel->where("`start_time` <= '$nowTime' AND `end_time` > '$nowTime' AND `user_id` = '$userId'")->order("`id` desc")->getField("end_time");
         if(!$startTime){
             $startTime=$nowTime;
         }
