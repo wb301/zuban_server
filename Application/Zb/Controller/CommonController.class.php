@@ -77,6 +77,7 @@ class CommonController extends Controller
             $productList[$key]['look_price'] = 0;
             $productList[$key]['price_type'] = 1;
             $productList[$key]['status'] = 0;
+            $productList[$key]['user_id']='';
             $productList[$key]['product_info'] = '';
             $productList[$key]['num'] = $value['num'];
             array_push($proCodeList, $value['product_sys_code']);
@@ -93,6 +94,7 @@ class CommonController extends Controller
                             $productList[$key]['look_price'] = $v['look_price'];
                             $productList[$key]['price_type'] = $v['price_type'];
                             $productList[$key]['product_info'] = $v['product_info'];
+                            $productList[$key]['user_id'] = $v['user_id'];
                             $productList[$key]['status'] = $v['status'];
                         }
                     }
