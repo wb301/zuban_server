@@ -16,7 +16,7 @@ class SystemConfigController extends CommonController {
         $vipInfo = $this->getVip($userInfo["user_id"]);
         $vipConfig = json_decode($this->getSysConfig('VIP_LIST'), true);
 
-        $this->returnSuccess(array("info" => $vipInfo, "config" => $vipConfig));
+        $this->returnSuccess(array("info" => $vipInfo, "config" => $vipConfig, "nowTime" => date('Y-m-d H:i:s')));
     }
 
     /**
