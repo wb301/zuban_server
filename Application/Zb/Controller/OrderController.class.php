@@ -80,7 +80,7 @@ class OrderController extends CommonController {
                 $this->returnErrorNotice('商品状态已变更!');
             }
             if($parameters['order_type']){
-                $price+=$value['price'];
+                $price+=$value['price']*$value['num'];
             }else{
                 $price+=$value['look_price'];
             }
