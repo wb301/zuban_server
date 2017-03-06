@@ -7,7 +7,7 @@ use Pay\AliPay\AliPay;
 use Pay\WxPay\WxPay;
 use Common\Controller\CommonController;
 
-abstract class BasePay
+class BasePay
 {
     protected $config = array();
     const CHANNEL_WX = 'wx';
@@ -101,13 +101,13 @@ abstract class BasePay
         }
         //*******事务开始*********
         $transModel = M();
-        $transModel->startTrans();
+        //$transModel->startTrans();
         //0.抽成
         $rakePrice=$this->settlementPrice($orderRs,$tradeNo);
         $returnPrice=$rakePrice['decPrice'];
         if(count($rakePrice['add'])>0){
             $regionMoney=M('admin_region_money_history','','DB_DSN');
-            $insertRegionMoneyResult = $transModel->db(0, 'DB_DSN')->table('admin_region_money_history')->addAll($rakePrice['add']);
+            $insertRegionMoneyResult = $transModel->db(1, 'DB_DSN')->table('admin_region_money_history')->addAll($rakePrice['add']);
             if(!$insertRegionMoneyResult){
                 $this->logPay('notify channel='.$channel.' insertRegionMoney sql='.$regionMoney->getLastSql(), 'ERR');
                 $transModel->rollback();
@@ -126,7 +126,7 @@ abstract class BasePay
             $upDataOrder['status']=1;
             $upDataOrder['return_price']=$returnPrice;//获取
         }
-        $upOrderResult = $transModel->db(0, 'DB_DSN')->table('zuban_order')->where($whereOrder)->save($upDataOrder);
+        $upOrderResult = $transModel->db(1, 'DB_DSN')->table('zuban_order')->where($whereOrder)->save($upDataOrder);
         if(!$upOrderResult){
             $this->logPay('notify channel='.$channel.' updateOrder sql='.$orderModel->getLastSql(), 'ERR');
             $transModel->rollback();
@@ -134,7 +134,7 @@ abstract class BasePay
         }
         if(in_array($orderRs['order_type'],array(0,1))) {
             //2.订单商品状态变更
-            $upOrderProductResult = $transModel->db(0, 'DB_DSN')->table('zuban_order_product')->where($whereOrderProduct)->setField("status", 1);
+            $upOrderProductResult = $transModel->db(1, 'DB_DSN')->table('zuban_order_product')->where($whereOrderProduct)->setField("status", 1);
             if (!$upOrderProductResult) {
                 $this->logPay('notify channel=' . $channel . ' updateOrderProduct sql=' . $orderProductModel->getLastSql(), 'ERR');
                 $transModel->rollback();
@@ -152,7 +152,7 @@ abstract class BasePay
             'pay_type' => $channel,
         );
         $orderPayRecordModel=M('zuban_order_pay_record','','DB_DSN');
-        $upOrderPayRecordResult = $transModel->db(0, 'DB_DSN')->table('zuban_order_pay_record')->where($whereOrderPayRecord)->save($upDataOrderPayRecord);
+        $upOrderPayRecordResult = $transModel->db(1, 'DB_DSN')->table('zuban_order_pay_record')->where($whereOrderPayRecord)->save($upDataOrderPayRecord);
          if(!$upOrderPayRecordResult){
             $this->logPay('notify channel='.$channel.' updatePayrecord sql='.$orderPayRecordModel->getLastSql(), 'ERR');
             $transModel->rollback();
@@ -161,7 +161,7 @@ abstract class BasePay
         //4.消费记录钱包核算
         $moneyHistory=$this->getHistyAry($orderRs,$price,$returnPrice);
         $moneyHistoryModel=M('zuban_user_money_history','','DB_DSN');
-        $addMoneyHistoryResult = $transModel->db(0, 'DB_DSN')->table('zuban_user_money_history')->addAll($moneyHistory);
+        $addMoneyHistoryResult = $transModel->db(1, 'DB_DSN')->table('zuban_user_money_history')->addAll($moneyHistory);
         if(!$addMoneyHistoryResult){
             $this->logPay('notify channel='.$channel.' addMoneyHistory sql='.$moneyHistoryModel->getLastSql(), 'ERR');
             $transModel->rollback();
@@ -172,14 +172,14 @@ abstract class BasePay
         if($orderRs['order_type']==2){
             $vipTimeAry=$this->getVipTime($orderRs['user_id'],$orderRs['member_code'],$orderRs['price']);
             $vipModel=M('zuban_user_vip','','DB_DSN');
-            $vipResult = $transModel->db(0, 'DB_DSN')->table('zuban_user_vip')->add($vipTimeAry);
+            $vipResult = $transModel->db(1, 'DB_DSN')->table('zuban_user_vip')->add($vipTimeAry);
             if(!$vipResult){
                 $this->logPay('notify channel='.$channel.' addVipTime sql='.$vipModel->getLastSql(), 'ERR');
                 $transModel->rollback();
                 return $result;
             }
         }
-        $transModel->commit();
+        //$transModel->commit();
         //******事务结束*********
 
         $result['code'] = 1;

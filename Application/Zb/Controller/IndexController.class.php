@@ -3,6 +3,8 @@ namespace Zb\Controller;
 use Zb\Controller\CommonController;
 class IndexController extends CommonController {
     public function index(){
-        $this->show('<style type="text/css">*{ padding: 0; margin: 0; } div{ padding: 4px 48px;} body{ background: #fff; font-family: "微软雅黑"; color: #333;font-size:24px} h1{ font-size: 100px; font-weight: normal; margin-bottom: 12px; } p{ line-height: 1.8em; font-size: 36px }</style><div style="padding: 24px 48px;"> <h1>:)</h1><p>欢迎使用 <b>ThinkPHP</b>！</p><br/>[ 您现在访问的是Zb模块的Index控制器 ]</div><script type="text/javascript" src="http://tajs.qq.com/stats?sId=9347272" charset="UTF-8"></script>','utf-8');
+        $pay=new \Pay\BasePay();
+        $rs=$pay->payOrder('14888038281001000469',0.01,'11111','wx');
+        print_r($rs);exit;
     }
 }

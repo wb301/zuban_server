@@ -782,6 +782,12 @@ class OrderController extends CommonController {
         if ($orderPayId <= 0) {
             $this->returnErrorNotice('退款失败，请稍后再试!');
         }
+        // 开始付款后的状态变更
+        $updateAry = array(
+            'status' => 11,
+            'update_time' => date('Y-m-d H:i:s')
+        );
+        $orderModel->where("`order_no` ='$orderNo'")->save($updateAry);
         $this->returnSuccess('申请成功!');
     }
 
