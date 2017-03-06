@@ -104,7 +104,7 @@ class OrderController extends CommonController {
             'create_time' => $nowTime,
             'update_time' => $nowTime,
             'receiver' => "",
-            'phone' => "",
+            'phone' => $parameters['phone'],
             'check_code' => '',
         );
         $orderId = $orderModel->add($newOrderAry);
@@ -768,12 +768,16 @@ class OrderController extends CommonController {
         if ($orderRs['status']!=1) {
             $this->returnErrorNotice('该订单状态有误!');
         }
+        $returnMoney= $orderRs['return_price'];
+        if($orderRs['status']!=5){
+            $returnMoney= $orderRs['price'];
+        }
         //退款记录
         $orderReturnAry = array(
             'order_no' => $orderNo,
             'user_id' => $orderRs['user_id'],
             'reason' => '申请退款',
-            'return_money' => $orderRs['return_price'],
+            'return_money' => $returnMoney,
             'create_time' => date('Y-m-d H:i:s'),
             'status' => 1
         );
