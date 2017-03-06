@@ -7,7 +7,7 @@ use Pay\AliPay\AliPay;
 use Pay\WxPay\WxPay;
 use Common\Controller\CommonController;
 
-class BasePay
+abstract class BasePay
 {
     protected $config = array();
     const CHANNEL_WX = 'wx';
