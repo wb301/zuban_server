@@ -101,7 +101,7 @@ abstract class BasePay
         }
         //*******事务开始*********
         $transModel = M();
-        //$transModel->startTrans();
+        $transModel->startTrans();
         //0.抽成
         $rakePrice=$this->settlementPrice($orderRs,$tradeNo);
         $returnPrice=$rakePrice['decPrice'];
@@ -179,7 +179,7 @@ abstract class BasePay
                 return $result;
             }
         }
-        //$transModel->commit();
+        $transModel->commit();
         //******事务结束*********
 
         $result['code'] = 1;
