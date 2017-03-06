@@ -38,6 +38,7 @@ class UserController extends CommonController
             'head_img' => "",
             'nick_name' => "",
             'age' => "",
+            'sex' => "",
             'height' => "",
             'weight' => "",
             'professional' => "",
@@ -71,6 +72,7 @@ class UserController extends CommonController
             $saveArr["qualifications"] = $parameters['qualifications'];
         if( !empty($parameters['wx_account']) )
             $saveArr["wx_account"] = $parameters['wx_account'];
+        echo json_encode($parameters)."\n\n";
 
         $userBaseModel = M("zuban_user_base", '', "DB_DSN");
         if(count($saveArr) > 0){
