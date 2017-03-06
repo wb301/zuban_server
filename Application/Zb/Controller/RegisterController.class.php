@@ -67,7 +67,7 @@ class RegisterController extends CommonController
 
         $userInfo = $this->updUserInfoByOpendId($userInfo, $openId, false);
         if(strlen($userInfo["head_img"]) <= 0){
-            $userInfo["head_img"] = 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3443117432,1239143495&fm=21&gp=0.jpg';
+            $userInfo["head_img"] = 'https://ome5w9045.qnssl.com/touxiang.png';
         }
         //这里新增一下数据
         $userBaseModel->add($userInfo);
