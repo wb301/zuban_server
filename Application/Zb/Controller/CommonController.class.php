@@ -265,7 +265,7 @@ class CommonController extends Controller
         $maxMoney = $moneyHistoryModel->where($userIdSqlStr)->SUM("price");
 
         //总金额减去可用金额剩余冻结金额
-        $freezeMoney = $maxMoney - $availableMoney * 2;
+        $freezeMoney = $maxMoney - $availableMoney;
 
         return array("maxMoney" => $maxMoney, "available" => $availableMoney, "freeze" => $freezeMoney);
     }
