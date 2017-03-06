@@ -16,10 +16,10 @@ class QiniuController extends CommonController {
     */
     public function getQiniuToken()
     {
-        $accessKey = 'B7a2HYUmAWC0gRx8rGhi9UbPTkYg2_NgxBsMjZ3z';
-        $secretKey = 'dpyqdifPjBQO3yISdcEPUYYvM_85Rtqcgsnu6h8l';
+        $accessKey = 'UFL2RCDRO71BeQcmVvVdOoeYUpzScSkWMWmhob4n';
+        $secretKey = 'w8PqW69HiTs52VbZYTyNx0SgFPSAqmudhxtH-uWy';
         // 要上传的空间
-        $bucket = 'mbfun';
+        $bucket = 'zuban';
 
         // 构建鉴权对象
         $auth = new Auth($accessKey, $secretKey);
