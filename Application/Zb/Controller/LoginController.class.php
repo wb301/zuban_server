@@ -49,6 +49,7 @@ class LoginController extends CommonController
         $productModel->where(array("user_id" => $userInfo["user_id"]))->save($productSaveArr);
 
         $userInfo["token"] = $token;
+        $userInfo['server_phone']=$this->getSysConfig('CUSTOMER_SERVICE');
         return $userInfo;
     }
 

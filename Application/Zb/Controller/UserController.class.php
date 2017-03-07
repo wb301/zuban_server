@@ -96,7 +96,6 @@ class UserController extends CommonController
             $userInfo["is_complete"] = $is_complete;
             $userBaseModel->where($whereArr)->setField("is_complete", $is_complete);
         }
-
         return $this->returnSuccess($userInfo);
     }
 
