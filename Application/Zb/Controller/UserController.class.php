@@ -211,6 +211,7 @@ class UserController extends CommonController
 
             $this->setPageRow();
             $this->pageAry["list"] = $userMoneyHistoryModel->where($whereSqlStr)->page($this->page, $this->row)->select();
+            $this->pageAry["list"] = $this->pageAry["list"] ? $this->pageAry["list"] : array();
         }
 
         return $this->returnSuccess($this->pageAry);
