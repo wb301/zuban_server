@@ -71,8 +71,9 @@ class RegisterController extends CommonController
         }
         //这里新增一下数据
         $userBaseModel->add($userInfo);
+        $this->updUserInfo($userInfo);
 
-        return $this->returnSuccess(true);
+        return $this->returnSuccess($userInfo);
     }
 
 }

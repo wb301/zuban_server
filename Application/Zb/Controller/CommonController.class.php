@@ -398,8 +398,6 @@ class CommonController extends Controller
             $openIdInfo = $userBaseModel->where($openIdArr)->find();
 
             $newUserInfo = array("wx_openid" => $openId);
-            if(strlen($userInfo["head_img"]) <= 0)
-                $newUserInfo["head_img"] = $openIdInfo["head_img"];
             if(strlen($userInfo["nick_name"]) <= 0)
                 $newUserInfo["nick_name"] = $openIdInfo["nick_name"];
 
@@ -437,6 +435,48 @@ class CommonController extends Controller
             $productModel = M('zuban_product_goods','','DB_DSN');
             $productModel->where(array("user_id" => $userId))->save($userArr);
         }
+    }
+
+    /**
+        生成用户token
+    */
+    protected function updUserInfo($userInfo){
+
+        $nowTime = date('Y-m-d H:i:s');
+        $token = md5($userInfo['user_id'].time());
+
+        $userBase['token'] = $token;
+        $userBase["update_time"] = $nowTime;
+        if(isset($_REQUEST['device']))
+            $userBase["device"] = $_REQUEST['device'];
+        if(isset($_REQUEST['version']))
+            $userBase["version"] = $_REQUEST['version'];
+        if(isset($_REQUEST['app_name']))
+            $userBase["app_name"] = $_REQUEST['app_name'];
+        if(isset($_REQUEST['os_mode']))
+            $userBase["os_mode"] = $_REQUEST['os_mode'];
+        if(isset($_REQUEST['logitude']))
+            $userBase["logitude"] = $_REQUEST['logitude'];
+        if(isset($_REQUEST['latitude']))
+            $userBase["latitude"] = $_REQUEST['latitude'];
+
+        $userInfoModel = M("zuban_user_info", 0, "DB_DSN");
+        $userRes = $userInfoModel->where(array("user_id" => $userInfo["user_id"]))->find();
+
+        if( !$userRes ){
+            $userBase["user_id"] = $userInfo["user_id"];
+            $userInfoModel->add($userBase);
+        }else{
+            $userInfoModel->where(array("user_id" => $userInfo["user_id"]))->save($userBase);
+        }
+
+        //这里需要修改一下用户发布信息的经纬度
+        $productModel = M('zuban_product_goods','','DB_DSN');
+        $productSaveArr = array("logitude" => $userBase["logitude"], "latitude" => $userBase["latitude"]);
+        $productModel->where(array("user_id" => $userInfo["user_id"]))->save($productSaveArr);
+
+        $userInfo["token"] = $token;
+        return $userInfo;
     }
 
 }
