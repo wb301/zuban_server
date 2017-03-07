@@ -215,6 +215,8 @@ class ProductController extends CommonController {
             'region_code' => "地区编码不能为空!",
             'region_name' => "地区信息不能为空!",
             'category_id' => "服务类型不能为空!",
+            'logitude' => "位置信息不能为空!",
+            'latitude' => "位置信息不能为空!",
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry,$productInfo);
@@ -247,8 +249,8 @@ class ProductController extends CommonController {
             'product_image' => $productInfo['product_image'],
             'region_code' => $productInfo['region_code'],
             'region_name' => $productInfo['region_name'],
-            'logitude' => $userInfo['logitude'],
-            'latitude' => $userInfo['latitude'],
+            'logitude' => $productInfo['logitude'],
+            'latitude' => $productInfo['latitude'],
             'create_time' => $nowTime,
             'update_time' => $nowTime,
             'status' => 1
@@ -326,6 +328,10 @@ class ProductController extends CommonController {
         if(isset($productInfo['status'])){ //状态  删除 0
             $goodsUpdateAry['status'] = intval($productInfo['status']);
         }
+        if(isset($productInfo['logitude'])&&isset($productInfo['latitude'])){
+            $goodsUpdateAry['logitude'] = $productInfo['logitude'];
+            $goodsUpdateAry['latitude'] = $productInfo['latitude'];
+        }
         //检测服务类型
         $categoryAry = null;
         if(intval($productInfo['category_id']) > 0){
@@ -336,8 +342,6 @@ class ProductController extends CommonController {
             $goodsUpdateAry['look_price'] = $this->getLookPrice($categoryAry['is_free']);
         }
         //修改商品数据
-        $goodsUpdateAry['logitude'] = $userInfo['logitude'];
-        $goodsUpdateAry['latitude'] = $userInfo['latitude'];
         $goodsUpdateAry['update_time'] = date('Y-m-d H:i:s');
         $productModel->where("`id` = $productId")->save($goodsUpdateAry);
 
