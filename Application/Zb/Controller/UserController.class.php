@@ -72,7 +72,6 @@ class UserController extends CommonController
             $saveArr["qualifications"] = $parameters['qualifications'];
         if( !empty($parameters['wx_account']) )
             $saveArr["wx_account"] = $parameters['wx_account'];
-        echo json_encode($parameters)."\n\n";
 
         $userBaseModel = M("zuban_user_base", '', "DB_DSN");
         if(count($saveArr) > 0){
@@ -326,10 +325,10 @@ class UserController extends CommonController
         $dateTimeFormat = 'Y-m-d\TH:i:s\Z'; // ISO8601规范
         $accessKeyId = 'LTAIGPskV7XIy0QL';      // 这里填写您的Access Key ID
         $accessKeySecret = 'Rztpe5ie0WZ4Sq4wgdxhVXXNAhmGQ0';  // 这里填写您的Access Key Secret
-        $ParamString="{'code':'$mobile_code','time':'3'}";
+        $ParamString="{'code':'$mobile_code'}";
         $data = array(
             // 公共参数
-            'SignName'=> "签名名称",
+            'SignName'=> "租伴网",
             'Format' => "XML",
             'Version' => "2016-09-27",
             'AccessKeyId' => $accessKeyId,
@@ -339,7 +338,7 @@ class UserController extends CommonController
             'Timestamp' => date($dateTimeFormat),
             // 接口参数
             'Action' => "SingleSendSms",
-            'TemplateCode' => "SMS_48470040",
+            'TemplateCode' => "SMS_52720001",
             'RecNum' => $phone,
             'ParamString' => $ParamString
         );
