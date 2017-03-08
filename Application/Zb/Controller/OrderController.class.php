@@ -399,7 +399,7 @@ class OrderController extends CommonController {
      * 订单详情
      * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=getOrderDetails&token=422c7de3a240bbc32b684657cd947bd9&orderNo=14878565271001000008
      * */
-    public function getOrderDetails($orderNo,$token){
+    public function getOrderDetails($orderNo,$token,$type = 0){
 
         if ( strlen($token) <= 0 ||strlen($orderNo) < 0) {
             $this->returnErrorNotice('参数错误!');
@@ -407,8 +407,12 @@ class OrderController extends CommonController {
         //检测用户
         $userInfo=$this->checkToken(true);
         $userId=$userInfo['user_id'];
+        $whereSql = " `user_id` = '$userId' ";
+        if($type){
+            $whereSql = " `product_user` = '$userId' ";
+        }
         $orderModel = M('zuban_order','','DB_DSN');
-        $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo'")->order("`create_time` DESC ")->select();
+        $orderRs = $orderModel->where(" $whereSql AND `order_no` = '$orderNo'")->order("`create_time` DESC ")->select();
         if (count($orderRs) <= 0) {
             $this->returnErrorNotice('订单不存在或已经删除!');
         }
