@@ -141,17 +141,19 @@ abstract class BasePay
                 $transModel->rollback();
                 return $result;
             }
-            $orderProductRs = $transModel->db(1, 'DB_DSN')->table('zuban_order_product')->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
-            $productCode_str=getListString($orderProductRs);
-            $updateAry = array(
-                'status' => 2,
-                'update_time' => date('Y-m-d H:i:s')
-            );
-            $updateProduct=$transModel->db(1, 'DB_DSN')->table('zuban_product_goods')->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
-            if (!$updateProduct) {
-                $this->logPay('notify channel=' . $channel . ' updateProduct sql=' . $orderProductModel->getLastSql(), 'ERR');
-                $transModel->rollback();
-                return $result;
+            if($orderRs['order_type']){
+                $orderProductRs = $transModel->db(1, 'DB_DSN')->table('zuban_order_product')->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
+                $productCode_str=getListString($orderProductRs);
+                $updateAry = array(
+                    'status' => 2,
+                    'update_time' => date('Y-m-d H:i:s')
+                );
+                $updateProduct=$transModel->db(1, 'DB_DSN')->table('zuban_product_goods')->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
+                if (!$updateProduct) {
+                    $this->logPay('notify channel=' . $channel . ' updateProduct sql=' . $orderProductModel->getLastSql(), 'ERR');
+                    $transModel->rollback();
+                    return $result;
+                }
             }
         }
         //3.付款记录
