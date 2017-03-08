@@ -147,7 +147,7 @@ abstract class BasePay
                 'status' => 2,
                 'update_time' => date('Y-m-d H:i:s')
             );
-            $updateProduct=$transModel->db(1, 'DB_DSN')->table('zuban_order_product')->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
+            $updateProduct=$transModel->db(1, 'DB_DSN')->table('zuban_product_goods')->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
             if (!$updateProduct) {
                 $this->logPay('notify channel=' . $channel . ' updateProduct sql=' . $orderProductModel->getLastSql(), 'ERR');
                 $transModel->rollback();
