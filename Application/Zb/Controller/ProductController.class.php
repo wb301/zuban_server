@@ -172,13 +172,13 @@ class ProductController extends CommonController {
             $galleryRs = array();
         }
 
+        $userId = $productAry['user_id'];
         //查询当前用户
         $userInfo = $this->checkToken(0);
-        $userId = $userInfo['user_id'];
         //查询是否为会员
-        $vipLevel = intval($this->getVip($userId)["vip_type"]);
+        $vipLevel = $this->getVip($userInfo["user_id"]);
         $returnUserInfo = "";
-        if(!empty($userInfo) && $userInfo['user_id'] == $productAry["user_id"]){
+        if(!empty($userInfo) && $userInfo['user_id'] == $userId){
             //是自己
             $returnUserInfo = $userInfo;
         }else{
