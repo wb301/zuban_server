@@ -16,7 +16,11 @@ class SystemConfigController extends CommonController {
         $vipInfo = $this->getVip($userInfo["user_id"]);
         $vipConfig = json_decode($this->getSysConfig('VIP_LIST'), true);
 
-        $this->returnSuccess(array("info" => $vipInfo, "config" => $vipConfig, "nowTime" => date('Y-m-d H:i:s')));
+        $nowTime = time();
+        $endTime = strtotime($vipInfo["end_time"]);
+        $days = intval(($endTime - $nowTime) / (24 * 3600));
+
+        $this->returnSuccess(array("info" => $vipInfo, "config" => $vipConfig, "days" => $days));
     }
 
     /**
