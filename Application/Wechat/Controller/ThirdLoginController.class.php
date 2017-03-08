@@ -36,10 +36,14 @@ class ThirdLoginController extends CommonController
             if($userInfo){
                 $userData = $weixin->loginByOauth($userInfo);
                 if($userData){
+                    $redirect=explode('/',$redirect_url);
+                    $page=$redirect[count($redirect)-1];
+                    $redirect_url = str_replace("/".$page,"",$redirect_url);
                     $return_data = array(
                         'token' => $userData['token'],
                         'account'=>$userData['account'],
-                        'openid'=>$data['openid']
+                        'openid'=>$data['openid'],
+                        'page'=>$page
                     );
                     $return_data = json_encode($return_data);
                     $url_param = $redirect_url."/".$return_data;

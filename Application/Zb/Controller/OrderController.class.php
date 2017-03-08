@@ -677,6 +677,7 @@ class OrderController extends CommonController {
         if (!$result || count($result) <= 0) {
             $this->returnErrorNotice('关闭异常!');
         }
+        $this->changeProductStatus($orderNo,1);
         $this->returnSuccess(15);
 
     }
@@ -713,17 +714,7 @@ class OrderController extends CommonController {
         if(!$addMoneyHistoryResult){
             $this->returnErrorNotice('收货异常');
         }
-        $orderProductModel = M('zuban_order_product','','DB_DSN');
-        $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
-        if(count($orderProductRs)>0){
-            $productCode_str=getListString($orderProductRs);
-            $productModel = M('zuban_product_goods','','DB_DSN');
-            $updateAry = array(
-                'status' => 1,
-                'update_time' => date('Y-m-d H:i:s')
-            );
-            $productModel->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
-        }
+        $this->changeProductStatus($orderNo,2);
         $this->returnSuccess(6);
 
     }
@@ -785,6 +776,7 @@ class OrderController extends CommonController {
             'update_time' => date('Y-m-d H:i:s')
         );
         $orderModel->where("`order_no` ='$orderNo'")->save($updateAry);
+        $this->changeProductStatus($orderNo);
         $this->returnSuccess('申请成功!');
     }
 
@@ -819,6 +811,25 @@ class OrderController extends CommonController {
         $pay->prePay();
     }
 
+
+    /**
+     * @desc 更新商品状态
+     * */
+    public function changeProductStatus($orderNo,$status=1){
+
+        $orderProductModel = M('zuban_order_product','','DB_DSN');
+        $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
+        if(count($orderProductRs)>0){
+            $productCode_str=getListString($orderProductRs);
+            $productModel = M('zuban_product_goods','','DB_DSN');
+            $updateAry = array(
+                'status' => $status,
+                'update_time' => date('Y-m-d H:i:s')
+            );
+            $productModel->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
+        }
+
+    }
 
 
 }
