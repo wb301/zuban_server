@@ -85,6 +85,7 @@ abstract class BasePay
         }
         //检查订单商品
         $orderProductModel = M('zuban_order_product','','DB_DSN');
+        $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
         $whereOrderProduct = array(
             'order_no' => $orderRs['order_no'],
             'status' => 0,
@@ -137,6 +138,18 @@ abstract class BasePay
             $upOrderProductResult = $transModel->db(1, 'DB_DSN')->table('zuban_order_product')->where($whereOrderProduct)->setField("status", 1);
             if (!$upOrderProductResult) {
                 $this->logPay('notify channel=' . $channel . ' updateOrderProduct sql=' . $orderProductModel->getLastSql(), 'ERR');
+                $transModel->rollback();
+                return $result;
+            }
+            $orderProductRs = $transModel->db(1, 'DB_DSN')->table('zuban_order_product')->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
+            $productCode_str=getListString($orderProductRs);
+            $updateAry = array(
+                'status' => 2,
+                'update_time' => date('Y-m-d H:i:s')
+            );
+            $updateProduct=$transModel->db(1, 'DB_DSN')->table('zuban_order_product')->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
+            if (!$updateProduct) {
+                $this->logPay('notify channel=' . $channel . ' updateProduct sql=' . $orderProductModel->getLastSql(), 'ERR');
                 $transModel->rollback();
                 return $result;
             }

@@ -521,17 +521,6 @@ class OrderController extends CommonController {
         if(count($rs)<=0){
             $this->returnErrorNotice('发货失败!');
         }
-        $orderProductModel = M('zuban_order_product','','DB_DSN');
-        $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
-        if(count($orderProductRs)>0){
-            $productCode_str=getListString($orderProductRs);
-            $productModel = M('zuban_product_goods','','DB_DSN');
-            $updateAry = array(
-                'status' => 2,
-                'update_time' => date('Y-m-d H:i:s')
-            );
-            $productModel->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
-        }
         $this->returnSuccess(5);
     }
 
