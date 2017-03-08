@@ -178,7 +178,7 @@ class ProductController extends CommonController {
         //查询是否为会员
         $vipLevel = intval($this->getVip($userId)["vip_type"]);
         $returnUserInfo = "";
-        if(!empty($userInfo) && $userInfo['user_id'] == $userId){
+        if(!empty($userInfo) && $userInfo['user_id'] == $productAry["user_id"]){
             //是自己
             $returnUserInfo = $userInfo;
         }else{
