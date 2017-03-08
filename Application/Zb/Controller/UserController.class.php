@@ -141,6 +141,7 @@ class UserController extends CommonController
                         "price" => $price,
                         "account" => $account,
                         "from" => $from,
+                        "remark" => "提现中",
                         "create_time" => date('Y-m-d H:i:s'));
 
         $withdrawHistoryModel = M("zuban_user_withdraw_history", '', "DB_DSN");
@@ -155,16 +156,7 @@ class UserController extends CommonController
      */
     public function getUserWithdrawHistoryList(){
 
-        $this->_POST();
-        $keyAry = array(
-            "status" => ""
-        );
-        //参数列
-        $parameters = $this->getPostparameters($keyAry);
-        if (!$parameters) {
-            $this->returnErrorNotice('请求失败!');
-        }
-        $status = $parameters["status"] ? $parameters["status"] : 0;
+        $status = $_REQUEST["status"] ? $_REQUEST["status"] : 0;
 
         $userInfo = $this->checkToken();
         $userId = $userInfo["user_id"];
