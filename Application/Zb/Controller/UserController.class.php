@@ -171,7 +171,7 @@ class UserController extends CommonController
         if($this->pageAry["total"] > 0){
 
             $this->setPageRow();
-            $this->pageAry["list"] = $withdrawHistoryModel->where($whereSqlStr)->page($this->page, $this->row)->select();
+            $this->pageAry["list"] = $withdrawHistoryModel->where($whereSqlStr)->order("id DESC")->page($this->page, $this->row)->select();
             $this->pageAry["list"] = $this->pageAry["list"] ? $this->pageAry["list"] : array();
         }
 
@@ -200,7 +200,7 @@ class UserController extends CommonController
         if($this->pageAry["total"] > 0){
 
             $this->setPageRow();
-            $this->pageAry["list"] = $userMoneyHistoryModel->where($whereSqlStr)->page($this->page, $this->row)->select();
+            $this->pageAry["list"] = $userMoneyHistoryModel->where($whereSqlStr)->order("id DESC")->page($this->page, $this->row)->select();
             $this->pageAry["list"] = $this->pageAry["list"] ? $this->pageAry["list"] : array();
         }
 
