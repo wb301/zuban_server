@@ -251,6 +251,7 @@ abstract class BasePay
                         'create_time'=>date('Y-m-d H:i:s'),
                     );break;
                 }*/
+                break;
             case 2:
                 $moneyHistory[]=array(
                     'user_id'=>$orderInfo['user_id'],
