@@ -188,7 +188,7 @@ class UserController extends CommonController
         $userId = $userInfo["user_id"];
         $whereArr = array("user_id" => $userInfo["user_id"]);
 
-        $whereSqlStr = " `user_id` = '$userId' AND `price_type` > 1";
+        $whereSqlStr = " `user_id` = '$userId' AND `price_type` > 1 AND `price`>0 ";
         if(isset($_REQUEST["price_type"]) && $_REQUEST["price_type"] > 0){
 
             $price_type = $_REQUEST["price_type"];
