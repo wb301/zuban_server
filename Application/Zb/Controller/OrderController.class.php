@@ -603,6 +603,30 @@ class OrderController extends CommonController {
         if (!$addMoneyHistoryResult) {
             $this->returnErrorNotice('关闭异常');
         }
+        $this->changeProductStatus($orderNo,1);
+        $this->returnSuccess(15);
+
+    }
+
+
+
+
+
+    /**
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=orderConfirm&token=a69c61a9416b393cf4ad28a2fd575839&orderNo=14878564061001000007
+     * 确认收货接口
+     * 请求方式:get
+     * 服务名:Order
+     * 参数:
+     * @param $orderNo 订单No
+     * status 5->10
+     */
+    public function orderConfirm($orderNo)
+    {
+        $rs=$this->updateOrderStatus($orderNo,5,6);
+        if(count($rs)<=0){
+            $this->returnErrorNotice('确认失败!');
+        }
         $decPrice=0;
         $nowTime = date('Y-m-d H:i:s');
         $userId = $rs['user_id'];
@@ -665,7 +689,7 @@ class OrderController extends CommonController {
         $regionMoney=M('admin_region_money_history','','DB_DSN');
         $insertRegionMoneyResult = $regionMoney->table('admin_region_money_history')->addAll($addAry);
         if(!$insertRegionMoneyResult){
-            $this->returnErrorNotice('关闭异常');
+            $this->returnErrorNotice('收货异常');
         }
         // 开始付款后的状态变更
         $updateAry = array(
@@ -675,37 +699,13 @@ class OrderController extends CommonController {
         $orderModel = M('zuban_order', '', 'DB_DSN');
         $result = $orderModel->where("`order_no` ='$orderNo'")->save($updateAry);
         if (!$result || count($result) <= 0) {
-            $this->returnErrorNotice('关闭异常!');
-        }
-        $this->changeProductStatus($orderNo,1);
-        $this->returnSuccess(15);
-
-    }
-
-
-
-
-
-    /**
-     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=orderConfirm&token=a69c61a9416b393cf4ad28a2fd575839&orderNo=14878564061001000007
-     * 确认收货接口
-     * 请求方式:get
-     * 服务名:Order
-     * 参数:
-     * @param $orderNo 订单No
-     * status 5->10
-     */
-    public function orderConfirm($orderNo)
-    {
-        $rs=$this->updateOrderStatus($orderNo,5,6);
-        if(count($rs)<=0){
-            $this->returnErrorNotice('确认失败!');
+            $this->returnErrorNotice('收货异常!');
         }
         $moneyHistory=array(
             'user_id'=>$rs['product_user'],
             'price_type'=>3,
             'price_info'=>$rs['order_no'],
-            'price'=>$rs['return_price'],
+            'price'=>$decPrice,
             'remark'=>'收入',
             'create_time'=>date('Y-m-d H:i:s'),
         );
