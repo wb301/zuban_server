@@ -362,7 +362,7 @@ class OrderController extends CommonController {
         $orderRs = $this->getOrderPay($orderPayRs, $orderRs);
 
         //查询商品数据
-        $productList = $this->getProductListfByCode($productCodeList);
+        $productList = $this->getProductListByCode($productCodeList);
         //print_r($barcodeList);exit;
         //先绑定商品
         foreach ($orderProductRs as $ok => $ov) {
