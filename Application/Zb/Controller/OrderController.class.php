@@ -362,7 +362,7 @@ class OrderController extends CommonController {
         $orderRs = $this->getOrderPay($orderPayRs, $orderRs);
 
         //查询商品数据
-        $productList = $this->getProductListByCode($productCodeList);
+        $productList = $this->getProductListfByCode($productCodeList);
         //print_r($barcodeList);exit;
         //先绑定商品
         foreach ($orderProductRs as $ok => $ov) {
@@ -736,7 +736,7 @@ class OrderController extends CommonController {
         //检测用户userId
         $userId = $this->checkToken(1)['user_id'];
         $orderReturnModel = M('zuban_order_return','','DB_DSN');
-        $orderReturnRs = $orderReturnModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->find();
+        $orderReturnRs = $orderReturnModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' and `status`=1 ")->find();
         if ($orderReturnRs || count($orderReturnRs) >0) {
             $this->returnErrorNotice('申请退款已提交等待后台审核!');
         }
@@ -779,6 +779,60 @@ class OrderController extends CommonController {
         $this->changeProductStatus($orderNo);
         $this->returnSuccess('申请成功!');
     }
+
+
+
+
+    /**
+     * 取消退款
+     * http://localhost/zuban_server/index.php?c=Zb&m=Order&a=orderReturn&token=1111&orderNo=14876127851000103530
+     * 请求方式:get
+     * 服务名:Order
+     * 参数:
+     * @param $orderNo 订单No
+     */
+    public function cancelReturn($orderNo){
+        if (strlen($orderNo) <= 0) {
+            $this->returnErrorNotice('参数错误!');
+        }
+        //检测用户userId
+        $userId = $this->checkToken(1)['user_id'];
+        $orderReturnModel = M('zuban_order_return','','DB_DSN');
+        $orderReturnRs = $orderReturnModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' AND `status`=1 ")->find();
+        if (!$orderReturnRs || count($orderReturnRs) <0) {
+            $this->returnErrorNotice('取消申请有误!');
+        }
+        $orderModel = M('zuban_order', '', 'DB_DSN');
+        $orderRs = $orderModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->field("`return_price`,`user_id`,`order_no`,`price`,`status`,`order_type`")->select();
+        if (!$orderRs || count($orderRs) <= 0) {
+            $this->returnErrorNotice('订单编号错误!');
+        }
+        $orderRs = $orderRs[0];
+        if ($orderRs['order_type']!=1) {
+            $this->returnErrorNotice('该订单不支持退款!');
+        }
+        if ($orderRs['status']!=11) {
+            $this->returnErrorNotice('该订单状态有误!');
+        }
+        //退款记录
+        $orderReturnAry = array(
+            'status' => 0
+        );
+        $orderReturnModel = M('zuban_order_return','','DB_DSN');
+        $orderPayId = $orderReturnModel->where("`user_id` = '$userId' AND `order_no` = '$orderNo' ")->save($orderReturnAry);
+        if ($orderPayId <= 0) {
+            $this->returnErrorNotice('取消失败，请稍后再试!');
+        }
+        // 开始付款后的状态变更
+        $updateAry = array(
+            'status' => 1,
+            'update_time' => date('Y-m-d H:i:s')
+        );
+        $orderModel->where("`order_no` ='$orderNo'")->save($updateAry);
+        $this->changeProductStatus($orderNo,2);
+        $this->returnSuccess('申请成功!');
+    }
+
 
 
     /**

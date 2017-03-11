@@ -85,11 +85,15 @@ abstract class BasePay
         }
         //检查订单商品
         $orderProductModel = M('zuban_order_product','','DB_DSN');
-        $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
+        $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code");
         $whereOrderProduct = array(
             'order_no' => $orderRs['order_no'],
             'status' => 0,
         );
+        //获取分类名称
+        $productCategoryModel = M('zuban_product_category', '', 'DB_DSN');
+        $category = $productCategoryModel->where("`product_sys_code`= '$orderProductRs'")->getField("`category_name`");
+
         //非充值会员订单查询商品
         if(in_array($orderRs['order_type'],array(0,1))){
             $orderProductRs = $orderProductModel->where($whereOrderProduct)->field("`product_sys_code`, SUM(`num`) AS `num`,`price`, `total_price`")->group("product_sys_code")->select();
@@ -174,7 +178,7 @@ abstract class BasePay
             return $result;
         }
         //4.消费记录钱包核算
-        $moneyHistory=$this->getHistyAry($orderRs,$price,$returnPrice);
+        $moneyHistory=$this->getHistyAry($orderRs,$price,$returnPrice,$category);
         $moneyHistoryModel=M('zuban_user_money_history','','DB_DSN');
         $addMoneyHistoryResult = $transModel->db(1, 'DB_DSN')->table('zuban_user_money_history')->addAll($moneyHistory);
         if(!$addMoneyHistoryResult){
@@ -204,7 +208,7 @@ abstract class BasePay
 
 
     //消费记录
-    protected function getHistyAry($orderInfo,$price,$lastPrice){
+    protected function getHistyAry($orderInfo,$price,$lastPrice,$category){
         $moneyHistory=array();
         switch($orderInfo['order_type']){
             case 0:
@@ -221,7 +225,7 @@ abstract class BasePay
                     'price_type'=>2,
                     'price_info'=>$orderInfo['order_no'],
                     'price'=>-$price,
-                    'remark'=>'查看消费',
+                    'remark'=>'查看['.$category.']消费',
                     'create_time'=>date('Y-m-d H:i:s'),
                 );break;
             case 1:
@@ -238,7 +242,7 @@ abstract class BasePay
                     'price_type'=>2,
                     'price_info'=>$orderInfo['order_no'],
                     'price'=>-$price,
-                    'remark'=>'购买消费',
+                    'remark'=>'购买['.$category.']消费',
                     'create_time'=>date('Y-m-d H:i:s'),
                 );
                 /*if($lastPrice>0){
