@@ -22,6 +22,7 @@ class UserController extends CommonController
         $userBase["nick_name"] = $userBase["nick_name"] ? $userBase["nick_name"] : '昵称';
         $userBase["money"] = $this->getUserMoneyInfo($userId);
         $userBase["vip"] = $this->getVip($userId);
+        $userBase['server_phone']=$this->getSysConfig('CUSTOMER_SERVICE');
         $this->updUserGeographicPosition($userId);
 
         return $this->returnSuccess($userBase);
