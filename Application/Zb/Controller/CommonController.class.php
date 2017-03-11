@@ -474,7 +474,9 @@ class CommonController extends Controller
         $productModel = M('zuban_product_goods','','DB_DSN');
         $productSaveArr = array("logitude" => $userBase["logitude"], "latitude" => $userBase["latitude"]);
         $productModel->where(array("user_id" => $userInfo["user_id"]))->save($productSaveArr);
-        $userInfo['server_phone']=$this->getSysConfig('CUSTOMER_SERVICE');
+        $sysConfig = $this->getSysConfig();
+        $userBase['server_phone']=$sysConfig['CUSTOMER_SERVICE'];
+        $userBase['as']=intval(($sysConfig['AS_PLATFORM']+$sysConfig['AS_REGISTERED']+$sysConfig['AS_CONSUM']) / C('DENO')*100);
         $userInfo["token"] = $token;
         return $userInfo;
     }
