@@ -176,7 +176,7 @@ class ProductController extends CommonController {
         //查询当前用户
         $userInfo = $this->checkToken(0);
         //查询是否为会员
-        $vipLevel = $this->getVip($userInfo["user_id"]);
+        $vipInfo = $this->getVip($userInfo["user_id"]);
         $returnUserInfo = "";
         if(!empty($userInfo) && $userInfo['user_id'] == $userId){
             //是自己
@@ -187,7 +187,7 @@ class ProductController extends CommonController {
         }
         $productAry['category'] = $categoryRs;
         $productAry['image_list'] = $galleryRs;
-        $productAry['vip_level'] = $vipLevel;
+        $productAry['vip_level'] = $vipInfo['vip_type'];
         $productAry['user_info'] = $returnUserInfo;
 
         $this->returnSuccess($productAry);
