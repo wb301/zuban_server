@@ -210,6 +210,13 @@ abstract class BasePay
     //消费记录
     protected function getHistyAry($orderInfo,$price,$lastPrice,$category){
         $moneyHistory=array();
+        $vipName='银卡';
+        switch($orderInfo['member_code']){
+            case 1:$vipName='银卡';break;
+            case 2:$vipName='金卡';break;
+            case 3:$vipName='钻石';break;
+            default:  $vipName='银卡';
+        }
         switch($orderInfo['order_type']){
             case 0:
                 $moneyHistory[]=array(
@@ -225,7 +232,7 @@ abstract class BasePay
                     'price_type'=>2,
                     'price_info'=>$orderInfo['order_no'],
                     'price'=>-$price,
-                    'remark'=>'查看['.$category.']消费',
+                    'remark'=>'查看['.$category.']消费 订单编号'.$orderInfo['order_no'],
                     'create_time'=>date('Y-m-d H:i:s'),
                 );break;
             case 1:
@@ -242,7 +249,7 @@ abstract class BasePay
                     'price_type'=>2,
                     'price_info'=>$orderInfo['order_no'],
                     'price'=>-$price,
-                    'remark'=>'购买['.$category.']消费',
+                    'remark'=>'购买['.$category.']消费 订单编号'.$orderInfo['order_no'],
                     'create_time'=>date('Y-m-d H:i:s'),
                 );
                 /*if($lastPrice>0){
@@ -262,7 +269,7 @@ abstract class BasePay
                     'price_type'=>1,
                     'price_info'=>$orderInfo['order_no'],
                     'price'=>$price,
-                    'remark'=>'会员充值',
+                    'remark'=>$vipName.'会员充值',
                     'create_time'=>date('Y-m-d H:i:s'),
                 );
                 $moneyHistory[]=array(
@@ -270,7 +277,7 @@ abstract class BasePay
                     'price_type'=>6,
                     'price_info'=>$orderInfo['order_no'],
                     'price'=>-$price,
-                    'remark'=>'会员充值',
+                    'remark'=>$vipName.'会员充值',
                     'create_time'=>date('Y-m-d H:i:s'),
                 );break;
         }

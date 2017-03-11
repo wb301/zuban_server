@@ -706,7 +706,7 @@ class OrderController extends CommonController {
             'price_type'=>3,
             'price_info'=>$rs['order_no'],
             'price'=>$decPrice,
-            'remark'=>'收入',
+            'remark'=>'收入 订单编号:'.$rs['order_no'],
             'create_time'=>date('Y-m-d H:i:s'),
         );
         $moneyHistoryModel=M('zuban_user_money_history','','DB_DSN');
