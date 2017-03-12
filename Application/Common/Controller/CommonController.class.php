@@ -156,7 +156,7 @@ class CommonController extends Controller
             exit;
         }
     }
-
+    
     private function formatMapping($mapping)
     {
         $field  = "";
@@ -218,5 +218,71 @@ class CommonController extends Controller
         }
         return $list;
     }
+
+
+    /**
+     * version：2015-8-30
+     * 获取订单状态名称
+     * 参数:
+     * 无参数
+     */
+    protected function getSatusOrder($status){
+
+        $statusNameAry=array(
+            '0'=>'待付款',
+            '1'=>'待确认',
+            '5'=>'进行中',
+            '6'=>'已完成',
+            '9'=>'已取消',
+            '10'=>'已完成',
+            '11'=>'退款中',
+            '12'=>'退款已完成',
+            '15'=>'交易关闭',
+        );
+        return $statusNameAry[$status];
+    }
+
+    /**
+     * 绑定支付信息
+     * @param $payAry
+     * @param $orderAry
+     * @return mixed
+     */
+    protected function getOrderPay($payAry, $orderAry)
+    {
+        foreach ($orderAry as $key => $value) {
+            $orderNo = $value['order_no'];
+            $orderAry[$key]['paymentList'] = array();
+            if (count($payAry) > 0) {
+                foreach ($payAry as $ok => $ov) {
+                    if ($orderNo == $ov['order_no']) {
+                        array_push($orderAry[$key]['paymentList'], $ov);
+                    }
+                }
+            }
+        }
+        return $orderAry;
+    }
+
+    /**
+     * info：获取价格信息
+     * params:productList
+     * return:array
+     */
+    public function  getProductListByCode($productCodeList){
+        $proCodeListStr = getListString($productCodeList);
+        $productGoodsModel = M('zuban_product_goods', '', 'DB_DSN');
+        $productRs = $productGoodsModel->where("`product_sys_code` IN ($proCodeListStr)")->field("`price_type`,`product_sys_code`,`price`,`status`,`look_price`,`product_image`,`region_name`,`region_code`,`product_info`,`user_id`")->select();
+        //获取分类名称
+        $productCategoryModel = M('zuban_product_category', '', 'DB_DSN');
+        $category = $productCategoryModel->where("`product_sys_code` IN ($proCodeListStr)")->getField("`product_sys_code`,`category_name`");
+
+        foreach($productRs AS $key=>$vale){
+            $productRs[$key]['category_name']=$category[$vale['product_sys_code']];
+        }
+        return $productRs;
+
+    }
+
 
 }
