@@ -7,6 +7,9 @@ class SysController extends AdminCommonController
 	//获取系统可修改配置
     public function getSysConfigList()
     {
+    	//权限验证
+        $adminCode = "BOSS";
+
     	$sysModel = M("admin_system_config", 0, "DB_DSN");
         $sysList = $sysModel->where("`status` = 1 AND `is_auto` = 0 ")->select();
 
@@ -16,7 +19,7 @@ class SysController extends AdminCommonController
     //修改系统配置
     public function updateSysConfig()
     {
-    	// $this->_POST();
+    	$this->_POST();
         $keyAry = array(
             'key' => "配置属性名不能为空",
             'value' => "配置属性值不能为空"
@@ -30,7 +33,7 @@ class SysController extends AdminCommonController
         $value = $parameters['value'];
 
         //权限验证
-        $adminCode = "01";
+        $adminCode = "BOSS";
 
         //验证key
     	$sysModel = M("admin_system_config", 0, "DB_DSN");

@@ -168,68 +168,6 @@ class CommonController extends Controller
         return $orderAry;
     }
 
-
-    private function formatMapping($mapping)
-    {
-        $field  = "";
-        if($mapping){
-            $field = "";
-            foreach ($mapping as $key => $value) {
-                $field .= "`$key` AS $value, ";
-            }
-        }
-        return $field;
-    }
-
-    //获取地区列表
-    protected function region_list($code,$level=999999,$mapping=null)
-    {
-        $field = $this->formatMapping($mapping);
-        $tempBaseRegionModel = M('zuban_temp_base_region','','DB_DSN');
-        $regionRs = $tempBaseRegionModel->where("`status`= 1 AND `level`<= $level")->field("$field `code`,`parent_code`,`name`,`level`")->order(" `id` ASC,`level` ASC ")->select();
-
-        return list_to_tree($regionRs,$code,"code","parent_code");
-    }
-
-    //获取地区列表
-    protected function category_list($id,$level=999999,$mapping=null)
-    {
-        $field = $this->formatMapping($mapping);
-        $tempCategoryModel = M('admin_product_category','','DB_DSN');
-        $categoryRs = $tempCategoryModel->where("`status`= 1 AND `level`<= $level")->field("$field `id`,`parent_id`,`category_name`,`level` ")->order(" `sort` ASC,`level` ASC ")->select();
-
-        return list_to_tree($categoryRs,$id);
-    }
-
-    protected function fixAllForTree($list,$p,$level,$mapping=null,$set,$name,$pk,$ppk,$children="children")
-    {
-        $p[$name] = $set;
-        $p[$pk] = $p[$ppk];
-        if($mapping){
-            $p[$mapping[$name]] = $p[$name];
-            $p[$mapping[$pk]] = $p[$pk];
-        }
-        if($level > 0){
-            $p[$children] = [];
-        }
-        $level--;
-        $list = array_merge(array($p), $list);
-        foreach ($list as $key => $value) {
-            if(isset($value[$children])){
-                if(count($value[$children]) > 0){
-                    $push = $value[$children][0];
-                }else{
-                    $push = $value;
-                }
-                $set = $value[$name];
-                unset($push[$children]);
-                $list[$key][$children] = $this->fixAllForTree($value[$children],$push,$level,$mapping,$set,$name,$pk,$ppk,$children);
-            }
-
-        }
-        return $list;
-    }
-
     /**
      * 获取用户钱包
      * params:user_id
