@@ -11,7 +11,7 @@ class CategoryController extends AdminCommonController {
 		获取分类列表
 
 	*/
-    public function getCategoryList($id=1,$level=3)
+    public function getCategoryList($id=1,$level=3,$mapping=null)
     {
     	$id = intval($id);
         if($id < 0){
@@ -26,6 +26,7 @@ class CategoryController extends AdminCommonController {
             'create_time' => 'create_time',
             'update_time' => 'update_time'
         );
+        $map = array_merge($map,$mapping);
         $categoryList = $this->category_list($id,$level,$map,"");
 
         $this->returnSuccess($categoryList);
