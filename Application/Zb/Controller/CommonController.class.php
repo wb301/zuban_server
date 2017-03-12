@@ -220,44 +220,6 @@ class CommonController extends Controller
         return $userInfo;
     }
 
-    /**
-
-        绑定用户信息函数
-
-    */
-    public function getUserInfoByAryList($aryList,$fileName="user_id"){
-        if(!$aryList || count($aryList) <= 0){
-            return array();
-        }
-        $userIdList = array();
-        foreach ($aryList as $key => $value) {
-            if(isset($value[$fileName]) && strlen($value[$fileName]) > 0){
-                array_push($userIdList, $value[$fileName]);
-            }
-        }
-        if(count($userIdList) <= 0){
-            return $aryList;
-        }
-        $userIdListStr = getListString($userIdList);
-
-        $userModel = M('zuban_user_base','','DB_DSN');
-        $userInfoRs = $userModel->where("`user_id` IN ($userIdListStr) ")->select();
-
-        if(!$userInfoRs || count($userInfoRs) <= 0){
-            return $aryList;
-        }
-        foreach ($aryList as $ak => $av) {
-            $userId = $av[$fileName];
-            foreach ($userInfoRs as $uk => $uv) {
-                if($userId == $uv['user_id']){
-                    $aryList[$ak]['userInfo'] = $uv;
-                    break;
-                }
-            }
-        }
-
-        return $aryList;
-    }
 
     /**
 

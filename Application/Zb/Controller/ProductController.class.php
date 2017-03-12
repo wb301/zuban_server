@@ -108,12 +108,17 @@ class ProductController extends CommonController {
             $this->returnErrorNotice("地区编码错误！");
         }
         //条件格式化
-        $categoryIdList = array_merge(array($categoryId),array_column(tree_to_List($this->category_list($categoryId)), 'id'));
-        $regionCodeList = array_merge(array($regionCode),array_column(tree_to_List($this->region_list($regionCode)), 'code'));
-
-        $categoryIdListStr = join(",",$categoryIdList);
-        $regionCodeListStr = getListString($regionCodeList);
-        $where = "g.`status` = 1 AND c.`category_id` IN ($categoryIdListStr) AND g.`region_code` IN ($regionCodeListStr)";
+        $where = "g.`status` = 1";
+        if($categoryId > 1){
+            $categoryIdList = array_merge(array($categoryId),array_column(tree_to_List($this->category_list($categoryId)), 'id'));
+            $categoryIdListStr = join(",",$categoryIdList);
+            $where .= " AND c.`category_id` IN ($categoryIdListStr) ";
+        }
+        if(intval($regionCode) > 1){
+            $regionCodeList = array_merge(array($regionCode),array_column(tree_to_List($this->region_list($regionCode)), 'code'));
+            $regionCodeListStr = getListString($regionCodeList);
+            $where .= " AND g.`region_code` IN ($regionCodeListStr)";
+        }
 
         //查询
         $this->pageAry = $this->getProductList($where,array('lat'=>$latitude,'log'=>$logitude),$orderBy);
