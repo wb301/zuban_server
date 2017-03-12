@@ -61,7 +61,7 @@ class UserController extends AdminCommonController
         $userBase = $this->checkToken(1);
         $region_code = $parameters["region_code"];
 
-        $whereArr = array();
+        $whereArr = array("status" => array("lt", 3));
         if(strlen($region_code) > 0){
             $whereArr["region_code"] = $region_code;
         }
@@ -96,7 +96,8 @@ class UserController extends AdminCommonController
         //获取自己的信息
         $userBase = $this->checkToken(1);
         $userBaseModel = M("admin_region_manager", 0, "DB_DSN");
-        $userInfo = $userBaseModel->where(array("id" => $parameters["id"]))->find();
+        $whereArr = array("status" => array("lt", 3), "id" => $parameters["id"]);
+        $userInfo = $userBaseModel->where($whereArr)->find();
         if(!$userInfo){
             $this->returnErrorNotice('用户不存在!');
         }
@@ -128,6 +129,8 @@ class UserController extends AdminCommonController
 
         //获取自己的信息
         $userBase = $this->checkToken(1);
+        $adminCode = $userBase["admin_code"];
+
         $id = $parameters["id"];
         $account = $parameters["account"];
         $password = $parameters["password"];
@@ -156,11 +159,16 @@ class UserController extends AdminCommonController
                         "status" => $status);
 
         if($id > 0){
+            $remark = "修改代理商[".$id."],生成新数据:".json_encode($addArr);
             $userBaseModel->where(array("id" => $id))->save($addArr);
         }else{
-            $userBaseModel->add($addArr);
+            $addArr["admin_code"] = create_guid();
+            $remark = "新增代理商[".$nickName."],生成新数据id:".$id;
+            $id = $userBaseModel->add($addArr);
         }
 
+        $operation = "User-updRegionManager-admin_region_manager-".$id;
+        $this->insertHistory($adminCode,$operation,$remark);
         return $this->returnSuccess(true);
     }
 
@@ -182,6 +190,7 @@ class UserController extends AdminCommonController
 
         //获取自己的信息
         $userBase = $this->checkToken(1);
+        $adminCode = $userBase["admin_code"];
         $status = $parameters["status"];
 
         $userBaseModel = M("admin_region_manager", 0, "DB_DSN");
@@ -201,29 +210,13 @@ class UserController extends AdminCommonController
 
         }
 
-        $userBaseModel->where($whereArr)->save(array("status" => $status));
-        return $this->returnSuccess(true);
-    }
+        $saveArr = array("status" => $status);
+        $userBaseModel->where($whereArr)->save($saveArr);
 
-    /**
-        删除地区管理员账号
-    */
-    public function delRegionManager(){
+        $remark = "修改代理商[".$id."],生成新数据:".json_encode($saveArr);
+        $operation = "User-updRegionManagerStatus-admin_region_manager-".$id;
+        $this->insertHistory($adminCode,$operation,$remark);
 
-        $this->_POST();
-        $keyAry = array(
-            'id' => "用户标识不能为空"
-        );
-        //参数列
-        $parameters = $this->getPostparameters($keyAry);
-        if (!$parameters) {
-            $this->returnErrorNotice('请求失败!');
-        }
-
-        //获取自己的信息
-        $userBase = $this->checkToken(1);
-        $userBaseModel = M("admin_region_manager", 0, "DB_DSN");
-        $userBaseModel->where(array("id" => $parameters["id"]))->delete();
         return $this->returnSuccess(true);
     }
 
