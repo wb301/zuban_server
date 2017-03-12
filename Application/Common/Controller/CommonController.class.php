@@ -156,7 +156,7 @@ class CommonController extends Controller
             exit;
         }
     }
-    
+
     private function formatMapping($mapping)
     {
         $field  = "";

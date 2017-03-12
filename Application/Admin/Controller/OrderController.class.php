@@ -73,25 +73,25 @@ class OrderController extends AdminCommonController
             $whereSql .= " AND `order_type`= $type ";
         }
         if(strlen($parameters['phone'])>0){
-            $whereSql .= " AND `phone`= {$parameters['phone']} ";
+            $whereSql .= " AND `phone`= '{$parameters['phone']}' ";
         }
         if(strlen($parameters['name'])>0){
-            $whereSql .= " AND `receiver`= {$parameters['name']}  ";
+            $whereSql .= " AND `receiver`= '{$parameters['name']}'  ";
         }
         if(strlen($parameters['outNo'])>0){
-            $whereSql .= " AND `notice_trade_no`= {$parameters['outNo']}  ";
+            $whereSql .= " AND `notice_trade_no`= '{$parameters['outNo']}'  ";
         }
         if(strlen($parameters['orderNo'])>0){
-            $whereSql .= " AND `order_no`= {$parameters['orderNo']} ";
+            $whereSql .= " AND `order_no`= '{$parameters['orderNo']}' ";
         }
         if(strlen($parameters['sourse'])>0){
-            $whereSql .= " AND `from_source`= {$parameters['sourse']} ";
+            $whereSql .= " AND `from_source`= '{$parameters['sourse']}' ";
         }
         if(strlen($parameters['startTime'])>0){
-            $whereSql .= " AND `create_time`>= {$parameters['startTime']} ";
+            $whereSql .= " AND `create_time`>= '{$parameters['startTime']}' ";
         }
         if(strlen($parameters['endTime'])>0){
-            $whereSql .= " AND `create_time`<= {$parameters['endTime']} ";
+            $whereSql .= " AND `create_time`<= '{$parameters['endTime']}' ";
         }
         if ($statusList && count($statusList) > 0) {
             $statusListStr = getListString($statusList);
