@@ -40,7 +40,7 @@ class AdminCommonController extends CommonController
             }
         }
 
-        $userInfo = $userList[0]
+        $userInfo = $userList[0];
         if($checkManager){
         	$managerType = $userInfo["manager_type"];
 	        if($managerType <= 0){
