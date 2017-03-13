@@ -151,6 +151,79 @@ class ReportController extends AdminCommonController
     }
 
 
+    /**
+     * 订单统计
+     * http://localhost/zuban_server/index.php?c=Admin&m=Report&a=orderStatistics&token=1111&type=0&startTime=&endTime=&region=
+     * 请求方式:get
+     * 服务名:Wap
+     * 参数:
+     * @param $token 用户编号
+     * @param $startTime 开始时间
+     * @param $endTime 结束时间
+     * @param $region 区域code
+     *
+     */
+    public function orderStatistics(){
+
+        $keyAry = array(
+            'startTime' => "",
+            'endTime' => "",
+            'region' => "",
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+        $orderCount = array(
+            'WaitingPay' => 0,
+            'WaitingSend' => 0,
+            'WaitingConfirm' => 0,
+            'End' => 0,
+        );
+        $today=date("Y-m-d");
+        $yestoday=date("Y-m-d",strtotime("-1 day"));
+        $where='';
+        if(strlen($parameters['region'])>0){
+            $where.=" AND `region_code`= '{$parameters['region']}' ";
+        }
+        if(strlen($parameters['startTime'])>0){
+            $where.="  AND `create_time`>= '{$parameters['startTime']}'";
+        }
+        if(strlen($parameters['endTime'])>0){
+            $where.="  AND `create_time`<= '{$parameters['endTime']}'";
+        }
+        // 订单各个数量
+        $orderModel = M('zuban_order', '', 'DB_DSN');
+        $orderCountList = $orderModel->where("`is_delete` = 0 AND `status` IN (0,1,2,5,6,10,11,12,15) $where")->field(" count(id) AS count,`status`")->group("`status`")->select();
+        if (count($orderCountList) > 0) {
+            foreach ($orderCountList AS $key => $value) {
+                switch ($value['status']) {
+                    case 0:
+                        $orderCount['WaitingPay'] += intval($value['count']);
+                        break;
+                    case 1:
+                    case 2:
+                        $orderCount['WaitingSend'] += intval($value['count']);
+                        break;
+                    case 5:
+                        $orderCount['WaitingConfirm'] += intval($value['count']);
+                        break;
+                    case 6:
+                    case 12:
+                    case 15:
+                        $orderCount['End'] += intval($value['count']);
+                        break;
+
+                }
+            }
+
+        }
+        $this->returnSuccess($orderCount);
+
+    }
+
+
 
 
 

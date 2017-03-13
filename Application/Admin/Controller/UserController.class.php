@@ -438,6 +438,47 @@ class UserController extends AdminCommonController
     }
 
 
+    /**
+     * 删除用户
+     * http://localhost/zuban_server/index.php?c=Admin&m=User&a=deleteUser&userId=1111
+     * 请求方式:get
+     * 参数:
+     * @param $userId 用户编号
+     *
+     */
+    public function  deleteUser($userId){
+        //用户表
+        $userModel = M('zuban_user_base', '', 'DB_DSN');
+        $userRs = $userModel->where("`user_id`='$userId' AND `status`=1 ")->select();
+        if (count($userRs) <= 0) {
+            $this->returnErrorNotice('该用户已经被删除!');
+        }
+        //订单表
+        $orderModel = M('zuban_order', '', 'DB_DSN');
+        $orderRs=$orderModel->where("(`user_id`='$userId' OR `product_user`='$userId') AND `status` IN(1,5,11)")->count();
+        if($orderRs>0){
+            $this->returnErrorNotice('该用户存在交易订单不可删除!');
+        }
+
+        $moneyHistoryModel = M('zuban_user_money_history','','DB_DSN');
+        $userIdSqlStr = "`user_id` = '$userId'";
+        $money = $moneyHistoryModel->where($userIdSqlStr)->SUM("price");
+        if($money>0){
+            $this->returnErrorNotice('该用户有为提现金额不可删除!');
+        }
+        $orderModel->where($userIdSqlStr)->setField(array(
+            'status' => -1
+        ));
+        $productModel = M('zuban_product_goods', '', 'DB_DSN');
+        $updateAry = array(
+            'status' => -1,
+            'update_time' => date('Y-m-d H:i:s')
+        );
+        $productModel->where($userIdSqlStr)->setField($updateAry);
+        $this->returnSuccess('删除成功');
+    }
+
+
 
 
 }
