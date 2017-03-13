@@ -466,7 +466,7 @@ class UserController extends AdminCommonController
         if($money>0){
             $this->returnErrorNotice('该用户有为提现金额不可删除!');
         }
-        $orderModel->where($userIdSqlStr)->setField(array(
+        $userModel->where($userIdSqlStr)->setField(array(
             'status' => -1
         ));
         $productModel = M('zuban_product_goods', '', 'DB_DSN');
