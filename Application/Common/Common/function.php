@@ -372,3 +372,14 @@ function create_guid(){
     $uuid = strtolower($uuid);
     return $uuid;
 }
+
+function findNum($str=''){
+    $str=trim($str);
+    if(empty($str)){return '';}
+    $reg='/(\d{3}(\.\d+)?)/is';//匹配数字的正则表达式
+    preg_match_all($reg,$str,$result);
+    if(is_array($result)&&!empty($result)&&!empty($result[1])&&!empty($result[1][0])){
+        return $result[1][0];
+    }
+    return null;
+}

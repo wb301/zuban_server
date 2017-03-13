@@ -231,6 +231,10 @@ class ProductController extends CommonController {
         if(intval($productInfo['category_id']) <= 0){
             $this->returnErrorNotice('请添加服务类型!');
         }
+        //验证上传内容
+        if(findNum($productInfo['product_info'])){
+            $this->returnErrorNotice('补充意见请勿填写数字!');
+        }
         //查询分类信息
         $categoryAry = $this->getCategoryAry($productInfo['category_id']);
         if(empty($categoryAry)){
@@ -321,6 +325,10 @@ class ProductController extends CommonController {
             $goodsUpdateAry['price_type'] = intval($productInfo['price_type']);
         }
         if(isset($productInfo['product_info'])){
+            //验证上传内容
+            if(findNum($productInfo['product_info'])){
+                $this->returnErrorNotice('补充意见请勿填写数字!');
+            }
             $goodsUpdateAry['product_info'] = $productInfo['product_info'];
         }
         if(isset($productInfo['product_image'])){
