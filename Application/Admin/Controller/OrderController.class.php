@@ -173,4 +173,46 @@ class OrderController extends AdminCommonController
     }
 
 
+    //退款完成
+    public function confirmReturn($orderNo)
+    {
+
+        $orderModel = M('zuban_order', '', 'DB_DSN');
+        $orderRs = $orderModel->where(" `order_no` = '$orderNo' ")->field("`return_price`,`user_id`,`order_no`,`price`,`status`,`product_user`,`from_source`,`notice_trade_no`")->select();
+        if (!$orderRs || count($orderRs) <= 0) {
+            $this->returnErrorNotice('订单异常!');
+        }
+        $orderRs = $orderRs[0];
+        $moneyHistory = array(
+            'user_id' => $orderRs['product_user'],
+            'price_type' => 4,
+            'price_info' => $orderRs['order_no'],
+            'price' => $orderRs['price'],
+            'remark' => '申请退款记录'.'订单编号:'.$orderRs['order_no'],
+            'create_time' => date('Y-m-d H:i:s'),
+        );
+        $moneyHistoryModel = M('zuban_user_money_history', '', 'DB_DSN');
+        $addMoneyHistoryResult = $moneyHistoryModel->add($moneyHistory);
+        if (!$addMoneyHistoryResult) {
+            $this->returnErrorNotice('退款异常');
+        }
+        if (intval($orderRs['status']) != 11) {
+            $this->returnErrorNotice('订单状态已变更!');
+        }
+        // 开始付款后的状态变更
+        $updateAry = array(
+            'status' => 12,
+            'update_time' => date('Y-m-d H:i:s')
+        );
+        $result = $orderModel->where("`order_no` ='$orderNo'")->save($updateAry);
+        if (!$result || count($result) <= 0) {
+            $this->returnErrorNotice('订单状态变更失败!');
+        }
+        $this->changeProductStatus($orderNo,1);
+        $this->returnSuccess(12);
+
+    }
+
+
+
 }

@@ -866,24 +866,5 @@ class OrderController extends CommonController {
     }
 
 
-    /**
-     * @desc 更新商品状态
-     * */
-    public function changeProductStatus($orderNo,$status=1){
-
-        $orderProductModel = M('zuban_order_product','','DB_DSN');
-        $orderProductRs = $orderProductModel->where("`order_no` ='$orderNo' AND `status` >= 0")->getField("product_sys_code",true);
-        if(count($orderProductRs)>0){
-            $productCode_str=getListString($orderProductRs);
-            $productModel = M('zuban_product_goods','','DB_DSN');
-            $updateAry = array(
-                'status' => $status,
-                'update_time' => date('Y-m-d H:i:s')
-            );
-            $productModel->where("`product_sys_code`IN($productCode_str)")->setField($updateAry);
-        }
-
-    }
-
 
 }
