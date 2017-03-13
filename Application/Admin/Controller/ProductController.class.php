@@ -60,7 +60,8 @@ class ProductController extends AdminCommonController {
             $this->returnErrorNotice("地区编码错误！");
         }
         //权限验证
-        $adminCode = "BOSS";
+        $adminInfo = $this->checkToken(1);
+        $adminCode = $adminInfo['admin_code'];
 
         //条件格式化
         $where = "g.`status` = $status";
@@ -103,7 +104,8 @@ class ProductController extends AdminCommonController {
             $this->returnErrorNotice('请求失败!');
         }
         //权限验证
-        $adminCode = "BOSS";
+        $adminInfo = $this->checkToken(1);
+        $adminCode = $adminInfo['admin_code'];
 
         $id = intval($parameters['id']);
 

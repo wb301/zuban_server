@@ -8,7 +8,8 @@ class SysController extends AdminCommonController
     public function getSysConfigList()
     {
     	//权限验证
-        $adminCode = "BOSS";
+        $adminInfo = $this->checkToken(1);
+        $adminCode = $adminInfo['admin_code'];
 
     	$sysModel = M("admin_system_config", 0, "DB_DSN");
         $sysList = $sysModel->where("`status` = 1 AND `is_auto` = 0 ")->select();
@@ -33,7 +34,8 @@ class SysController extends AdminCommonController
         $value = $parameters['value'];
 
         //权限验证
-        $adminCode = "BOSS";
+        $adminInfo = $this->checkToken(1);
+        $adminCode = $adminInfo['admin_code'];
 
         //验证key
     	$sysModel = M("admin_system_config", 0, "DB_DSN");

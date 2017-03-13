@@ -18,7 +18,8 @@ class CategoryController extends AdminCommonController {
             $this->returnErrorNotice("分类编码错误！");
         }
         //权限验证
-        $adminCode = "BOSS";
+        $adminInfo = $this->checkToken(1);
+        $adminCode = $adminInfo['admin_code'];
         $map = array(
             'is_free' => 'is_free',
             'sort' => 'sort',
@@ -62,7 +63,8 @@ class CategoryController extends AdminCommonController {
             $this->returnErrorNotice('请添加排序!');
         }
         //权限验证
-        $adminCode = "BOSS";
+        $adminInfo = $this->checkToken(1);
+        $adminCode = $adminInfo['admin_code'];
 
         //查询分类level
         $categoryLevel = $this->getCategoryLevel(intval($categoryInfo['parent_id']));
@@ -129,7 +131,8 @@ class CategoryController extends AdminCommonController {
             $this->returnErrorNotice('请求失败!');
         }
         //权限验证
-        $adminCode = "BOSS";
+        $adminInfo = $this->checkToken(1);
+        $adminCode = $adminInfo['admin_code'];
 
         $id = intval($parameters['id']);
         $tempCategoryModel = M('admin_product_category','','DB_DSN');
