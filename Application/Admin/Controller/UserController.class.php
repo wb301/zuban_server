@@ -11,7 +11,6 @@ class UserController extends AdminCommonController
      */
     public function login()
     {
-        $this->_POST();
         $keyAry = array(
             'account' => "用户名不能为空",
             'password' => "密码不能为空"
@@ -48,7 +47,6 @@ class UserController extends AdminCommonController
      */
     public function getRegionManagerList(){
 
-        $this->_POST();
         $keyAry = array(
             'region_code' => ""
         );
@@ -84,7 +82,6 @@ class UserController extends AdminCommonController
      */
     public function getRegionManagerInfo(){
 
-        $this->_POST();
         $keyAry = array(
             'id' => "用户标识不能为空"
         );
@@ -111,7 +108,6 @@ class UserController extends AdminCommonController
      */
     public function updRegionManager(){
 
-        $this->_POST();
         $keyAry = array(
             'id' => "ID不能为空",   // 0.新增    不为0就是修改
             'account' => "代理商账号不能为空",
@@ -178,7 +174,6 @@ class UserController extends AdminCommonController
      */
     public function updRegionManagerStatus(){
 
-        $this->_POST();
         $keyAry = array(
             'id' => "用户标识不能为空",
             'status' => "代理商状态不能为空"
@@ -258,7 +253,6 @@ class UserController extends AdminCommonController
      */
     public function getUserInfo(){
 
-        $this->_POST();
         $keyAry = array(
             'userId' => "用户标识不能为空"
         );

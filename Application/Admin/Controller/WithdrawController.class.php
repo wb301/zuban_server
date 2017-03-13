@@ -42,10 +42,8 @@ class WithdrawController extends AdminCommonController
     */
     public function updWithdrawStatus(){
 
-        $this->_POST();
         $keyAry = array(
-            'id' => "用户标识不能为空",
-            'status' => "提现状态不能为空"
+            'id' => "用户标识不能为空"
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry);
@@ -57,23 +55,30 @@ class WithdrawController extends AdminCommonController
         $userBase = $this->checkToken(1);
         $adminCode = $userBase["admin_code"];
         $id = $parameters["id"];
-        $status = $parameters["status"];
 
         $withdrawModel = M("zuban_user_withdraw_history", 0, "DB_DSN");
         $whereArr = array("id" => $parameters["id"]);
-        $oldStatus = $withdrawModel->where($whereArr)->getField("status");
+        $withdrawInfo = $withdrawModel->where($whereArr)->find();
+        $oldStatus = $withdrawInfo["status"];
+        $userId = $withdrawInfo["user_id"];
+        $price = $withdrawInfo["price"];
 
         if($oldStatus != 2){
             $this->returnErrorNotice('该笔提现申请已处理!');
         }
 
-        if($status == 1){
-            $remark = "提现成功";
-        }else{
-            $remark = "提现失败";
-        }
-        $saveArr = array("status" => $status, "remark" => $remark);
+        $saveArr = array("status" => 1, "remark" => "提现成功");
         $withdrawModel->where($whereArr)->save($saveArr);
+
+        $moneyModel = M("zuban_user_money_history", 0, "DB_DSN");
+        $addArr = array("user_id" => $userId,
+                        "price_type" => 5,
+                        "price_info" => "提现",
+                        "remark" => "提现成功",
+                        "price" => $price,
+                        "create_time" => date('Y-m-d'));
+
+        $oldStatus = $moneyModel->add($addArr);
 
         $remark = "修改提现[".$id."],生成新数据:".json_encode($saveArr);
         $operation = "Withdraw-updWithdrawStatus-zuban_user_withdraw_history-".$id;
