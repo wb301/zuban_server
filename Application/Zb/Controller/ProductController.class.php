@@ -247,6 +247,7 @@ class ProductController extends CommonController {
         $productCode = $this->createCode("PRODUCT_CODE");
         $lookPrice = $this->getLookPrice($categoryAry['is_free']);
         $nowTime = date('Y-m-d H:i:s');
+        $product_info=$this->checkContentInfo($productInfo['product_info'],500,true);
         //新增商品数据
         $goodsNewAry = array(
             'user_id' => $userId,
@@ -254,7 +255,7 @@ class ProductController extends CommonController {
             'price' => floatval($productInfo['price']),
             'look_price' => $lookPrice,
             'price_type' => intval($productInfo['price_type']),
-            'product_info' => $productInfo['product_info'],
+            'product_info' => $product_info,
             'product_image' => $productInfo['product_image'],
             'region_code' => $productInfo['region_code'],
             'region_name' => $productInfo['region_name'],
@@ -329,7 +330,7 @@ class ProductController extends CommonController {
             if(findNum($productInfo['product_info'])){
                 $this->returnErrorNotice('补充意见请勿填写数字!');
             }
-            $goodsUpdateAry['product_info'] = $productInfo['product_info'];
+            $goodsUpdateAry['product_info']=$this->checkContentInfo($productInfo['product_info'],500,true);
         }
         if(isset($productInfo['product_image'])){
             $goodsUpdateAry['product_image'] = $productInfo['product_image'];

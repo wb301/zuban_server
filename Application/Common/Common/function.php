@@ -383,3 +383,23 @@ function findNum($str=''){
     }
     return null;
 }
+
+
+function checkForbiddenStr($str)
+{
+    $tempSensitiveWordsModel = M('zuban_sensitive_words','','DB_DSN');
+    $ary= $tempSensitiveWordsModel->getField('code',true);
+    foreach ($ary as $key => $value) {
+        $pos = strpos($str, $value);
+        if ($pos !== false) {
+            $num = ceil(strlen($value)/2);
+            for ($i=0; $i < $num; $i++) {
+                $r.="*";
+            }
+            $str = str_replace($value, $r, $str);
+        }
+    }
+
+    return $str;
+}
+

@@ -343,5 +343,31 @@ class CommonController extends Controller
 
     }
 
+    /**
+     * version：2.0.0
+     * info： 检测内容是否合法
+     * params:contentInfo，checkLength，isCheckErr
+     * return:
+     */
+    protected function checkContentInfo($contentInfo,$checkLength,$isCheckErr = false){
+        if(!$contentInfo || strlen($contentInfo) <= 0){
+            if($isCheckErr){
+                return $this->returnErrorNotice('内容长度不合法！');
+            }else{
+                return $contentInfo;
+            }
+        }
+        //去除
+        $contentInfo = replaceStr($contentInfo);
+        $contentInfo = checkForbiddenStr($contentInfo);
+
+        // 返回单元个数
+        if(getStrLength($contentInfo) > $checkLength){
+            return $this->returnErrorNotice('内容长度不合法！');
+        }
+        return $contentInfo;
+    }
+
+
 
 }
