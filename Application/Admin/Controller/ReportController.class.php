@@ -30,16 +30,19 @@ class ReportController extends AdminCommonController
         }
         $rs=array(
             'today'=>array(
+                'day_name'=>'今日统计',
                 'all_num'=>$this->getAllNum(0,$parameters['region']),
                 'register_num'=>$this->getRegisterNum(0,$parameters['region']),
                 'login_num'=>$this->getloginNum(0,$parameters['region']),
             ),
             'yestoday'=>array(
+                'day_name'=>'昨日统计',
                 'all_num'=>$this->getAllNum(1,$parameters['region']),
                 'register_num'=>$this->getRegisterNum(1,$parameters['region']),
                 'login_num'=>$this->getloginNum(1,$parameters['region']),
             ),
             'search'=>array(
+                'day_name'=>'查询统计',
                 'all_num'=>0,
                 'register_num'=>0,
                 'login_num'=>0,

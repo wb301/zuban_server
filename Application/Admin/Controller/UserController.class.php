@@ -198,7 +198,7 @@ class UserController extends AdminCommonController
                 $this->returnErrorNotice('用户不存在!');
             }
             $regionCode = $userInfo["region_code"];
-            $regionWhereArr = array("region_code" => $regionCode, "status" => 1);
+            $regionWhereArr = array("region_code" => $regionCode, "status" => 1, "manager_type" => 0);
             $userInfo = $userBaseModel->where($regionWhereArr)->count();
             if($userInfo > 0){
                 $this->returnErrorNotice('该地区已存在代理商!');

@@ -112,7 +112,9 @@ class UserController extends CommonController
         $keyAry = array(
             "price" => "提现金额不能为空",
             "account" => "账号不能为空",
-            "from" => "来源不能为空"
+            "from" => "来源不能为空",
+            "bank_name" => "",
+            "user_name" => ""
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry);
@@ -126,6 +128,8 @@ class UserController extends CommonController
         $price = $parameters["price"];
         $account = $parameters["account"];
         $from = $parameters["from"];
+        $bank_name = $parameters["bank_name"];
+        $user_name = $parameters["user_name"];
         if(!is_numeric($price)){
             $this->returnErrorNotice('提现金额必须为数字!');
         }
@@ -145,6 +149,8 @@ class UserController extends CommonController
                         "price" => $price,
                         "account" => $account,
                         "from" => $from,
+                        "bank_name" => $bank_name,
+                        "user_name" => $user_name,
                         "remark" => "提现中",
                         "create_time" => date('Y-m-d H:i:s'));
 

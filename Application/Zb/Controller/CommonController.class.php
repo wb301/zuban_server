@@ -114,33 +114,44 @@ class CommonController extends Controller
 
         $moneyHistoryModel = M('zuban_user_money_history','','DB_DSN');
 
-        $oldTime = date('Y-m-d H:i:s', time() - 7 * 24 * 60 * 60);
-        $userIdSqlStr = "`user_id` = '$userId'";
+        // $oldTime = date('Y-m-d H:i:s', time() - 7 * 24 * 60 * 60);
+        // $userIdSqlStr = "`user_id` = '$userId'";
 
-        //获取七天前可用余额
-        $zhiChuSqlStr = $userIdSqlStr . " AND `create_time` <= '$oldTime'";
-        $maxZhiChuMoney = $moneyHistoryModel->where($zhiChuSqlStr)->SUM("price");
-        $maxZhiChuMoney = $maxZhiChuMoney ? $maxZhiChuMoney : 0;
+        // //获取七天前可用余额
+        // $zhiChuSqlStr = $userIdSqlStr . " AND `create_time` <= '$oldTime'";
+        // $maxZhiChuMoney = $moneyHistoryModel->where($zhiChuSqlStr)->SUM("price");
+        // $maxZhiChuMoney = $maxZhiChuMoney ? $maxZhiChuMoney : 0;
 
-        //获取近七天内的提现和余额支付
-        $sevenDaySqlStr = $userIdSqlStr . " AND `create_time` >= '$oldTime' AND `price_type` IN (5,7) ";
-        $sevenDayMoney = $moneyHistoryModel->where($sevenDaySqlStr)->SUM("price");
-        $sevenDayMoney = $sevenDayMoney ? $sevenDayMoney : 0;
+        // //获取近七天内的提现和余额支付
+        // $sevenDaySqlStr = $userIdSqlStr . " AND `create_time` >= '$oldTime' AND `price_type` IN (5,7) ";
+        // $sevenDayMoney = $moneyHistoryModel->where($sevenDaySqlStr)->SUM("price");
+        // $sevenDayMoney = $sevenDayMoney ? $sevenDayMoney : 0;
 
-        //提现中的金额
-        $withdrawHistoryModel = M("zuban_user_withdraw_history", '', "DB_DSN");
-        $withdrawHistorySqlStr = $userIdSqlStr . " AND `status` = 2 ";
-        $withdrawMoney = $withdrawHistoryModel->where($withdrawHistorySqlStr)->SUM("price");
+        // //提现中的金额
+        // $withdrawHistoryModel = M("zuban_user_withdraw_history", '', "DB_DSN");
+        // $withdrawHistorySqlStr = $userIdSqlStr . " AND `status` = 2 ";
+        // $withdrawMoney = $withdrawHistoryModel->where($withdrawHistorySqlStr)->SUM("price");
 
-        //七天前的可提现金额  - 近七天内的余额支付和提现 - 提现中的金额
-        $availableMoney = $maxZhiChuMoney - abs($sevenDayMoney) - $withdrawMoney;
-        $availableMoney = $availableMoney ? $availableMoney : 0;
+        // //七天前的可提现金额  - 近七天内的余额支付和提现 - 提现中的金额
+        // $availableMoney = $maxZhiChuMoney - abs($sevenDayMoney) - $withdrawMoney;
+        // $availableMoney = $availableMoney ? $availableMoney : 0;
+
+        // //获取现在的总金额
+        // $maxMoney = $moneyHistoryModel->where($userIdSqlStr)->SUM("price");
+
+        // //总金额减去可用金额剩余冻结金额
+        // $freezeMoney = $maxMoney - $availableMoney;
 
         //获取现在的总金额
         $maxMoney = $moneyHistoryModel->where($userIdSqlStr)->SUM("price");
 
-        //总金额减去可用金额剩余冻结金额
-        $freezeMoney = $maxMoney - $availableMoney;
+        //提现中的金额
+        $withdrawHistoryModel = M("zuban_user_withdraw_history", '', "DB_DSN");
+        $withdrawHistorySqlStr = $userIdSqlStr . " AND `status` = 2 ";
+        $freezeMoney = $withdrawHistoryModel->where($withdrawHistorySqlStr)->SUM("price");
+
+        //可提现金额
+        $availableMoney = $maxMoney - $freezeMoney;
 
         return array("maxMoney" => number_format($maxMoney,2), "available" => number_format($availableMoney,2), "freeze" => number_format($freezeMoney,2));
     }
