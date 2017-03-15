@@ -115,7 +115,7 @@ class CommonController extends Controller
         $moneyHistoryModel = M('zuban_user_money_history','','DB_DSN');
 
         // $oldTime = date('Y-m-d H:i:s', time() - 7 * 24 * 60 * 60);
-        // $userIdSqlStr = "`user_id` = '$userId'";
+        $userIdSqlStr = "`user_id` = '$userId'";
 
         // //获取七天前可用余额
         // $zhiChuSqlStr = $userIdSqlStr . " AND `create_time` <= '$oldTime'";

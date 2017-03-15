@@ -86,4 +86,65 @@ class MoneyHistoryController extends AdminCommonController
         return $this->returnSuccess(true);
     }
 
+
+
+    /**
+     * 代理商分成
+     * @param $token    用户标示
+     */
+    public function getDividedList(){
+
+        $keyAry = array(
+            'pageSize' => "",
+            'pageIndex' => "",
+            'startTime' => "",
+            'endTime' => "",
+            'status' => "",
+            'region_code' => "",
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+        $this->setPageRow();
+        $rs = array(
+            'report'=>array(
+                'balance'=>0,
+                'withdrawal'=>0,
+                'cumulative'=>0,
+            ),
+            'list' => array(),
+            'total' => 0
+        );
+        $whereSql = " 1=1 ";
+        if(strlen($parameters['status'])>0){
+            $whereSql .= " AND `status`= '{$parameters['status']}' ";
+        }
+        if(strlen($parameters['region_code'])>0){
+            $whereSql .= " AND `region_code`= '{$parameters['region_code']}' ";
+        }
+        if(strlen($parameters['startTime'])>0){
+            $whereSql .= " AND `create_time`>= '{$parameters['startTime']}' ";
+        }
+        if(strlen($parameters['endTime'])>0){
+            $whereSql .= " AND `create_time`<= '{$parameters['endTime']}' ";
+        }
+        $adminRegionMoneyHistoryModel = M("admin_region_money_history", '', "DB_DSN");
+        $withdrawCount = $adminRegionMoneyHistoryModel->where($whereSql)->count();
+        if ($withdrawCount <= 0) {
+            $this->returnSuccess($rs);
+        }
+        $withdrawRs = $adminRegionMoneyHistoryModel->where($whereSql)->order("`create_time` DESC ")->page($this->page, $this->row)->select();
+        if (count($withdrawRs) <= 0) {
+            $this->returnSuccess($rs);
+        }
+        $rs['report']['balance']=$adminRegionMoneyHistoryModel->where($whereSql)->SUM("price");//剩余
+        $rs['report']['withdrawal']=$adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=2 ")->SUM("price");//提现
+        $rs['report']['cumulative']=$adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=1 ")->SUM("price");//累计
+        $rs['list'] = $withdrawRs;
+        $rs['total'] = $withdrawCount;
+        $this->returnSuccess($rs);
+    }
+
 }
