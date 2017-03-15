@@ -11,7 +11,7 @@ class CategoryController extends AdminCommonController {
 		获取分类列表
 
 	*/
-    public function getCategoryList($id=1,$level=3,$mapping=array())
+    public function getCategoryList($id=1,$level=3,$mapping=array(),$fixAll=0)
     {
     	$id = intval($id);
         if($id < 0){
@@ -29,6 +29,11 @@ class CategoryController extends AdminCommonController {
         );
         $map = array_merge($map,$mapping);
         $categoryList = $this->category_list($id,$level,$map,"");
+        if($fixAll > 0){
+            $push = $categoryList[0];
+            unset($push['children']);
+            $categoryList = $this->fixAllForTree($categoryList,$push,$level-2,$map,"全部","category_name","id","parent_id");
+        }
 
         $this->returnSuccess($categoryList);
     }

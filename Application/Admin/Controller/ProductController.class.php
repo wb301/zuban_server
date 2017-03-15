@@ -50,7 +50,7 @@ class ProductController extends AdminCommonController {
 		获取发布列表
 
 	*/
-    public function getShowProductList($status=1,$categoryId=1,$regionCode="1")
+    public function getShowProductList($categoryId=1,$regionCode="1")
     {
     	$categoryId = intval($categoryId);
         if($categoryId < 0){
@@ -64,7 +64,7 @@ class ProductController extends AdminCommonController {
         $adminCode = $adminInfo['admin_code'];
 
         //条件格式化
-        $where = "g.`status` = $status";
+        $where = "g.`status` IN (0,1)";
         if($categoryId > 1){
             $categoryIdList = array_merge(array($categoryId),array_column(tree_to_List($this->category_list($categoryId)), 'id'));
             $categoryIdListStr = join(",",$categoryIdList);
@@ -88,7 +88,7 @@ class ProductController extends AdminCommonController {
         删除服务
 
     */
-    public function deleteProductBySys()
+    public function updateProductBySys()
     {
         $this->_POST();
         $productInfo = $_POST['productInfo'];
@@ -96,7 +96,8 @@ class ProductController extends AdminCommonController {
             $this->returnErrorNotice("服务参数错误！");
         }
         $keyAry = array(
-            'id' => "服务id不能为空!"
+            'id' => "服务id不能为空!",
+            'status' => "服务状态不能为空!"
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry,$productInfo);
@@ -111,14 +112,14 @@ class ProductController extends AdminCommonController {
 
         $productModel = M('zuban_product_goods','','DB_DSN');
         $updateRow = M('zuban_product_goods','','DB_DSN')->where("`id` = $id AND `status` != 2")->save(array(
-            'status' => 0,
+            'status' => intval($parameters['status']),
             'update_time' => date('Y-m-d H:i:s')
         ));
         if($updateRow <= 0){
-            $this->returnErrorNotice('商品处于出售状态,暂不可删除');
+            $this->returnErrorNotice('商品处于出售状态,暂不可操作');
         }
 
-        $operation = "Product-deleteProductBySys-admin_product_category-".$id;
+        $operation = "Product-updateProductBySys-admin_product_category-".$id;
         $remark = "删除服务[".$id."]";
         $this->insertHistory($adminCode,$operation,$remark);
 
