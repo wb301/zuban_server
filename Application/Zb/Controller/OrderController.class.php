@@ -103,7 +103,7 @@ class OrderController extends CommonController {
             'memo' => $parameters['memo'],
             'create_time' => $nowTime,
             'update_time' => $nowTime,
-            'receiver' => "",
+            'receiver' => $parameters['receiver'],
             'phone' => $parameters['phone'],
             'check_code' => '',
         );
@@ -717,7 +717,7 @@ class OrderController extends CommonController {
         if(!$addMoneyHistoryResult){
             $this->returnErrorNotice('收货异常');
         }
-        $this->changeProductStatus($orderNo,2);
+        $this->changeProductStatus($orderNo,1);
         $this->returnSuccess(6);
 
     }
