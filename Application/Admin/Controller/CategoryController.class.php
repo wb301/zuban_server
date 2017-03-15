@@ -11,7 +11,7 @@ class CategoryController extends AdminCommonController {
 		获取分类列表
 
 	*/
-    public function getCategoryList($id=1,$level=3,$mapping=null)
+    public function getCategoryList($id=1,$level=3,$mapping=array())
     {
     	$id = intval($id);
         if($id < 0){
