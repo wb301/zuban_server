@@ -10,40 +10,66 @@ class WithdrawController extends AdminCommonController
     */
 
     /**
-        获取提现申请列表
-    */
-    public function getWithdrawList(){
+     * 提现申请
+     * @param $token    用户标示
+     */
+    public function getUserWithdrawHistoryList(){
 
-        $status = $_REQUEST["status"] ? $_REQUEST["status"] : 0;
-
-        //获取自己的信息
-        $userBase = $this->checkToken(1);
-        $region_code = $parameters["region_code"];
-
-        $whereArr = array();
-        if($status > 0){
-            $whereArr["status"] = $status;
+        $keyAry = array(
+            'pageSize' => "",
+            'pageIndex' => "",
+            'startTime' => "",
+            'endTime' => "",
+            'name' => "",
+            'status' => "",
+            'from' => "",
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
         }
-        
-        $withdrawModel = M("zuban_user_withdraw_history", 0, "DB_DSN");
-        $this->pageAry["total"] = $withdrawModel->where($whereArr)->count();
-        if($this->pageAry["total"] > 0){
-
-            $this->setPageRow();
-            $this->pageAry["list"] = $withdrawModel->where($whereArr)->order("id DESC")->page($this->page, $this->row)->select();
-            $this->pageAry["list"] = $this->pageAry["list"] ? $this->pageAry["list"] : array();
+        $this->setPageRow();
+        $rs = array(
+            'list' => array(),
+            'total' => 0
+        );
+        $whereSql = " 1=1 ";
+        if(strlen($parameters['status'])>0){
+            $whereSql .= " AND `status`= '{$parameters['status']}' ";
         }
-
-        return $this->returnSuccess($this->pageAry);
+        /*if(strlen($parameters['name'])>0){
+            $whereSql .= " AND `nick_name`= '{$parameters['name']}'  ";
+        }*/
+        if(strlen($parameters['from'])>0){
+            $whereSql .= " AND `from`= '{$parameters['from']}' ";
+        }
+        if(strlen($parameters['startTime'])>0){
+            $whereSql .= " AND `create_time`>= '{$parameters['startTime']}' ";
+        }
+        if(strlen($parameters['endTime'])>0){
+            $whereSql .= " AND `create_time`<= '{$parameters['endTime']}' ";
+        }
+        $withdrawHistoryModel = M("zuban_user_withdraw_history", '', "DB_DSN");
+        $withdrawCount = $withdrawHistoryModel->where($whereSql)->count();
+        if ($withdrawCount <= 0) {
+            $this->returnSuccess($rs);
+        }
+        $withdrawRs = $withdrawHistoryModel->where($whereSql)->order("`create_time` DESC ")->page($this->page, $this->row)->select();
+        if (count($withdrawRs) <= 0) {
+            $this->returnSuccess($rs);
+        }
+        $rs['list'] = $withdrawRs;
+        $rs['total'] = $withdrawCount;
+        $this->returnSuccess($rs);
     }
-
     /**
-        修改地区管理员账号状态
+        提现完成
     */
     public function updWithdrawStatus(){
 
         $keyAry = array(
-            'id' => "用户标识不能为空"
+            'id' => "编号不能为空"
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry);

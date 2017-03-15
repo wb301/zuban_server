@@ -472,7 +472,4 @@ class UserController extends AdminCommonController
         $this->returnSuccess('删除成功');
     }
 
-
-
-
 }
