@@ -16,8 +16,8 @@ class MoneyHistoryController extends AdminCommonController
 
         $status = $_REQUEST["status"] ? $_REQUEST["status"] : 0;
         $orderNo = $_REQUEST["orderNo"] ? $_REQUEST["orderNo"] : '';
-        $startTime = $_REQUEST["startTime"] ? $this->fixDate($_REQUEST["status"]) : "1991-01-01 00:00:00";
-        $endTime = $_REQUEST["endTime"] ? $this->fixDate($_REQUEST["endTime"]) : "2911-01-01 00:00:00";
+        $startTime = $_REQUEST["sTime"] ? $this->fixDate($_REQUEST["sTime"]) : "1991-01-01 00:00:00";
+        $endTime = $_REQUEST["eTime"] ? $this->fixDate($_REQUEST["eTime"]) : "2911-01-01 00:00:00";
 
         //获取自己的信息
         $userBase = $this->checkToken(1);
