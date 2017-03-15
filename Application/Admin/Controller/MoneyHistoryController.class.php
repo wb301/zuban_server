@@ -55,13 +55,14 @@ class MoneyHistoryController extends AdminCommonController
                               "maxVipPrice" => 0,
                               "regionPercentagePrice" => 0);
 
-        $orderModel = M("zuban_order", 0, "DB_DSN");
-        $maxPriceInfo["maxPrice"] = $orderModel->where(array("status" => array("IN", array(6, 10))))->SUM("price");
-        $maxPriceInfo["maxPrice"] = $maxPriceInfo["maxPrice"] ? $maxPriceInfo["maxPrice"] : 0;
-
         $moneyHistoryModel = M("zuban_user_money_history", 0, "DB_DSN");
         $maxPriceInfo["maxVipPrice"] = $moneyHistoryModel->where("`price_type` = 6")->SUM("price");
         $maxPriceInfo["maxVipPrice"] = $maxPriceInfo["maxVipPrice"] ? abs($maxPriceInfo["maxVipPrice"]) : 0;
+
+        $orderModel = M("zuban_order", 0, "DB_DSN");
+        $maxPriceInfo["maxPrice"] = $orderModel->where(array("status" => array("IN", array(6, 10))))->SUM("price");
+        $maxPriceInfo["maxPrice"] = $maxPriceInfo["maxPrice"] ? $maxPriceInfo["maxPrice"] : 0;
+        $maxPriceInfo["maxPrice"] += $maxPriceInfo["maxVipPrice"];
 
         $regionMoneyHistoryModel = M("admin_region_money_history", 0, "DB_DSN");
         $maxPriceInfo["maxPercentagePrice"] = $regionMoneyHistoryModel->where("`region_code` = 1 AND `price_type` = 1")->SUM("price");

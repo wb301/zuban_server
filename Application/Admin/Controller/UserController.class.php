@@ -113,7 +113,6 @@ class UserController extends AdminCommonController
             'account' => "代理商账号不能为空",
             'password' => "代理商密码不能为空",
             'nick_name' => "代理商昵称不能为空",
-            'manager_type' => "代理商类型不能为空",
             'region_code' => "代理商地区不能为空",
             'region_name' => "代理商地区名称不能为空",
             'status' => "代理商状态不能为空"
@@ -132,7 +131,7 @@ class UserController extends AdminCommonController
         $account = $parameters["account"];
         $password = $parameters["password"];
         $nickName = $parameters["nick_name"];
-        $managerType = $parameters["manager_type"];
+        $managerType = 0;
         $regionCode = $parameters["region_code"];
         $regionName = $parameters["region_name"];
         $status = $parameters["status"];
