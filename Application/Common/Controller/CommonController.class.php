@@ -380,4 +380,12 @@ class CommonController extends Controller
         return $lookPrice;
     }
 
+    //时间修正
+    public function fixDate($date)
+    {
+        $date = str_replace("T", " ", $date);
+        $date = str_replace(".00Z", "", $date);
+        return $date;
+    }
+
 }

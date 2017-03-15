@@ -10,18 +10,24 @@ class MoneyHistoryController extends AdminCommonController
     */
 
     /**
-        获取提现申请列表
+        获取收支明细
     */
     public function getMoneyHistoryList(){
 
         $status = $_REQUEST["status"] ? $_REQUEST["status"] : 0;
+        $orderNo = $_REQUEST["orderNo"] ? $_REQUEST["orderNo"] : '';
+        $startTime = $_REQUEST["startTime"] ? $this->fixDate($_REQUEST["status"]) : "1991-01-01 00:00:00";
+        $endTime = $_REQUEST["endTime"] ? $this->fixDate($_REQUEST["endTime"]) : "2911-01-01 00:00:00";
 
         //获取自己的信息
         $userBase = $this->checkToken(1);
 
-        $whereArr = array();
+        $whereArr = array("create_time" => array("between", array($startTime, $endTime)));
         if($status > 0){
-            $whereArr["status"] = $status;
+            $whereArr["price_type"] = $status;
+        }
+        if(strlen($orderNo) > 0){
+            $whereArr["proce_info"] = $orderNo;
         }
         
         $moneyHistoryModel = M("admin_region_money_history", 0, "DB_DSN");
@@ -34,6 +40,36 @@ class MoneyHistoryController extends AdminCommonController
         }
 
         return $this->returnSuccess($this->pageAry);
+    }
+
+    /**
+        获取抽成数据
+    */
+    public function getMaxPriceInfo(){
+
+        //获取自己的信息
+        $userBase = $this->checkToken(1);
+
+        $maxPriceInfo = array("maxPrice" => 0,
+                              "maxPercentagePrice" => 0,
+                              "maxVipPrice" => 0,
+                              "regionPercentagePrice" => 0);
+
+        $orderModel = M("zuban_order", 0, "DB_DSN");
+        $maxPriceInfo["maxPrice"] = $orderModel->where(array("status" => array("IN", array(6, 10))))->SUM("price");
+        $maxPriceInfo["maxPrice"] = $maxPriceInfo["maxPrice"] ? $maxPriceInfo["maxPrice"] : 0;
+
+        $moneyHistoryModel = M("zuban_user_money_history", 0, "DB_DSN");
+        $maxPriceInfo["maxVipPrice"] = $moneyHistoryModel->where("`price_type` = 6")->SUM("price");
+        $maxPriceInfo["maxVipPrice"] = $maxPriceInfo["maxVipPrice"] ? abs($maxPriceInfo["maxVipPrice"]) : 0;
+
+        $regionMoneyHistoryModel = M("admin_region_money_history", 0, "DB_DSN");
+        $maxPriceInfo["maxPercentagePrice"] = $regionMoneyHistoryModel->where("`region_code` = 1 AND `price_type` = 1")->SUM("price");
+        $maxPriceInfo["regionPercentagePrice"] = $regionMoneyHistoryModel->where("`region_code` > 1 AND `price_type` = 1")->SUM("price");
+        $maxPriceInfo["maxPercentagePrice"] = $maxPriceInfo["maxPercentagePrice"] ? $maxPriceInfo["maxPercentagePrice"] : 0;
+        $maxPriceInfo["regionPercentagePrice"] = $maxPriceInfo["regionPercentagePrice"] ? $maxPriceInfo["regionPercentagePrice"] : 0;
+
+        return $this->returnSuccess($maxPriceInfo);
     }
 
     /**
