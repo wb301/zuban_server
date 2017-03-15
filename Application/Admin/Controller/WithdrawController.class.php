@@ -93,7 +93,7 @@ class WithdrawController extends AdminCommonController
             $this->returnErrorNotice('该笔提现申请已处理!');
         }
 
-        $saveArr = array("status" => 1, "remark" => "提现成功");
+        $saveArr = array("status" => 1, "remark" => "提现成功",'update_time'=>date('Y-m-d'));
         $withdrawModel->where($whereArr)->save($saveArr);
 
         $moneyModel = M("zuban_user_money_history", 0, "DB_DSN");
@@ -110,7 +110,7 @@ class WithdrawController extends AdminCommonController
         $operation = "Withdraw-updWithdrawStatus-zuban_user_withdraw_history-".$id;
         $this->insertHistory($adminCode,$operation,$remark);
 
-        return $this->returnSuccess(true);
+        return $this->returnSuccess('操作成功!');
     }
 
 }

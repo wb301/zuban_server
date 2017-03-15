@@ -666,6 +666,7 @@ class OrderController extends CommonController {
                 'price_type' => 1,
                 'remark' => $remark,
                 'price' => $toMaxPrice,
+                'price_info' => $orderNo,
                 'create_time' => $nowTime
             ),
             array(//注册地
@@ -674,6 +675,7 @@ class OrderController extends CommonController {
                 'price_type' => 1,
                 'remark' => $remark,
                 'price' => $toRegPrice,
+                'price_info' => $orderNo,
                 'create_time' => $nowTime
             ),
             array(//服务地
@@ -682,6 +684,7 @@ class OrderController extends CommonController {
                 'price_type' => 1,
                 'remark' => $remark,
                 'price' => $toServerPrice,
+                'price_info' => $orderNo,
                 'create_time' => $nowTime
             )
         );
