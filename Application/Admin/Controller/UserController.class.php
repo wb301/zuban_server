@@ -158,6 +158,7 @@ class UserController extends AdminCommonController
             $remark = "修改代理商[".$id."],生成新数据:".json_encode($addArr);
             $userBaseModel->where(array("id" => $id))->save($addArr);
         }else{
+            $addArr["create_time"] = date('Y-m-d H:i:s');
             $addArr["admin_code"] = create_guid();
             $remark = "新增代理商[".$nickName."],生成新数据id:".$id;
             $id = $userBaseModel->add($addArr);
