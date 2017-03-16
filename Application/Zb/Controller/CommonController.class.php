@@ -254,7 +254,7 @@ class CommonController extends Controller
                 $userBaseModel->where(array("account" => $userInfo["account"]))->save($newUserInfo);
             }else{
                 $userInfo["wx_openid"] = $openId;
-                $userInfo["head_img"] = $openIdInfo["head_img"];
+                $userInfo["head_img"] = 'https://ome5w9045.qnssl.com/touxiang.png';
                 $userInfo["nick_name"] = $openIdInfo["nick_name"];
             }
         }
