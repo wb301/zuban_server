@@ -184,4 +184,127 @@ class MoneyHistoryController extends AdminCommonController
         $this->returnSuccess($rs);
     }
 
+
+    /**
+     * 代理商结算
+     * @param $token    用户标示
+     */
+    public function settlement(){
+
+        $keyAry = array(
+            'region_code' => "",
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+        $this->setPageRow();
+        $rs = array(
+            'report'=>array(
+                'balance'=>0,
+                'withdrawal'=>0,
+                'cumulative'=>0,
+            ),
+            'list' => array(),
+            'total' => 0
+        );
+        $whereSql = " `region_code`!=1 ";
+        if(strlen($parameters['region_code'])>0){
+            $whereSql .= " AND `region_code`= '{$parameters['region_code']}' ";
+        }
+        $adminRegionMoneyHistoryModel = M("admin_region_money_history", '', "DB_DSN");
+        //收入
+        $cumulativePrice = $adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=1 AND `region_code`!=''")->field("`region_code`,sum(price) as price,`create_time`")->order("`create_time` DESC")->group('region_code')->select();
+        //结算
+        $withdrawalPrice = $adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=2 AND `region_code`!=''")->field("`region_code`,sum(price) as price,`create_time`")->order("`create_time` DESC")->group('region_code')->select();
+
+        if(count($cumulativePrice)<=0){
+            $this->returnSuccess($rs);
+        }
+        $region=array();
+        foreach($cumulativePrice AS $key=>$value){
+            $cumulativePrice[$key]['withdrawal']=0;
+            $cumulativePrice[$key]['balance']=$value['price'];
+            $cumulativePrice[$key]['region_name']='';
+            array_push($region,$value['region_code']);
+        }
+        //结算
+        $newWithdrawal=array();
+        if(count($withdrawalPrice)>0){
+            foreach($withdrawalPrice AS $key=>$value){
+                $newWithdrawal[$value['region_code']]=$value;
+            }
+        }
+        $userBaseModel = M("admin_region_manager", 0, "DB_DSN");
+        $where['region_code']=array('IN',$region);
+        $userInfo = $userBaseModel->where($where)->getField("`region_code`,`region_name`");
+        foreach($cumulativePrice AS $key=>$value){
+            if(isset($newWithdrawal[$value['region_code']])){
+                $cumulativePrice[$key]['withdrawal']=abs($newWithdrawal[$value['region_code']]['price']);
+                $cumulativePrice[$key]['create_time']=$newWithdrawal[$value['region_code']]['create_time'];
+                $cumulativePrice[$key]['balance']=$newWithdrawal[$value['region_code']]['price']+$value['price'];
+            }
+            $cumulativePrice[$key]['region_name']=$userInfo[$value['region_code']];
+        }
+        $rs['list'] = $cumulativePrice;
+        $rs['total'] = count($cumulativePrice);
+        $rs['report']['balance']=0;//剩余
+        $rs['report']['withdrawal']=0;//提现
+        $rs['report']['cumulative']=0;//累计
+        $this->returnSuccess($rs);
+    }
+
+
+    //核销接口
+    //http://localhost/zuban_server/index.php?c=Admin&m=MoneyHistory&a=verification&bossCode=5ccdff89-387a-7e89-f84b-59dad88cd71c&region=425&price=0.01
+    public function verification($region,$bossCode,$price){
+
+        $whereSql = " `admin_code`= '$bossCode' ";
+        $adminRegionMoneyHistoryModel = M("admin_region_money_history", '', "DB_DSN");
+        $lastprice=0;
+        $last=$adminRegionMoneyHistoryModel->where($whereSql)->SUM("price");//剩余
+        if($last){
+            $lastprice =$last;
+        }
+        if($price>$lastprice){
+            $this->returnErrorNotice('核销金额大于剩余金额！');
+        }
+        $addAry=array(
+                'region_code' => $region,
+                'admin_code' => $bossCode,
+                'price_type' => 2,
+                'remark' => '平台核销',
+                'price' => -$price,
+                'price_info' =>'',
+                'create_time' => date('Y-m-d')
+        );
+        $rs=$adminRegionMoneyHistoryModel->add($addAry);
+        if(!$rs){
+            $this->returnErrorNotice('核销失败！');
+        }
+        $this->returnSuccess('核销成功！');
+
+    }
+    //获取核销接口
+    //http://localhost/zuban_server/index.php?c=Admin&m=MoneyHistory&a=getverification&bossCode=5ccdff89-387a-7e89-f84b-59dad88cd71c
+    public function getverification($bossCode){
+
+        $whereSql = " `admin_code`= '$bossCode' ";
+        $adminRegionMoneyHistoryModel = M("admin_region_money_history", '', "DB_DSN");
+        $lastprice=0;
+        $last=$adminRegionMoneyHistoryModel->where($whereSql)->SUM("price");//剩余
+        if($last){
+            $lastprice=$last;
+        }
+        $userBaseModel = M("admin_region_manager", 0, "DB_DSN");
+        $userInfo = $userBaseModel->where($whereSql)->select();
+        $userInfo[0]['lastprice']=$lastprice;
+        $this->returnSuccess($userInfo);
+    }
+
+
+
+
+
 }
