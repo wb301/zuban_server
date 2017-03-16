@@ -31,7 +31,7 @@ class AdminCommonController extends CommonController
     {
         $token=isset($_REQUEST['token'])?$_REQUEST['token']:'';
         $userInfoModel = M('admin_region_manager', '', 'DB_DSN');
-        $userList = $userInfoModel->where("`token` = '$token' ")->select();
+        $userList = $userInfoModel->where("`token` = '$token' AND `status` = 1")->select();
         if (!$userList || count($userList) <= 0) {
             if ($isNotice) {
                 return $this->returnErrorNotice("用户标识错误!", -999);
