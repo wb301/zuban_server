@@ -80,6 +80,35 @@ class UserController extends AdminCommonController
     }
 
     /**
+    获取地区管理员账号列表
+     */
+    public function getAllRegionManagerList(){
+
+        $keyAry = array(
+            'region_code' => ""
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+
+        //获取自己的信息
+        $userBase = $this->checkToken(1);
+        $region_code = $parameters["region_code"];
+
+        $whereArr['status'] =1;
+        $whereArr['manager_type']=0;
+        if(strlen($region_code) > 0){
+            $whereArr["region_code"] = $region_code;
+        }
+        $userBaseModel = M("admin_region_manager", 0, "DB_DSN");
+        $rs=$userBaseModel->where($whereArr)->order("id DESC")->field("`admin_code`,`nick_name`,`region_code`")->select();
+        return $this->returnSuccess($rs);
+    }
+
+
+    /**
     获取地区管理员账号详情
      */
     public function getRegionManagerInfo(){
