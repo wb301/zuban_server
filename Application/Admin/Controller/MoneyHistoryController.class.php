@@ -176,9 +176,22 @@ class MoneyHistoryController extends AdminCommonController
         if (count($withdrawRs) <= 0) {
             $this->returnSuccess($rs);
         }
-        $rs['report']['balance']=$adminRegionMoneyHistoryModel->where($whereSql)->SUM("price");//剩余
-        $rs['report']['withdrawal']=$adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=2 ")->SUM("price");//提现
-        $rs['report']['cumulative']=$adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=1 ")->SUM("price");//累计
+        $rs['report']['balance']=0;
+        $balance=$adminRegionMoneyHistoryModel->where($whereSql)->SUM("price");//剩余
+        if($balance){
+            $rs['report']['balance']=$balance;
+        }
+        $rs['report']['withdrawal']=0;
+        $withdrawal=$adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=2 ")->SUM("price");//提现
+        if($withdrawal){
+            $rs['report']['withdrawal']=abs($withdrawal);
+        }
+        $rs['report']['cumulative']=0;
+        $cumulative=$adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=1 ")->SUM("price");//累计
+        if($cumulative){
+            $rs['report']['cumulative']=$cumulative;
+        }
+        $rs['report']['cumulative']=$cumulative;
         $rs['list'] = $withdrawRs;
         $rs['total'] = $withdrawCount;
         $this->returnSuccess($rs);
