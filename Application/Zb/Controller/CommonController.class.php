@@ -323,8 +323,8 @@ class CommonController extends Controller
         $productSaveArr = array("logitude" => $userBase["logitude"], "latitude" => $userBase["latitude"]);
         $productModel->where(array("user_id" => $userInfo["user_id"]))->save($productSaveArr);
         $sysConfig = $this->getSysConfig();
-        $userBase['server_phone']=$sysConfig['CUSTOMER_SERVICE'];
-        $userBase['as']=intval(($sysConfig['AS_PLATFORM']+$sysConfig['AS_REGISTERED']+$sysConfig['AS_CONSUM']) / C('DENO')*100);
+        $userInfo['server_phone']=$sysConfig['CUSTOMER_SERVICE'];
+        $userInfo['as']=intval(($sysConfig['AS_PLATFORM']+$sysConfig['AS_REGISTERED']+$sysConfig['AS_CONSUM']) / C('DENO')*100);
         $userInfo["token"] = $token;
         return $userInfo;
     }
