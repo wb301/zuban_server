@@ -147,7 +147,7 @@ class UserController extends AdminCommonController
         }
 
         $addArr = array("account" => $account,
-            "password" => $password,
+            "password" => md5($password),
             "nick_name" => $nickName,
             "manager_type" => $managerType,
             "region_code" => $regionCode,
