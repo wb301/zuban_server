@@ -30,6 +30,8 @@ class UserController extends AdminCommonController
             $this->returnErrorNotice("帐号不存在");
         if( $userInfo['password'] != md5($password) )
             $this->returnErrorNotice("密码错误");
+        if( $userInfo['status'] == 0 )
+            $this->returnErrorNotice("该账号已被封停");
 
         $userInfo["token"] = md5($userInfo['user_id'].time());
         $saveArr = array("token" => $userInfo["token"], "update_time" => date('Y-m-d H:i:s'));
