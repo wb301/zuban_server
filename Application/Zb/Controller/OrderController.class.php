@@ -85,7 +85,7 @@ class OrderController extends CommonController {
                 $price+=$value['look_price'];
             }
         }
-        if($allPrice<$price){
+        if(round($allPrice,2)!=round($price,2)){
             $this->returnErrorNotice('商品价格已变更!');
         }
         //生成订单号

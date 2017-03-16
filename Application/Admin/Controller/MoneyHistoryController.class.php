@@ -267,7 +267,7 @@ class MoneyHistoryController extends AdminCommonController
         if($last){
             $lastprice =$last;
         }
-        if($price>$lastprice){
+        if(round($price,2)>round($lastprice,2)){
             $this->returnErrorNotice('核销金额大于剩余金额！');
         }
         $addAry=array(
