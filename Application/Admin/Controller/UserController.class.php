@@ -251,10 +251,10 @@ class UserController extends AdminCommonController
         $this->setPageRow();
         $whereSql = " `status`= {$parameters['status']} ";
         if(strlen($parameters['phone'])>0){
-            $whereSql .= " AND `account`= '{$parameters['phone']}' ";
+            $whereSql .= " AND `account`  LIKE  '%{$parameters['phone']}%' ";
         }
         if(strlen($parameters['name'])>0){
-            $whereSql .= " AND `nick_name`= '{$parameters['name']}'  ";
+            $whereSql .= " AND `nick_name` LIKE  '%{$parameters['name']}%'  ";
         }
         $userModel = M('zuban_user_base', '', 'DB_DSN');
         $this->pageAry["total"] = intval($userModel->where($whereSql)->count());
