@@ -136,6 +136,7 @@ class MoneyHistoryController extends AdminCommonController
             'pageIndex' => "",
             'startTime' => "",
             'endTime' => "",
+            'admin_code' => "",
             'status' => "",
             'region_code' => "",
         );
@@ -156,7 +157,10 @@ class MoneyHistoryController extends AdminCommonController
         );
         $whereSql = " 1=1 ";
         if(strlen($parameters['status'])>0){
-            $whereSql .= " AND `status`= '{$parameters['status']}' ";
+            $whereSql .= " AND `price_type`= '{$parameters['status']}' ";
+        }
+        if(strlen($parameters['admin_code'])>0){
+            $whereSql .= " AND `admin_code`= '{$parameters['admin_code']}' ";
         }
         if(strlen($parameters['region_code'])>0){
             $whereSql .= " AND `region_code`= '{$parameters['region_code']}' ";
@@ -179,7 +183,7 @@ class MoneyHistoryController extends AdminCommonController
         $rs['report']['balance']=0;
         $balance=$adminRegionMoneyHistoryModel->where($whereSql)->SUM("price");//剩余
         if($balance){
-            $rs['report']['balance']=$balance;
+            $rs['report']['balance']=abs($balance);
         }
         $rs['report']['withdrawal']=0;
         $withdrawal=$adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=2 ")->SUM("price");//提现
@@ -189,7 +193,7 @@ class MoneyHistoryController extends AdminCommonController
         $rs['report']['cumulative']=0;
         $cumulative=$adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=1 ")->SUM("price");//累计
         if($cumulative){
-            $rs['report']['cumulative']=$cumulative;
+            $rs['report']['cumulative']=abs($cumulative);
         }
         $rs['report']['cumulative']=$cumulative;
         $rs['list'] = $withdrawRs;
