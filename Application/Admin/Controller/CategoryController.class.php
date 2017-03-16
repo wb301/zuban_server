@@ -28,7 +28,7 @@ class CategoryController extends AdminCommonController {
             'update_time' => 'update_time'
         );
         $map = array_merge($map,$mapping);
-        $categoryList = $this->category_list($id,$level,$map,"");
+        $categoryList = $this->category_list($id,$level,$map);
         if($fixAll > 0){
             $push = $categoryList[0];
             unset($push['children']);
