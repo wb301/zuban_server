@@ -259,7 +259,7 @@ class MoneyHistoryController extends AdminCommonController
     //核销接口
     //http://localhost/zuban_server/index.php?c=Admin&m=MoneyHistory&a=verification&bossCode=5ccdff89-387a-7e89-f84b-59dad88cd71c&region=425&price=0.01
     public function verification($region,$bossCode,$price){
-
+        $userBase = $this->checkToken(1);
         $whereSql = " `admin_code`= '$bossCode' ";
         $adminRegionMoneyHistoryModel = M("admin_region_money_history", '', "DB_DSN");
         $lastprice=0;
@@ -290,6 +290,7 @@ class MoneyHistoryController extends AdminCommonController
     //http://localhost/zuban_server/index.php?c=Admin&m=MoneyHistory&a=getverification&bossCode=5ccdff89-387a-7e89-f84b-59dad88cd71c
     public function getverification($bossCode){
 
+        $userBase = $this->checkToken(1);
         $whereSql = " `admin_code`= '$bossCode' ";
         $adminRegionMoneyHistoryModel = M("admin_region_money_history", '', "DB_DSN");
         $lastprice=0;
