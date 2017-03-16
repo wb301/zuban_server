@@ -221,10 +221,6 @@ class ProductController extends CommonController {
         if(intval($productInfo['category_id']) <= 0){
             $this->returnErrorNotice('请添加服务类型!');
         }
-        //验证上传内容
-        if(findNum($productInfo['product_info'])){
-            $this->returnErrorNotice('补充意见请勿填写数字!');
-        }
         //查询分类信息
         $categoryAry = $this->getCategoryAry($productInfo['category_id']);
         if(empty($categoryAry)){
@@ -237,7 +233,15 @@ class ProductController extends CommonController {
         $productCode = $this->createCode("PRODUCT_CODE");
         $lookPrice = $this->getLookPrice($categoryAry['is_free']);
         $nowTime = date('Y-m-d H:i:s');
-        $product_info=$this->checkContentInfo($productInfo['product_info'],500,true);
+        if(strlen($productInfo['product_info']) > 0){
+            $product_info=$this->checkContentInfo($productInfo['product_info'],500,true);
+            //验证上传内容
+            if(findNum($productInfo['product_info'])){
+                $this->returnErrorNotice('补充意见请勿填写数字!');
+            }
+        }else{
+            $product_info = "";
+        }
         //新增商品数据
         $goodsNewAry = array(
             'user_id' => $userId,
@@ -316,11 +320,15 @@ class ProductController extends CommonController {
             $goodsUpdateAry['price_type'] = intval($productInfo['price_type']);
         }
         if(isset($productInfo['product_info'])){
-            //验证上传内容
-            if(findNum($productInfo['product_info'])){
-                $this->returnErrorNotice('补充意见请勿填写数字!');
+            if(strlen($productInfo['product_info']) > 0){
+                $goodsUpdateAry['product_info']=$this->checkContentInfo($productInfo['product_info'],500,true);
+                //验证上传内容
+                if(findNum($productInfo['product_info'])){
+                    $this->returnErrorNotice('补充意见请勿填写数字!');
+                }
+            }else{
+                $productInfo['product_info'] = "";
             }
-            $goodsUpdateAry['product_info']=$this->checkContentInfo($productInfo['product_info'],500,true);
         }
         if(isset($productInfo['product_image'])){
             $goodsUpdateAry['product_image'] = $productInfo['product_image'];
