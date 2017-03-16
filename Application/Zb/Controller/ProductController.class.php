@@ -203,7 +203,7 @@ class ProductController extends CommonController {
         }
 
         $keyAry = array(
-            'product_info' => "服务内容不能为空!",
+            'product_info' => "",
             'price' => "服务价格不能为空",
             'price_type' => "结算方式不能为空",
             'product_image' => "服务主图不能为空",
