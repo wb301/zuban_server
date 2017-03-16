@@ -12,7 +12,7 @@ class SysController extends AdminCommonController
         $adminCode = $adminInfo['admin_code'];
 
     	$sysModel = M("admin_system_config", 0, "DB_DSN");
-        $sysList = $sysModel->where("`status` = 1 AND `is_auto` = 0 ")->select();
+        $sysList = $sysModel->where("`status` = 1 AND `is_auto` = 0 ")->order("`sort` ASC")->select();
 
        	$this->returnSuccess($sysList);
     }
