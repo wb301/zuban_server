@@ -591,7 +591,7 @@ class OrderController extends CommonController {
             $this->returnSuccess(15);
         }
         $moneyHistory = array(
-            'user_id' => $rs['product_user'],
+            'user_id' => $rs['user_id'],
             'price_type' => 4,
             'price_info' => $rs['order_no'],
             'price' => $rs['price'],
