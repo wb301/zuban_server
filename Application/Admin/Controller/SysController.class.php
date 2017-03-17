@@ -48,6 +48,8 @@ class SysController extends AdminCommonController
         	if(!is_array(json_decode($value))){
         		$this->returnErrorNotice('配置属性值错误!');
         	}
+        }else if($key == 'LOOK_PRICE'){
+            M('zuban_product_goods','','DB_DSN')->where("`look_price` > 0")->setField('look_price',$value);
         }
         //修改配置
         $sysConfigId = intval($sysConfig['id']);
