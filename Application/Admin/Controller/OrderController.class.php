@@ -188,6 +188,9 @@ class OrderController extends AdminCommonController
             $this->returnErrorNotice('订单异常!');
         }
         $orderRs = $orderRs[0];
+        if (intval($orderRs['status']) != 11) {
+            $this->returnErrorNotice('订单状态已变更!');
+        }
         $moneyHistory = array(
             'user_id' => $orderRs['user_id'],
             'price_type' => 4,
@@ -200,9 +203,6 @@ class OrderController extends AdminCommonController
         $addMoneyHistoryResult = $moneyHistoryModel->add($moneyHistory);
         if (!$addMoneyHistoryResult) {
             $this->returnErrorNotice('退款异常');
-        }
-        if (intval($orderRs['status']) != 11) {
-            $this->returnErrorNotice('订单状态已变更!');
         }
         // 开始付款后的状态变更
         $updateAry = array(
