@@ -69,10 +69,28 @@ class UserController extends AdminCommonController
 
         $userBaseModel = M("admin_region_manager", 0, "DB_DSN");
         $this->pageAry["total"] = $userBaseModel->where($whereArr)->count();
-        if($this->pageAry["total"] > 0){
+        if ($this->pageAry["total"] > 0) {
 
             $this->setPageRow();
-            $this->pageAry["list"] = $userBaseModel->where($whereArr)->order("id DESC")->page($this->page, $this->row)->select();
+            $rs = $userBaseModel->where($whereArr)->order("id DESC")->page($this->page, $this->row)->select();
+            if (count($rs) > 0) {
+                $adminRegionMoneyHistoryModel = M("admin_region_money_history", '', "DB_DSN");
+                //收入
+                $cumulativePrice = $adminRegionMoneyHistoryModel->where(" `admin_code`!='' AND `region_code`!=''")->field("`admin_code`,sum(price) as price")->group('admin_code')->select();
+                if (count($cumulativePrice) > 0) {
+                    $newPrice = array();
+                    foreach ($cumulativePrice AS $key => $value) {
+                        $newPrice[$value['admin_code']] = $value;
+                    }
+                }
+                foreach ($rs AS $key => $value) {
+                    $rs[$key]['price'] = 0;
+                    if (isset($newPrice[$rs[$key]['admin_code']])) {
+                        $rs[$key]['price'] = $newPrice[$rs[$key]['admin_code']]['price'];
+                    }
+                }
+            }
+            $this->pageAry["list"]=$rs;
             $this->pageAry["list"] = $this->pageAry["list"] ? $this->pageAry["list"] : array();
         }
 

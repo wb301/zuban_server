@@ -275,7 +275,7 @@ class MoneyHistoryController extends AdminCommonController
 
     //核销接口
     //http://localhost/zuban_server/index.php?c=Admin&m=MoneyHistory&a=verification&bossCode=5ccdff89-387a-7e89-f84b-59dad88cd71c&region=425&price=0.01
-    public function verification($region,$bossCode,$price){
+    public function verification($region,$bossCode,$price,$remark){
         $userBase = $this->checkToken(1);
         $whereSql = " `admin_code`= '$bossCode' ";
         $adminRegionMoneyHistoryModel = M("admin_region_money_history", '', "DB_DSN");
@@ -284,6 +284,9 @@ class MoneyHistoryController extends AdminCommonController
         if($last){
             $lastprice =$last;
         }
+        if(round($price,2)<=0){
+            $this->returnErrorNotice('核销金额不可小于0元！');
+        }
         if(round($price,2)>round($lastprice,2)){
             $this->returnErrorNotice('核销金额大于剩余金额！');
         }
@@ -291,7 +294,7 @@ class MoneyHistoryController extends AdminCommonController
                 'region_code' => $region,
                 'admin_code' => $bossCode,
                 'price_type' => 2,
-                'remark' => '平台核销',
+                'remark' => '平台核销'.$remark,
                 'price' => -$price,
                 'price_info' =>'',
                 'create_time' => date('Y-m-d')
