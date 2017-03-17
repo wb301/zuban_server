@@ -43,8 +43,8 @@ class MoneyHistoryController extends AdminCommonController
     }
 
     /**
-        获取抽成数据
-    */
+    获取抽成数据
+     */
     public function getMaxPriceInfo(){
 
         //获取自己的信息
@@ -64,7 +64,7 @@ class MoneyHistoryController extends AdminCommonController
         $allMaxPrice = $orderModel->where(array("status" => array("IN", array(6, 10))))->SUM("price");
 
         // 平台
-        $regionMoneyHistoryModel = M("admin_region_money_history", 0, "DB_DSN");        
+        $regionMoneyHistoryModel = M("admin_region_money_history", 0, "DB_DSN");
         $allHistoryList = $regionMoneyHistoryModel->where("`order_type` < 3")->group("order_type")->field("order_type,SUM(price) as price")->select();
         foreach ($allHistoryList as $key => $value) {
             $allIncomePrice += $value["price"];
@@ -97,7 +97,7 @@ class MoneyHistoryController extends AdminCommonController
 
         // 用户
         $userIncomePrice = 0;
-        $userMoneyHistoryModel = M("zuban_user_money_history", 0, "DB_DSN");        
+        $userMoneyHistoryModel = M("zuban_user_money_history", 0, "DB_DSN");
         $allHistoryList = $userMoneyHistoryModel->group("price_type")->field("price_type,SUM(price) as price")->select();
         foreach ($allHistoryList as $key => $value) {
             switch ($value["price_type"]) {
@@ -109,18 +109,18 @@ class MoneyHistoryController extends AdminCommonController
                     break;
             }
         }
-        $userSurplusPrice = $userIncomePrice - $userWithdrawPrice;
+        $userSurplusPrice = $userIncomePrice + $userWithdrawPrice;
 
         $priceInfo = array(
             array("name" => "平台流水",
-                  "mingxi" => "订单流水金额:".$allMaxPrice."元"),
+                "mingxi" => "订单流水金额:".$allMaxPrice."元"),
             array("name" => "平台",
-                  "mingxi" => "收入金额:".$allIncomePrice."元    查看金额:".$allLookPrice."元     抽成金额:".$allPercentagePrice."元   会员金额:".$allVipPrice."元"),
+                "mingxi" => "收入金额:".$allIncomePrice."元    查看金额:".$allLookPrice."元     抽成金额:".$allPercentagePrice."元   会员金额:".$allVipPrice."元"),
             array("name" => "代销商",
-                  "mingxi" => "剩余金额:".$regionSurplusPrice."元    抽成金额:".$regionPercentagePrice."元    结算金额:".$regionSettlementPrice."元"),
+                "mingxi" => "剩余金额:".$regionSurplusPrice."元    抽成金额:".$regionPercentagePrice."元    结算金额:".$regionSettlementPrice."元"),
             array("name" => "用户",
-                  "mingxi" => "剩余金额:".$userSurplusPrice."元      提现金额:".$userWithdrawPrice."元")
-            );
+                "mingxi" => "剩余金额:".$userSurplusPrice."元      提现金额:".$userWithdrawPrice."元")
+        );
 
         return $this->returnSuccess($priceInfo);
     }
@@ -238,7 +238,7 @@ class MoneyHistoryController extends AdminCommonController
         if ($withdrawCount <= 0) {
             $this->returnSuccess($rs);
         }
-        $withdrawRs = $adminRegionMoneyHistoryModel->where($whereSql)->order("`create_time`")->page($this->page, $this->row)->select();
+        $withdrawRs = $adminRegionMoneyHistoryModel->where($whereSql)->order("`create_time` DESC ")->page($this->page, $this->row)->select();
         if (count($withdrawRs) <= 0) {
             $this->returnSuccess($rs);
         }
@@ -360,7 +360,7 @@ class MoneyHistoryController extends AdminCommonController
                 'price' => -$price,
                 'price_info' =>'',
                 'order_type' => 3,
-                'create_time' => date('Y-m-d')
+                'create_time' => date('Y-m-d H:i:s')
         );
         $rs=$adminRegionMoneyHistoryModel->add($addAry);
         if(!$rs){

@@ -189,7 +189,7 @@ class OrderController extends AdminCommonController
         }
         $orderRs = $orderRs[0];
         $moneyHistory = array(
-            'user_id' => $orderRs['product_user'],
+            'user_id' => $orderRs['user_id'],
             'price_type' => 4,
             'price_info' => $orderRs['order_no'],
             'price' => $orderRs['price'],
