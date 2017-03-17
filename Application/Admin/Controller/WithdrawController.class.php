@@ -101,7 +101,7 @@ class WithdrawController extends AdminCommonController
                         "price_type" => 5,
                         "price_info" => "提现",
                         "remark" => "提现成功",
-                        "price" => $price,
+                        "price" => -$price,
                         "create_time" => date('Y-m-d'));
 
         $oldStatus = $moneyModel->add($addArr);
