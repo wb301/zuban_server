@@ -161,8 +161,12 @@ class MoneyHistoryController extends AdminCommonController
         if(strlen($parameters['status'])>0){
             $whereSql .= " AND `price_type`= '{$parameters['status']}' ";
         }
-        if(strlen($parameters['admin_code'])>0){
-            $whereSql .= " AND `admin_code`= '{$parameters['admin_code']}' ";
+        if($userBase['manager_type']==0){
+            $whereSql .= " AND `admin_code`= '{$userBase['admin_code']}' ";
+        }else{
+            if(strlen($parameters['admin_code'])>0){
+                $whereSql .= " AND `admin_code`= '{$parameters['admin_code']}' ";
+            }
         }
         if($userBase['manager_type']==0){
             $whereSql .= " AND `region_code`= '{$userBase['region_code']}' ";
@@ -303,6 +307,7 @@ class MoneyHistoryController extends AdminCommonController
                 'remark' => '平台核销'.$remark,
                 'price' => -$price,
                 'price_info' =>'',
+                'order_type' => 3,
                 'create_time' => date('Y-m-d')
         );
         $rs=$adminRegionMoneyHistoryModel->add($addAry);

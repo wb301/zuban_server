@@ -442,6 +442,7 @@ abstract class BasePay
                     'remark' => $remark,
                     'price' => $toMaxPrice,
                     'price_info' => $orderNo,
+                    'order_type' => $orderType,
                     'create_time' => $nowTime
                 )
             );
