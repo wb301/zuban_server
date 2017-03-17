@@ -49,28 +49,80 @@ class MoneyHistoryController extends AdminCommonController
 
         //获取自己的信息
         $userBase = $this->checkToken(1);
-
-        $maxPriceInfo = array("maxPrice" => 0,
-                              "maxPercentagePrice" => 0,
-                              "maxVipPrice" => 0,
-                              "regionPercentagePrice" => 0);
-
-        $moneyHistoryModel = M("zuban_user_money_history", 0, "DB_DSN");
-        $maxPriceInfo["maxVipPrice"] = $moneyHistoryModel->where("`price_type` = 6")->SUM("price");
-        $maxPriceInfo["maxVipPrice"] = $maxPriceInfo["maxVipPrice"] ? abs($maxPriceInfo["maxVipPrice"]) : 0;
+        $allMaxPrice = 0; // 订单流水金额
+        $allIncomePrice = 0; // 平台收入金额
+        $allLookPrice = 0; // 查看金额
+        $allPercentagePrice = 0; // 平台抽成金额
+        $allVipPrice = 0; // 会员金额
+        $regionPercentagePrice = 0; // 代理商抽成金额
+        $regionSurplusPrice = 0; // 代理商剩余金额
+        $regionSettlementPrice = 0; // 代理商结算金额
+        $userWithdrawPrice = 0; // 用户提现金额
+        $userSurplusPrice = 0; // 用户剩余金额
 
         $orderModel = M("zuban_order", 0, "DB_DSN");
-        $maxPriceInfo["maxPrice"] = $orderModel->where(array("status" => array("IN", array(6, 10))))->SUM("price");
-        $maxPriceInfo["maxPrice"] = $maxPriceInfo["maxPrice"] ? $maxPriceInfo["maxPrice"] : 0;
-        $maxPriceInfo["maxPrice"] += $maxPriceInfo["maxVipPrice"];
+        $allMaxPrice = $orderModel->where(array("status" => array("IN", array(6, 10))))->SUM("price");
 
-        $regionMoneyHistoryModel = M("admin_region_money_history", 0, "DB_DSN");
-        $maxPriceInfo["maxPercentagePrice"] = $regionMoneyHistoryModel->where("`region_code` = 1 AND `price_type` = 1")->SUM("price");
-        $maxPriceInfo["regionPercentagePrice"] = $regionMoneyHistoryModel->where("`region_code` > 1 AND `price_type` = 1")->SUM("price");
-        $maxPriceInfo["maxPercentagePrice"] = $maxPriceInfo["maxPercentagePrice"] ? $maxPriceInfo["maxPercentagePrice"] : 0;
-        $maxPriceInfo["regionPercentagePrice"] = $maxPriceInfo["regionPercentagePrice"] ? $maxPriceInfo["regionPercentagePrice"] : 0;
+        // 平台
+        $regionMoneyHistoryModel = M("admin_region_money_history", 0, "DB_DSN");        
+        $allHistoryList = $regionMoneyHistoryModel->where("`order_type` < 3")->group("order_type")->field("order_type,SUM(price) as price")->select();
+        foreach ($allHistoryList as $key => $value) {
+            $allIncomePrice += $value["price"];
+            switch ($value["order_type"]) {
+                case '0':
+                    $allLookPrice = $value["price"];
+                    break;
+                case '1':
+                    $allPercentagePrice = $value["price"];
+                    break;
+                case '2':
+                    $allVipPrice = $value["price"];
+                    break;
+            }
+        }
 
-        return $this->returnSuccess($maxPriceInfo);
+        // 代理商
+        $regionHistoryList = $regionMoneyHistoryModel->where("`order_type` = 3")->group("price_type")->field("price_type,SUM(price) as price")->select();
+        foreach ($regionHistoryList as $key => $value) {
+            $regionSurplusPrice += $value["price"];
+            switch ($value["price_type"]) {
+                case '1':
+                    $regionPercentagePrice = $value["price"];
+                    break;
+                case '2':
+                    $regionSettlementPrice = $value["price"];
+                    break;
+            }
+        }
+
+        // 用户
+        $userIncomePrice = 0;
+        $userMoneyHistoryModel = M("zuban_user_money_history", 0, "DB_DSN");        
+        $allHistoryList = $userMoneyHistoryModel->group("price_type")->field("price_type,SUM(price) as price")->select();
+        foreach ($allHistoryList as $key => $value) {
+            switch ($value["price_type"]) {
+                case '5':
+                    $userWithdrawPrice = $value["price"];
+                    break;
+                case '3':
+                    $userIncomePrice = $value["price"];
+                    break;
+            }
+        }
+        $userSurplusPrice = $userIncomePrice - $userWithdrawPrice;
+
+        $priceInfo = array(
+            array("name" => "平台流水",
+                  "mingxi" => "订单流水金额:".$allMaxPrice."元"),
+            array("name" => "平台",
+                  "mingxi" => "收入金额:".$allIncomePrice."元    查看金额:".$allLookPrice."元     抽成金额:".$allPercentagePrice."元   会员金额:".$allVipPrice."元"),
+            array("name" => "代销商",
+                  "mingxi" => "剩余金额:".$regionSurplusPrice."元    抽成金额:".$regionPercentagePrice."元    结算金额:".$regionSettlementPrice."元"),
+            array("name" => "用户",
+                  "mingxi" => "剩余金额:".$userSurplusPrice."元      提现金额:".$userWithdrawPrice."元")
+            );
+
+        return $this->returnSuccess($priceInfo);
     }
 
     /**
