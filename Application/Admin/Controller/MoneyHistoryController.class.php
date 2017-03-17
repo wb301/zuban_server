@@ -238,7 +238,7 @@ class MoneyHistoryController extends AdminCommonController
         if ($withdrawCount <= 0) {
             $this->returnSuccess($rs);
         }
-        $withdrawRs = $adminRegionMoneyHistoryModel->where($whereSql)->order("`create_time` DESC ")->page($this->page, $this->row)->select();
+        $withdrawRs = $adminRegionMoneyHistoryModel->where($whereSql)->order("`create_time`")->page($this->page, $this->row)->select();
         if (count($withdrawRs) <= 0) {
             $this->returnSuccess($rs);
         }
