@@ -61,7 +61,7 @@ class UserController extends CommonController
         if( !empty($parameters['head_img']) )
             $saveArr["head_img"] = $parameters['head_img'];
         if( !empty($parameters['nick_name']) )
-            $saveArr["nick_name"] = $this->checkContentInfo($parameters['nick_name']);
+            $saveArr["nick_name"] = $this->checkContentInfo($parameters['nick_name'],20);
         if( !empty($parameters['age']) )
             $saveArr["age"] = $parameters['age'];
         if( !empty($parameters['sex']) )
@@ -71,9 +71,9 @@ class UserController extends CommonController
         if( !empty($parameters['weight']) )
             $saveArr["weight"] = $parameters['weight'];
         if( !empty($parameters['professional']) )
-            $saveArr["professional"] = $this->checkContentInfo($parameters['professional']);
+            $saveArr["professional"] = $this->checkContentInfo($parameters['professional'],120);
         if( !empty($parameters['qualifications']) )
-            $saveArr["qualifications"] = $this->checkContentInfo($parameters['qualifications']);
+            $saveArr["qualifications"] = $this->checkContentInfo($parameters['qualifications'],120);
         if( !empty($parameters['wx_account']) )
             $saveArr["wx_account"] = $parameters['wx_account'];
 
