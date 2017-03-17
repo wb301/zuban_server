@@ -67,7 +67,7 @@ class OrderController extends AdminCommonController
             $statusList = $statusMap[$status];
         }
         //检测用户 TODO
-        //$userInfo=$this->checkToken(true);
+        $userInfo=$this->checkToken();
         $whereSql = " 1=1 ";
         if(strlen($type)>0){
             $whereSql .= " AND `order_type`= $type ";
@@ -84,8 +84,12 @@ class OrderController extends AdminCommonController
         if(strlen($parameters['orderNo'])>0){
             $whereSql .= " AND `order_no`= '{$parameters['orderNo']}' ";
         }
-        if(strlen($parameters['sourse'])>0){
-            $whereSql .= " AND `from_source`= '{$parameters['sourse']}' ";
+        if($userInfo['manager_type']==0){
+            $whereSql .= " AND `from_source`= '{$userInfo['region_code']}' ";
+        }else{
+            if(strlen($parameters['sourse'])>0){
+                $whereSql .= " AND `from_source`= '{$parameters['sourse']}' ";
+            }
         }
         if(strlen($parameters['startTime'])>0){
             $whereSql .= " AND `create_time`>= '{$parameters['startTime']}' ";
@@ -253,6 +257,7 @@ class OrderController extends AdminCommonController
         if (!$parameters) {
             $this->returnErrorNotice('请求失败!');
         }
+        $userBase = $this->checkToken();
         $this->setPageRow();
         $rs = array(
             'list' => array(),
@@ -274,8 +279,12 @@ class OrderController extends AdminCommonController
         if(strlen($parameters['orderNo'])>0){
             $whereSql .= " AND `order_no`= '{$parameters['orderNo']}' ";
         }
-        if(strlen($parameters['sourse'])>0){
-            $whereSql .= " AND `from_source`= '{$parameters['sourse']}' ";
+        if($userBase['manager_type']==0){
+            $whereSql .= " AND `from_source`= '{$userBase['region_code']}' ";
+        }else{
+            if(strlen($parameters['sourse'])>0){
+                $whereSql .= " AND `from_source`= '{$parameters['sourse']}' ";
+            }
         }
         if(strlen($parameters['startTime'])>0){
             $whereSql .= " AND `create_time`>= '{$parameters['startTime']}' ";

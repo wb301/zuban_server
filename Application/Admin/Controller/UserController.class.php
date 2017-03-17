@@ -112,7 +112,7 @@ class UserController extends AdminCommonController
         }
 
         //获取自己的信息
-        $userBase = $this->checkToken(1);
+        $userBase = $this->checkToken();
         $region_code = $parameters["region_code"];
 
         $whereArr['status'] =1;

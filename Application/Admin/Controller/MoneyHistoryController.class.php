@@ -145,6 +145,8 @@ class MoneyHistoryController extends AdminCommonController
         if (!$parameters) {
             $this->returnErrorNotice('请求失败!');
         }
+        //获取自己的信息
+        $userBase = $this->checkToken();
         $this->setPageRow();
         $rs = array(
             'report'=>array(
@@ -162,8 +164,12 @@ class MoneyHistoryController extends AdminCommonController
         if(strlen($parameters['admin_code'])>0){
             $whereSql .= " AND `admin_code`= '{$parameters['admin_code']}' ";
         }
-        if(strlen($parameters['region_code'])>0){
-            $whereSql .= " AND `region_code`= '{$parameters['region_code']}' ";
+        if($userBase['manager_type']==0){
+            $whereSql .= " AND `region_code`= '{$userBase['region_code']}' ";
+        }else{
+            if(strlen($parameters['region_code'])>0){
+                $whereSql .= " AND `region_code`= '{$parameters['region_code']}' ";
+            }
         }
         if(strlen($parameters['startTime'])>0){
             $whereSql .= " AND `create_time`>= '{$parameters['startTime']}' ";
