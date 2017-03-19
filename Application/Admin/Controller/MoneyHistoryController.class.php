@@ -209,22 +209,26 @@ class MoneyHistoryController extends AdminCommonController
             'list' => array(),
             'total' => 0
         );
-        $whereSql = " 1=1 ";
+        $whereSql = $whereSql2= " `order_type`=3 ";
         if(strlen($parameters['status'])>0){
             $whereSql .= " AND `price_type`= '{$parameters['status']}' ";
         }
         if($userBase['manager_type']==0){
             $whereSql .= " AND `admin_code`= '{$userBase['admin_code']}' ";
+            $whereSql2 .= " AND `admin_code`= '{$userBase['admin_code']}' ";
         }else{
             if(strlen($parameters['admin_code'])>0){
                 $whereSql .= " AND `admin_code`= '{$parameters['admin_code']}' ";
+                $whereSql2 .= " AND `admin_code`= '{$parameters['admin_code']}' ";
             }
         }
         if($userBase['manager_type']==0){
             $whereSql .= " AND `region_code`= '{$userBase['region_code']}' ";
+            $whereSql2 .= " AND `region_code`= '{$userBase['region_code']}' ";
         }else{
             if(strlen($parameters['region_code'])>0){
                 $whereSql .= " AND `region_code`= '{$parameters['region_code']}' ";
+                $whereSql2 .= " AND `region_code`= '{$parameters['region_code']}' ";
             }
         }
         if(strlen($parameters['startTime'])>0){
@@ -242,18 +246,33 @@ class MoneyHistoryController extends AdminCommonController
         if (count($withdrawRs) <= 0) {
             $this->returnSuccess($rs);
         }
+        $adminCodeList=array();
+        foreach($withdrawRs AS $key=>$value){
+            $withdrawRs[$key]['nick_name']='';
+            $withdrawRs[$key]['region_name']='';
+            $adminCodeList[]=$value['admin_code'];
+        }
+        $userBaseModel = M("admin_region_manager", 0, "DB_DSN");
+        $where['admin_code']=array('IN',$adminCodeList);
+        $adminInfo = $userBaseModel->where($where)->getField("`admin_code`,`nick_name`,`region_name`");
+        foreach($withdrawRs AS $key=>$value){
+            if(isset($adminInfo[$value['admin_code']])){
+                $withdrawRs[$key]['nick_name']=$adminInfo[$value['admin_code']]['nick_name'];
+                $withdrawRs[$key]['region_name']=$adminInfo[$value['admin_code']]['region_name'];
+            }
+        }
         $rs['report']['balance']=0;
-        $balance=$adminRegionMoneyHistoryModel->where($whereSql)->SUM("price");//剩余
+        $balance=$adminRegionMoneyHistoryModel->where($whereSql2)->SUM("price");//剩余
         if($balance){
             $rs['report']['balance']=abs($balance);
         }
         $rs['report']['withdrawal']=0;
-        $withdrawal=$adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=2 ")->SUM("price");//提现
+        $withdrawal=$adminRegionMoneyHistoryModel->where("$whereSql2 AND `price_type`=2 ")->SUM("price");//提现
         if($withdrawal){
             $rs['report']['withdrawal']=abs($withdrawal);
         }
         $rs['report']['cumulative']=0;
-        $cumulative=$adminRegionMoneyHistoryModel->where("$whereSql AND `price_type`=1 ")->SUM("price");//累计
+        $cumulative=$adminRegionMoneyHistoryModel->where("$whereSql2 AND `price_type`=1 ")->SUM("price");//累计
         if($cumulative){
             $rs['report']['cumulative']=abs($cumulative);
         }
