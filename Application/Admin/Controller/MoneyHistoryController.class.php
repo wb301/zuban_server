@@ -27,7 +27,7 @@ class MoneyHistoryController extends AdminCommonController
             $whereArr["price_type"] = $status;
         }
         if(strlen($orderNo) > 0){
-            $whereArr["proce_info"] = $orderNo;
+            $whereArr["price_info"] = $orderNo;
         }
         
         $moneyHistoryModel = M("admin_region_money_history", 0, "DB_DSN");
@@ -61,7 +61,7 @@ class MoneyHistoryController extends AdminCommonController
         $userSurplusPrice = 0; // 用户剩余金额
 
         $orderModel = M("zuban_order", 0, "DB_DSN");
-        $allMaxPrice = $orderModel->where(array("status" => array("IN", array(6, 10))))->SUM("price");
+        $allMaxPrice = $orderModel->where(array("status" => array("IN", array(6, 10, 12))))->SUM("price");
 
         // 平台
         $regionMoneyHistoryModel = M("admin_region_money_history", 0, "DB_DSN");
@@ -105,7 +105,8 @@ class MoneyHistoryController extends AdminCommonController
                     $userWithdrawPrice = $value["price"];
                     break;
                 case '3':
-                    $userIncomePrice = $value["price"];
+                case '4':
+                    $userIncomePrice += $value["price"];
                     break;
             }
         }
