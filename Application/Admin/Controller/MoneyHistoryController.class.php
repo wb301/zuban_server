@@ -22,7 +22,7 @@ class MoneyHistoryController extends AdminCommonController
         //获取自己的信息
         $userBase = $this->checkToken(1);
 
-        $whereArr = array("create_time" => array("between", array($startTime, $endTime)));
+        $whereArr = array("create_time" => array("between", array($startTime, $endTime)), "order_type" => array("neq", 3));
         if($status > 0){
             $whereArr["price_type"] = $status;
         }

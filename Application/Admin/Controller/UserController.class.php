@@ -41,6 +41,40 @@ class UserController extends AdminCommonController
     }
 
     /**
+     * 修改密码
+     * 请求方式:post
+     * @param token
+     * @param old_password 旧密码
+     * password 新密码
+     */
+    public function changePassword()
+    {
+        $this->_POST();
+        $keyAry = array(
+            'oldPwd' => "旧密码不能为空",
+            'newPwd' => "新密码不能为空"
+        );
+        //参数列
+        $parameters = $this->getPostparameters($keyAry);
+        if (!$parameters) {
+            $this->returnErrorNotice('请求失败!');
+        }
+
+        $userBase = $this->checkToken();
+        $oldPwd = $parameters['oldPwd'];
+        $newPwd = $parameters['newPwd'];
+
+        if( $userBase['password'] != md5($oldPwd) )
+            $this->returnErrorNotice("密码错误");
+
+        $reguonManagerModel = M("admin_region_manager", 0, "DB_DSN");
+        $saveArr = array("password" => md5($newPwd));
+        $reguonManagerModel->where(array("admin_code" => $userBase["admin_code"]))->save($saveArr);
+
+        $this->returnSuccess(true);
+    }
+
+    /**
     =======================   平台的操作   =======================
      */
 
