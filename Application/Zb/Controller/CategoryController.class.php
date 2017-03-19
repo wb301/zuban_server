@@ -22,7 +22,7 @@ class CategoryController extends CommonController {
         if($fixAll > 0){
             $push = $categoryList[0];
             unset($push['children']);
-            $categoryList = $this->fixAllForTree($categoryList,$push,$level-2,$mapping,"全部","category_name","id","parent_id");
+            $categoryList = $this->fixAllForTree($categoryList,$push,$level-2,$mapping,"分类","category_name","id","parent_id");
         }
         $this->returnSuccess($categoryList);
     }

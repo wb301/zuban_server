@@ -32,7 +32,7 @@ class CategoryController extends AdminCommonController {
         if($fixAll > 0){
             $push = $categoryList[0];
             unset($push['children']);
-            $categoryList = $this->fixAllForTree($categoryList,$push,$level-2,$map,"全部","category_name","id","parent_id");
+            $categoryList = $this->fixAllForTree($categoryList,$push,$level-2,$map,"分类","category_name","id","parent_id");
         }
 
         $this->returnSuccess($categoryList);

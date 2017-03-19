@@ -19,7 +19,7 @@ class RegionController extends AdminCommonController {
         if($fixAll > 0){
             $push = $regionList[0];
             unset($push['children']);
-            $regionList = $this->fixAllForTree($regionList,$push,$level-2,$mapping,"全国","name","code","parent_code");
+            $regionList = $this->fixAllForTree($regionList,$push,$level-2,$mapping,"地区","name","code","parent_code");
         }
         $this->returnSuccess($regionList);
     }
