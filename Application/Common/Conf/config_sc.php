@@ -1,7 +1,7 @@
 <?php
 return array(
     'RUN_ENV' =>  0, //0开发 1测试 2正式  //此处用的测试环境配置  后续改正
-    'SERVER_URL'            =>  "https://weixin.zuban8.com/zuban_server", //当前服务地址
+    'SERVER_URL'            =>  "https://www.zuban8.com/zuban_server", //当前服务地址
     /**
 
     数据库
@@ -76,7 +76,7 @@ return array(
     'WXTOKEN'=>'zuban666',//微信公众号token
 
     /*************第三方登陆******************/
-    'THIRD_LOGIN' => 'https://weixin.zuban8.com/zuban_server',
+    'THIRD_LOGIN' => 'https://www.zuban8.com/zuban_server',
     //微信appid,appsecret
     'APPID_WX' => 'wx3c5e318a8146f352',
     'APPSECRET_WX' =>'f8f83a2db7fa19ba7335e41aef642749',
@@ -115,7 +115,7 @@ return array(
         'KEY' => '6034e609io23f86507eg79887tb0519e',
         'APP_KEY' => '',
         'APPSECRET' => 'f8f83a2db7fa19ba7335e41aef642749',
-        'NOTIFY_URL' => 'https://weixin.zuban8.com/zuban_server/index.php/notify/channel/wx',
+        'NOTIFY_URL' => 'https://www.zuban8.com/zuban_server/index.php/notify/channel/wx',
         'SSLCERT_PATH' => APP_PATH.'Pay/Wx/cert/apiclient_cert.pem',
         'SSLKEY_PATH' => APP_PATH.'Pay/Wx/cert/apiclient_key.pem',
         'PRE_PAY_URL' => 'https://api.mch.weixin.qq.com/pay/unifiedorder',
