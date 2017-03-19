@@ -84,7 +84,8 @@ class UserController extends AdminCommonController
     public function getRegionManagerList(){
 
         $keyAry = array(
-            'region_code' => ""
+            'region_code' => "",
+            'phone' => ""
         );
         //参数列
         $parameters = $this->getPostparameters($keyAry);
@@ -95,10 +96,14 @@ class UserController extends AdminCommonController
         //获取自己的信息
         $userBase = $this->checkToken(1);
         $region_code = $parameters["region_code"];
+        $phone = $parameters["phone"];
 
         $whereArr = array("status" => array("lt", 3));
         if(strlen($region_code) > 0){
             $whereArr["region_code"] = $region_code;
+        }
+        if(strlen($phone) > 0){
+            $whereArr["account"] = $phone;
         }
 
         $userBaseModel = M("admin_region_manager", 0, "DB_DSN");
