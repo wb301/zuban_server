@@ -118,9 +118,9 @@ class MoneyHistoryController extends AdminCommonController
             array("name" => "平台",
                 "mingxi" => "收入金额:".$allIncomePrice."元    查看金额:".$allLookPrice."元     抽成金额:".$allPercentagePrice."元   会员金额:".$allVipPrice."元"),
             array("name" => "代销商",
-                "mingxi" => "剩余金额:".$regionSurplusPrice."元    抽成金额:".$regionPercentagePrice."元    结算金额:".$regionSettlementPrice."元"),
+                "mingxi" => "剩余金额:".$regionSurplusPrice."元    抽成金额:".$regionPercentagePrice."元    结算金额:".abs($regionSettlementPrice)."元"),
             array("name" => "用户",
-                "mingxi" => "剩余金额:".$userSurplusPrice."元      提现金额:".$userWithdrawPrice."元")
+                "mingxi" => "剩余金额:".$userSurplusPrice."元      提现金额:".abs($userWithdrawPrice)."元")
         );
 
         return $this->returnSuccess($priceInfo);
