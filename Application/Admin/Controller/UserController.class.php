@@ -233,7 +233,6 @@ class UserController extends AdminCommonController
                 $this->returnErrorNotice('该地区已存在代理商!');
             }
         }
-
         $addArr = array("account" => $account,
             "password" => md5($password),
             "nick_name" => $nickName,
@@ -243,6 +242,7 @@ class UserController extends AdminCommonController
             "status" => $status);
 
         if($id > 0){
+            unset($addArr['manager_type']);
             $remark = "修改代理商[".$id."],生成新数据:".json_encode($addArr);
             $userBaseModel->where(array("id" => $id))->save($addArr);
         }else{
