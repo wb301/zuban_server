@@ -225,7 +225,7 @@ class UserController extends AdminCommonController
         $status = $parameters["status"];
 
         $userBaseModel = M("admin_region_manager", 0, "DB_DSN");
-        if($managerType <= 0){
+        if($managerType <= 0&&$id==0){
 
             $whereArr = array("region_code" => $regionCode, "status" => 1);
             $userInfo = $userBaseModel->where($whereArr)->count();
