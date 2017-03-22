@@ -115,15 +115,7 @@ class CategoryController extends AdminCommonController {
         }else if($sort <= 0){
             $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` > $oldSort ")->setDec("sort");
         }else{
-            if($oldSort > $sort){
-                $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` = $sort ")->setInc("sort");
-                $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` = $oldSort ")->setDec("sort");
-            }
-
-            if($oldSort < $sort){
-                $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` = $oldSort ")->setInc("sort");
-                $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` = $sort ")->setDec("sort");
-            }
+            $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` = $sort ")->setField("sort",$oldSort);
         }
 
         return $sort;
