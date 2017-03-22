@@ -74,7 +74,7 @@ class CategoryController extends AdminCommonController {
         //查询分类level
         $categoryLevel = $this->getCategoryLevel(intval($categoryInfo['parent_id']));
         //修正排序信息
-        $this->fixCategorySort(intval($categoryInfo['parent_id']),intval($categoryInfo['sort']));
+        $this->fixCategorySort(intval($categoryInfo['parent_id']),0,0);
 
         //新增分类信息
         $nowTime = date('Y-m-d H:i:s');
@@ -82,7 +82,7 @@ class CategoryController extends AdminCommonController {
             'parent_id' => intval($categoryInfo['parent_id']),
             'category_name' => $categoryInfo['category_name'],
             'is_free' => intval($categoryInfo['is_free']),
-            'sort' => intval($categoryInfo['sort']),
+            'sort' => 1,
             'level' => $categoryLevel,
             'status' => 1,
             'create_time' => $nowTime,
@@ -107,11 +107,26 @@ class CategoryController extends AdminCommonController {
         return $categoryLevel;
     }
 
-    private function fixCategorySort($parentId,$sort)
+    private function fixCategorySort($parentId,$oldSort,$sort)
     {
-        //所有往后的排序重置+1
         $tempCategoryModel = M('admin_product_category','','DB_DSN');
-        $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` >= $sort ")->setInc("sort");
+        if($oldSort == 0 && $sort == 0){
+            $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId ")->setInc("sort");
+        }else if($sort <= 0){
+            $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` > $oldSort ")->setDec("sort");
+        }else{
+            if($oldSort > $sort){
+                $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` = $sort ")->setInc("sort");
+                $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` = $oldSort ")->setDec("sort");
+            }
+
+            if($oldSort < $sort){
+                $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` = $oldSort ")->setInc("sort");
+                $tempCategoryModel->where("`status`= 1 AND `parent_id` = $parentId AND `sort` = $sort ")->setDec("sort");
+            }
+        }
+
+        return $sort;
     }
 
 
@@ -151,8 +166,7 @@ class CategoryController extends AdminCommonController {
         );
         if(isset($categoryInfo['sort'])){
             //修正排序信息
-            $this->fixCategorySort(intval($categoryAry['parent_id']),intval($categoryInfo['sort']));
-            $updateAry['sort'] = intval($categoryInfo['sort']);
+            $updateAry['sort'] = $this->fixCategorySort(intval($categoryAry['parent_id']),intval($categoryAry['sort']),intval($categoryInfo['sort']));
         }
         if(isset($categoryInfo['is_free'])){
             $updateAry['is_free'] = intval($categoryInfo['is_free']);
@@ -175,6 +189,9 @@ class CategoryController extends AdminCommonController {
         }
         if(isset($categoryInfo['status'])){
             $updateAry['status'] = intval($categoryInfo['status']);
+            if($updateAry['status'] == -1){
+                $this->fixCategorySort(intval($categoryAry['parent_id']),intval($categoryAry['sort']),-1);
+            }
         }
         if(isset($categoryInfo['category_name']) && strlen($categoryInfo['category_name']) > 0){
             $updateAry['category_name'] = $categoryInfo['category_name'];
