@@ -4,7 +4,7 @@ use Think\Controller;
 
 /**
 
-	控制器层 调用service层
+    控制器层 调用service层
 
 */
 class CommonController extends Controller
@@ -21,6 +21,15 @@ class CommonController extends Controller
         $this->requestTime = time();
         //对象实例化
         $this->service = A( "{$this->modelName}/{$this->getControllerName()}", 'Service' );
+        $this->_server();
+    }
+
+    private function _server()
+    {
+        $closeModuleList = json_decode($this->getSysConfig('CLOSE_MODULE',2), true);
+        if(in_array($this->modelName, $closeModuleList)){
+            $this->returnErrorNotice('当前服务器维护中~!');
+        }
     }
 
     //数组分页通用返回结构及统一获取
@@ -40,22 +49,22 @@ class CommonController extends Controller
     }
 
     private $requestTime = 0;
-	private function returnJQuery($data,$msg,$code,$status)
-	{
+    private function returnJQuery($data,$msg,$code,$status)
+    {
         $time =  time() - $this->requestTime;
-		$result = array(
-	        'data' => $data,
-	        'msg' => $msg,
-	        'code' => $code,
-	        'status' => $status,
+        $result = array(
+            'data' => $data,
+            'msg' => $msg,
+            'code' => $code,
+            'status' => $status,
             'time' => $time
-		);
+        );
         if($time > C('REQUEST_OUT_TIME')){
             // TODO:记录此次访问请求url
         }
 
         exit(json_encode($result));
-	}
+    }
 
     protected function _POST()
     {
@@ -128,9 +137,9 @@ class CommonController extends Controller
     /**
         获取系统配置
     */
-    protected function getSysConfig($key=null){
+    protected function getSysConfig($key=null,$isAuto=0){
         $sysModel = M("admin_system_config", 0, "DB_DSN");
-        $sysAry = $sysModel->where("`status` = 1 AND `is_auto` = 0 ")->getField("config_key,config_value");
+        $sysAry = $sysModel->where("`status` = 1 AND `is_auto` = $isAuto ")->getField("config_key,config_value");
         if($key){
             return $sysAry[$key];
         }
